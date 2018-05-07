@@ -71,7 +71,7 @@ Dans l'url :
 
 Status : `200 OK`
 
-Retourne une description succinte des exercices disponibles dans un tableau JSON.
+Retourne la description complète de l'exercice demandé.
 
 Exemple :
 
