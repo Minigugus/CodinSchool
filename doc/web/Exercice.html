@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en-US">
+  <!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- Begin Jekyll SEO tag v2.4.0 -->
+<title>Exercice | CodinSchool</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Exercice" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="Exercice.html" />
+<meta property="og:url" content="Exercice.html" />
+<meta property="og:site_name" content="CodinSchool" />
+<script type="application/ld+json">
+{"@type":"WebPage","url":"https://pseudo.github.io/CodinSchool/Exercice.html","headline":"Exercice","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="assets/css/styleda9f.css?v=1cdeb207f5816eca7b5152f03b93b25c4ff89069">
+    <script src="assets/js/jquery-3.3.0.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>CodinSchool</h1>
+        <p></p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/pseudo/CodinSchool" class="button fork"><strong>View On GitHub</strong></a>
+        
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1 id="exercice">Exercice</h1>
+
+<h2 id="structure">Structure</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">id</code> (<code class="highlighter-rouge">string</code>) : ID de l’exercice.</li>
+  <li><code class="highlighter-rouge">name</code> (<code class="highlighter-rouge">string</code>) : Nom de l’exercice.</li>
+  <li><code class="highlighter-rouge">description</code> (<code class="highlighter-rouge">string</code>) : Description de l’exercice.</li>
+  <li><code class="highlighter-rouge">score</code> (<code class="highlighter-rouge">float</code>) : Meilleur score obtenu sur cet exercice par l’utilisateur connecté.</li>
+  <li><code class="highlighter-rouge">skills_unlocked</code> (<code class="highlighter-rouge">integer[]</code>) : Compétences débloquées une fois cet exercice résolu.</li>
+  <li><code class="highlighter-rouge">language</code> (<code class="highlighter-rouge">string</code>) : Langage de programmation de cet exercice.</li>
+</ul>
+
+<h2 id="opérations">Opérations</h2>
+
+<h3 id="get-exercices">GET <code class="highlighter-rouge">/exercices</code></h3>
+
+<p>Authentification requise.
+Retourne la liste des exercices visible par l’utilisateur connecté.</p>
+
+<h4 id="requête">Requête</h4>
+
+<p>Aucun paramètre requis.</p>
+
+<h4 id="réponse">Réponse</h4>
+
+<p>Status :</p>
+<ul>
+  <li>Succès : <code class="highlighter-rouge">200 OK</code></li>
+  <li>Exercice introuvable : <code class="highlighter-rouge">404 Not Found</code></li>
+</ul>
+
+<p>Retourne une description succinte des exercices disponibles dans un tableau JSON.</p>
+
+<p>Exemple :</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hello-world"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello World !"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Le premier programme que tout developpeur doit connaître !"</span><span class="w">
+		</span><span class="s2">"score"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"skills_unlocked"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="mi">153</span><span class="p">,</span><span class="w"> </span><span class="mi">406</span><span class="w"> </span><span class="p">],</span><span class="w">
+		</span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"c"</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+	</span><span class="p">{</span><span class="w">
+		</span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"somme-nombres"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Somme de Nombres"</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Additionner 2 nombres choisis par l'utilisateur. C'est aussi simple que ça !"</span><span class="w">
+		</span><span class="s2">"score"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.42</span><span class="p">,</span><span class="w">
+		</span><span class="s2">"skills_unlocked"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="mi">75</span><span class="p">,</span><span class="w"> </span><span class="mi">153</span><span class="p">,</span><span class="w"> </span><span class="mi">241</span><span class="w"> </span><span class="p">],</span><span class="w">
+		</span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"java"</span><span class="w">
+	</span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<p>NOTES :</p>
+<ul>
+  <li><code class="highlighter-rouge">score</code> est compris entre 0 et 1 inclus, 2 chiffres significatifs max.</li>
+</ul>
+
+<p><em>FIXME : ajouter un champ « skills_required » pour bloquer l’accès à un exercice aux utilisateurs qui n’auraient pas fait assez d’exercices débloquant la/les compétences requise ?</em></p>
+
+<h3 id="get-exercicesexerciceid">GET <code class="highlighter-rouge">/exercices/{exercice.id}</code></h3>
+
+<p>Authentification requise.
+Retourne une description plus détaillé d’un exercice.</p>
+
+<h4 id="requête-1">Requête</h4>
+
+<p>Dans l’url :</p>
+<ul>
+  <li><code class="highlighter-rouge">exercice.id</code> : ID de l’exercice à obtenir.</li>
+</ul>
+
+<h4 id="réponse-1">Réponse</h4>
+
+<p>Status : <code class="highlighter-rouge">200 OK</code></p>
+
+<p>Retourne une description succinte des exercices disponibles dans un tableau JSON.</p>
+
+<p>Exemple :</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hello-world"</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello World !"</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Le premier programme que tout developpeur doit connaître !"</span><span class="w">
+	</span><span class="s2">"score"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"skills_unlocked"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="mi">153</span><span class="p">,</span><span class="w"> </span><span class="mi">406</span><span class="w"> </span><span class="p">],</span><span class="w">
+	</span><span class="s2">"language"</span><span class="p">:</span><span class="w"> </span><span class="s2">"java"</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"nb_tests"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+	</span><span class="s2">"best_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"class Main {</span><span class="se">\n\t</span><span class="s2">public static void main(String[] args) {</span><span class="se">\n\t\t</span><span class="s2">System.out.println(</span><span class="se">\"</span><span class="s2">Hello World!</span><span class="se">\"</span><span class="s2">); }</span><span class="se">\n\t</span><span class="s2">}</span><span class="se">\n</span><span class="s2">}"</span><span class="w">
+	</span><span class="s2">"exemples"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+		</span><span class="p">{</span><span class="w">
+			</span><span class="s2">"input"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+			</span><span class="s2">"output"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello World!</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span><span class="w">
+			</span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Très compliqué..."</span><span class="w">
+		</span><span class="p">}</span><span class="w">
+	</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><em>NOTE : <code class="highlighter-rouge">best_code</code> est le code par défaut si l’exercice n’a pas encore était évalué au moins fois.</em></p>
+
+<h3 id="post-exercicesexerciceid">POST <code class="highlighter-rouge">/exercices/{exercice.id}</code></h3>
+
+<p>Authentification requise.
+Évalue un code source sur les tests</p>
+
+<h4 id="requête-2">Requête</h4>
+
+<p>Corps de type MIME <code class="highlighter-rouge">text/plain</code> : code source à évaluer (1 seul fichier).</p>
+
+<h4 id="réponse-2">Réponse</h4>
+
+<p>Status : <code class="highlighter-rouge">200 OK</code></p>
+
+<p>Retourne un flux de type MIME <code class="highlighter-rouge">text/event-stream</code> (voir <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">la documentation MDN</a>).</p>
+
+<p>Une évaluation peut être placé dans une file d’attente si le serveur est surchagé.</p>
+
+<p>Exemple:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>: CodingSchool - Evaluation in progress
+
+event: queued
+data: { position: 1, total: 2 }
+
+event: compilation_started
+data: { timestamp: 1525050061 }
+
+event: compilation_done
+data: { timestamp: 1525050161, passed: true }
+
+event: test_started
+data: { timestamp: 1525050168, id: 0 }
+
+event: test_started
+data: { timestamp: 1525050170, id: 1 }
+
+event: test_done
+data: { timestamp: 1525050178, id: 0, passed: false, code: 127, expected: "Hello World!", output: "Hello World !" }
+
+event: test_done
+data: { timestamp: 1525050181, id: 1, passed: true }
+
+</code></pre></div></div>
+
+<p>Description des évènements (par ordre d’apparition):</p>
+<ul>
+  <li><code class="highlighter-rouge">queued</code> : L’évaluation est dans une file d’attente. L’évènement est renvoyé toutes 3 secondes environ tant que l’évaluation est dans la file.</li>
+  <li><code class="highlighter-rouge">compilation_started</code> : La compilation a commencé.</li>
+  <li><code class="highlighter-rouge">compilation_done</code> : La compilation est terminée.</li>
+  <li><code class="highlighter-rouge">test_started</code> : Un test à commencé.</li>
+  <li><code class="highlighter-rouge">test_done</code> : Un test est terminé.</li>
+</ul>
+
+<p><em>FIXME : Limiter le nombre de tentatives par minute ?</em></p>
+
+
+      </section>
+      <footer>
+        
+          <p>Project maintained by <a href="https://github.com/pseudo">pseudo</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+
+    
+  </body>
+</html>
