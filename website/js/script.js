@@ -13,6 +13,9 @@ function getExercices(dataTable) {
 	});
 	request.fail(function(jqXHR, textStatus) {
 		console.log("Fail fetching exercices : " + jqXHR.status);
+		dataTable.clear().draw();
+		alert("Impossible de charger les exercices.");
+		//doSomething
 	});
 }
 
