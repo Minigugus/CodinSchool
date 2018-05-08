@@ -14,8 +14,7 @@ let skills
 const getSkills = () => {
 	return new Promise((resolve, reject) => {
 		let request = $.ajax({
-			//url: "/skills",
-			url: "php_test_api/skills.php",
+			url: "/api/skills",
 			method: "GET",
 			dataType: "json"
 		})
@@ -43,8 +42,7 @@ log(skills)
 //Fetch exercices and append them to table 
 const getExercices = dataTable => {
 	let request = $.ajax({
-		//url: "/exercices",
-		url: "php_test_api/exercices.php",
+		url: "/api/exercices",
 		method: "GET",
 		dataType: "json"
 	})
