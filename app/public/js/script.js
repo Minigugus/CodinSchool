@@ -22,7 +22,7 @@ var dataTableFrench = {
 			sSortDescending: ": activer pour trier la colonne par ordre d&eacute;croissant"
 		}
 	}
-};
+}
 
 let log = (el) => {
 	console.log(el)
@@ -33,7 +33,7 @@ const toObj = (array) => {
 	let obj = {}
 	array.forEach(x => obj[x.id] = x)
 	return obj
-};
+}
 
 let skills
 
@@ -56,15 +56,17 @@ const getSkills = () => {
 	})
 }
 
+/*
 const skillsPromise = getSkills()
-	.then(resolve => {
-		skills = resolve
-	})
-	.catch(reject => {
-		log(reject.message)
-	})
+.then(resolve => {
+	skills = resolve
+})
+.catch(reject => {
+	log(reject.message)
+})
 
 log(skills)
+*/
 
 //Fetch exercices and append them to table 
 const getExercices = dataTable => {
@@ -99,4 +101,85 @@ const setExercices = (dataTable, exercices) => {
 			x.language
 		])
 	).draw(false)
+}
+
+
+//Check login form
+const checkLogin = () => {
+	$("form").submit(() => {
+		let formData = {}
+
+		formData.email = {
+			obj: $('#inputEmail4'),
+			val: $('#inputEmail4').val()
+		}
+		formData.password = {
+			obj: $('#inputPassword4'),
+			val: $('#inputPassword4').val()
+		}
+
+		let count = 0
+		//Check if input is empty
+		for (let data in formData) {
+			if (formData[data].val === '') {
+				//Red input
+				formData[data].obj.addClass("is-invalid")
+				formData[data].obj.removeClass("is-valid")
+			} else {
+				//Green input
+				formData[data].obj.addClass("is-valid")
+				formData[data].obj.removeClass("is-invalid")
+				count++
+			}
+		}
+
+		if (!(count === Object.keys(formData).length)) {
+			//Some fields are empty, don't send form
+			//Show error message
+			$("#formError").html("Tous les champs sont obligatoires.")
+			$("#formError").fadeIn()
+		} else {
+			//Send form
+			login(formData)
+		}
+		return false
+	})
+}
+
+
+//login 
+const login = formData => {
+	let formParam = {}
+	for (let data in formData)
+		formParam[data] = formData[data].val
+
+	//Loading message on login button
+	$("#submitButton").html("<i class='fa fa-spinner fa-spin'></i> Connexion en cours")
+
+	let request = $.ajax({
+		url: "/api/login",
+		method: "POST",
+		data: formParam,
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8"
+	})
+	request.done(response => {
+		log("Success logging in.")
+		window.location.href = "work.html"
+	})
+	request.fail((jqXHR, textStatus) => {
+		log("Fail logging in : " + jqXHR.status)
+
+		//Show red on inputs
+		for (let data in formData) {
+			formData[data].obj.addClass("is-invalid")
+		}
+		//Show error message
+		$("#formError").html("Nom d'utilisateur ou mot de passe incorrect.")
+		$("#formError").fadeIn()
+	})
+	request.always(() => {
+		//Reset button message
+		//Fake timeout pour test !
+		setTimeout(() => {$("#submitButton").html("Connexion")}, 1000)
+	})
 }
