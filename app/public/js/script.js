@@ -99,7 +99,7 @@ const getExercices = dataTable => {
 const setExercices = (dataTable, exercices) => {
     //Fetch asynchronously
     (async () => {
-        let promise, skills, languages
+        let skills, languages
         try {
             skills = await skillsPromise()
             languages = await languagesPromise()
@@ -107,10 +107,8 @@ const setExercices = (dataTable, exercices) => {
             setToTable(skills, languages)
         } catch (e) {
             log(e)
-            setToTable(null, null)
-            return null
         }
-        return promise
+        return null
     })()
 
     //Set everything to the table
