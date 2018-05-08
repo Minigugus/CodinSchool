@@ -35,10 +35,9 @@ const toObj = (array) => {
 	return obj
 }
 
-let skills
 
-//Fetch skills
-const getSkills = () => {
+//Fetch skills (promise)
+const skillsPromise = () => {
 	return new Promise((resolve, reject) => {
 		let request = $.ajax({
 			url: "/api/skills",
@@ -56,19 +55,27 @@ const getSkills = () => {
 	})
 }
 
-/*
-const skillsPromise = getSkills()
-.then(resolve => {
-	skills = resolve
-})
-.catch(reject => {
-	log(reject.message)
-})
+//Fetch languages (promise)
+const languagesPromise = () => {
+	return new Promise((resolve, reject) => {
+		let request = $.ajax({
+			url: "/api/languages",
+			method: "GET",
+			dataType: "json"
+		})
+		request.done(response => {
+			log("Success fetching languages.")
+			resolve(toObj(response))
+		})
+		request.fail((jqXHR, textStatus) => {
+			//doSomething
+			reject(new Error("Fail fetching languages : " + jqXHR.status))
+		})
+	})
+}
 
-log(skills)
-*/
 
-//Fetch exercices and append them to table 
+//Fetch exercices 
 const getExercices = dataTable => {
 	let request = $.ajax({
 		url: "/api/exercices",
@@ -87,20 +94,64 @@ const getExercices = dataTable => {
 	})
 }
 
+
+
 //Set exercices to the table
 const setExercices = (dataTable, exercices) => {
-	let count = 0
-	dataTable.rows.add(
-		exercices.map(x => [
-			++count,
-			x.id,
-			x.name,
-			x.description,
-			x.score,
-			x.skills_unlocked,
-			x.language
-		])
-	).draw(false)
+	//Set everything to the table
+	const setToTable = (fetchedSkills, fetchedLanguages) => {
+		log(fetchedLanguages.java)
+		let skillsString = ""
+		for (let work of exercices) {
+			for (skill_id of work.skills_unlocked) {
+				skillsString += (fetchedSkills[skill_id]) ? fetchedSkills[skill_id].name + " " : ""
+			}
+			work.language = fetchedLanguages[work.language].name
+			work.skills_unlocked = skillsString
+		}
+		let count = 0
+		dataTable.rows.add(
+			exercices.map(x => [
+				++count,
+				x.name,
+				x.description,
+				x.score,
+				x.skills_unlocked,
+				x.language
+			])
+		).draw(false)
+	}
+
+	//Assign skills
+	const getSkills = skillsPromise()
+		.then(resolve => {
+			let skills = resolve
+
+			//Assign languages
+			const getLanguages = languagesPromise()
+				.then(resolve => {
+					let languages = resolve
+					setToTable(skills, languages)
+				})
+				.catch(reject => {
+					log(reject.message)
+					setToTable(skills, null)
+				})
+		})
+		.catch(reject => {
+			log(reject.message)
+
+			//Assign languages
+			const getLanguages = languagesPromise()
+				.then(resolve => {
+					let languages = resolve
+					setToTable(null, languages)
+				})
+				.catch(reject => {
+					log(reject.message)
+					setToTable(null, null)
+				})
+		})
 }
 
 
@@ -180,6 +231,13 @@ const login = formData => {
 	request.always(() => {
 		//Reset button message
 		//Fake timeout pour test !
-		setTimeout(() => {$("#submitButton").html("Connexion")}, 1000)
+		setTimeout(() => {
+			$("#submitButton").html("Connexion")
+		}, 1000)
 	})
+}
+
+//logout
+const logout = () => {
+
 }
