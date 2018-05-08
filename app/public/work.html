@@ -152,19 +152,13 @@
 	<script src="js/script.js"></script>
 	<script>
 		$(document).ready(function() {
-
 			var dataTableSettings = {
-				"columnDefs": [{
-					"width": "5%",
-					"targets": 0
-				}, {
-					"width": "20%",
-					"targets": 1
-				}]
-			};
+				undefined,
+				dataTableFrench
+			}
 
 			//Set the table as a datatable and set width of cols
-			var dataTable = $('#exercices').DataTable(dataTableSettings);
+			var dataTable = $('#exercices').DataTable(dataTableFrench);
 
 			//Fetch exercices
 			getExercices(dataTable);
