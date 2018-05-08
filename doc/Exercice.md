@@ -35,7 +35,7 @@ Exemple :
 	{
 		"id": "hello-world",
 		"name": "Hello World !",
-		"description": "Le premier programme que tout developpeur doit connaître !"
+		"description": "Le premier programme que tout developpeur doit connaître !",
 		"score": 1,
 		"skills_unlocked": [ 153, 406 ],
 		"language": "c"
@@ -43,7 +43,7 @@ Exemple :
 	{
 		"id": "somme-nombres",
 		"name": "Somme de Nombres",
-		"description": "Additionner 2 nombres choisis par l'utilisateur. C'est aussi simple que ça !"
+		"description": "Additionner 2 nombres choisis par l'utilisateur. C'est aussi simple que ça !",
 		"score": 0.42,
 		"skills_unlocked": [ 75, 153, 241 ],
 		"language": "java"
@@ -79,12 +79,12 @@ Exemple :
 {
 	"id": "hello-world",
 	"name": "Hello World !",
-	"description": "Le premier programme que tout developpeur doit connaître !"
+	"description": "Le premier programme que tout developpeur doit connaître !",
 	"score": 1,
 	"skills_unlocked": [ 153, 406 ],
 	"language": "java",
 	"nb_tests": 2,
-	"best_code": "class Main {\n\tpublic static void main(String[] args) {\n\t\tSystem.out.println(\"Hello World!\"); }\n\t}\n}"
+	"best_code": "class Main {\n\tpublic static void main(String[] args) {\n\t\tSystem.out.println(\"Hello World!\"); }\n\t}\n}",
 	"exemples": [
 		{
 			"input": "",

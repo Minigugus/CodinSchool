@@ -21,7 +21,7 @@ Aucun paramètre requis.
 
 Status : `200 OK`
 
-Retourne une description succinte des exercices disponibles dans un tableau JSON.
+Retourne une description succinte des skills disponibles dans un tableau JSON.
 
 Exemple :
 
