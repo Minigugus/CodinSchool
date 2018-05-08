@@ -9,9 +9,9 @@ const user = require('./User.js');
 
 const router = express.Router();
 
-router.use('/exercices', exercice);
-router.use('/skills', skill);
 router.use('/languages', language);
 router.use('/', user);
+router.use('/skills', skill);
+router.use('/exercices', exercice);
 
 module.exports = router;
