@@ -1,0 +1,22 @@
+{
+  "name": "codinschool",
+  "version": "0.1.0",
+  "description": "Site Web de résolution de problèmes d'algorithmique en ligne.",
+  "main": "app/index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://iut.univ-littoral.fr/gitlab/prenom.magniez/CodinSchool.git"
+  },
+  "author": "NOM Prenom",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "npm": "^6.0.0"
+  }
+}
