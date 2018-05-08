@@ -112,3 +112,6 @@ body {
 .hidden {
   display: none;
 }
+.margin0auto {
+  margin: 0 auto
+}
