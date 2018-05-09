@@ -20,10 +20,4 @@ router.use(session({
 }));
 
 module.exports = router;
-module.exports.isValid = (req) => !!req.session;
-module.exports.check = (req, res, next) => {
-	if (req.session.account_id === undefined)
-		res.status(401).json({ message: 'You must be authentificated to use this operation.' });
-	else
-		next();
-};
+module.exports.isValid = (req) => !!req.session && !!req.session.account_id;
