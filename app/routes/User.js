@@ -16,6 +16,14 @@ router.get('/login', session.check, (req, res) => {
 	db.queryFirst('SELECT id, name FROM account WHERE id = $1;', [ req.session.account_id ])
 		.then(user => (user || Promise.reject(new Error(`Account ID ${req.session.account_id} not found !`))))
 		.then(user => res.status(200).json(user))
+
+router.post('/login', (req, res) => {
+	db.queryFirst('SELECT id, password_hash, name FROM account WHERE username = $1;', [ req.body.username ])
+		.then(user => ({ success: bcrypt.compare(req.body.password, user.password_hash), user: user }))
+		.then(result => {
+			result.success && (req.session.account_id = result.user.id);
+			res.status(result.success ? 200 : 403).json({ id: result.user.id, name: result.user.name });
+		})
 		.catch(err => {
 			console.error(`ERROR Get logged user failed : ${err}`);
 			res.status(505).json({ message: 'Internal server error.' });

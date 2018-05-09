@@ -77,28 +77,6 @@
 					</div>
 				</div>
 
-				<table class="display table" id="exercices">
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>Nom</th>
-							<th>Description</th>
-							<th>Score</th>
-							<th>Compétences débloquées</th>
-							<th>Language utilisé</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td colspan="6" class="text-center">Chargement des exercices...</td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-						</tr>
-					</tbody>
-				</table>
 			</main>
 		</div>
 	</div>
@@ -121,11 +99,9 @@
 				logout()
 			})
 
-			//Set the table as a datatable and set width of cols
-			let dataTable = $('#exercices').DataTable(dataTableSettings)
-
-			//Fetch exercices
-			//getExercices(dataTable)
+			const urlParam = getUrlParameters()
+			if (urlParam.foo)
+				log(urlParam)
 		})
 	</script>
 </body>
