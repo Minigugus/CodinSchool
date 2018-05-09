@@ -51,7 +51,7 @@ router.post('/password', session.check, urlParser, (req, res) => {
 					res.status(403).json({ message: 'Wrong old password.' });
 				else
 					return bcrypt.hash(req.body.password, config.bcrypt_rounds)
-						.then(password_hash => db.execute('UPDATE account SET password_hash = $1;', [ req.body.password ])
+						.then(password_hash => db.execute('UPDATE account SET password_hash = $1;', [ req.body.password ]))
 						.then(rowCount => {
 							res.status(204).end();
 						})
