@@ -7,7 +7,7 @@ const session = require('../session.js');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-	if (session.check(req, res))
+	//if (session.check(req, res))
 		res.status(200).json([
 			{
 				id: 153,

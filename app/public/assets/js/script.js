@@ -24,8 +24,9 @@ let dataTableSettings = {
     }
 }
 
-let log = (el) => {
-    console.log(el)
+let log = (...el) => {
+    for (let arg of el)
+        console.log(arg)
 }
 
 //Assign the id properties as array key
@@ -85,7 +86,7 @@ const getExercices = dataTable => {
         dataType: "json"
     })
     request.done(response => {
-        log("Success fetching exercices.")
+        log("Success fetching exercices. Fetching skills and languages...")
         setExercices(dataTable, response)
     })
     request.fail((jqXHR, textStatus) => {
@@ -97,27 +98,13 @@ const getExercices = dataTable => {
 
 //Set exercices to the table
 const setExercices = (dataTable, exercices) => {
-    //Fetch asynchronously
-    (async () => {
-        let skills, languages
-        try {
-            skills = await skillsPromise()
-            languages = await languagesPromise()
-            dataTable.clear().draw()
-            setToTable(skills, languages)
-        } catch (e) {
-            log(e)
-        }
-        return null
-    })()
-
     //Set everything to the table
     const setToTable = (fetchedSkills, fetchedLanguages) => {
         let skillsString = ""
         for (let work of exercices) {
             for (let skill_id of work.skills_unlocked) {
                 if (fetchedSkills) {
-                    skillsString += (fetchedSkills[skill_id]) ? fetchedSkills[skill_id].name + " " : ""
+                    skillsString += (fetchedSkills[skill_id]) ? "[" + fetchedSkills[skill_id].name + "]<br>" : ""
                 }
             }
             work.language = (fetchedLanguages) ? fetchedLanguages[work.language].name : ""
@@ -135,6 +122,22 @@ const setExercices = (dataTable, exercices) => {
             ])
         ).draw(false)
     }
+
+    //Fetch asynchronously
+    (async () => {
+        Promise.all([
+                skillsPromise(),
+                languagesPromise()
+            ])
+            .catch(e => {
+                console.error(e)
+                return false
+            })
+            .then(res => {
+                dataTable.clear().draw()
+                setToTable(res[0], res[1])
+            })
+    })()
 }
 
 //Check login form
@@ -235,7 +238,7 @@ const logout = () => {
 }
 
 //Get cookie string by name
-function getCookie(sKey) {
+const getCookie = sKey => {
     if (!sKey) {
         return null
     }
@@ -269,6 +272,16 @@ const checkLoggedIn = () => {
     }
     if (!isLoggedIn()) {
         alert("Not logged in.\nCookies : " + document.cookie)
-        throw new Error("User is not logged in !");
+        throw new Error("User is not logged in !")
     }
+}
+
+const getUrlParameters = () => {
+    let parts = window.location.search.substr(1).split("&"),
+        data = {};
+    for (let i = 0, c = parts.length; i < c; i++) {
+        let temp = parts[i].split("=")
+        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
+    }
+    return data
 }
