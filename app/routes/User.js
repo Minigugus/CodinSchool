@@ -29,7 +29,7 @@ router.post('/login', urlParser, (req, res) => {
 });
 router.get('/logout', (req, res) => {
 	if (!session.isValid(req, res))
-		res.status(404).json({ message: 'You are not logged on.' });
+		res.status(404).json({ message: 'You are not logged in.' });
 	else
 		req.session.destroy(err => {
 			if (err)
