@@ -17,6 +17,7 @@
   "author": "NOM Prenom",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^2.0.1",
     "connect-pg-simple": "^4.2.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
