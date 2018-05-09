@@ -2,11 +2,11 @@
 
 const express = require('express');
 
-const session = require('../session.js');
+const util = require('../util');
 
 const router = express.Router();
 
-router.get('/', session.check, (req, res) => {
+router.get('/', util.check, (req, res) => {
 	res.status(200).json([
 		{
 			id: 153,
