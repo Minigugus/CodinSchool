@@ -8,8 +8,8 @@ WITH (OIDS=FALSE);
 ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 CREATE TABLE account (
-	id integer PRIMARY KEY,
-	username varchar(24) NOT NULL,
+	id serial PRIMARY KEY,
+	username varchar(24) NOT NULL UNIQUE,
 	password_hash char(60) NOT NULL,
 	name varchar(100) NOT NULL
 );

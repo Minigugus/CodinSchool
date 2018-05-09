@@ -15,7 +15,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use(express.static('public'));
+app.use('/', express.static('public'));
 
 app.use(session);
 app.use(config.api_url_base, routes);

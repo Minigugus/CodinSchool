@@ -12,20 +12,22 @@ const pool = new Pool({
 	password: config.db_password
 });
 
+function query(text, params) {
+	let startDate = Date.now();
+	return pool.query(text, params)
+		.then(res => {
+			console.info(`DB SUCCESS ${Date.now() - startDate}ms ${text} ${params}`);
+			return res;
+		})
+		.catch(err => {
+			console.error(`DB FAIL ${Date.now() - startDate}ms ${text} ${params} - ${err}`);
+			throw err;
+		});
+}
+
 module.exports = {
 	pool: () => pool,
 
-	query: (text, params) => {
-		let startDate = Date.now();
-		return pool.query(text, params)
-			.then(res => {
-				console.info(`DB SUCCESS ${Date.now() - startDate}ms ${text} ${params}`);
-				return res;
-			})
-			.catch(err => {
-				console.error(`DB FAIL ${Date.now() - startDate}ms ${text} ${params} - ${err}`);
-				throw err;
-			});
-	},
-	queryFirst: (text, params) => this.query(text, params).then(x => x.rows[0])
+	query: query,
+	queryFirst: (text, params) => query(text, params).then(x => x.rows[0])
 };

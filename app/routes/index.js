@@ -14,4 +14,8 @@ router.use('/', user);
 router.use('/skills', skill);
 router.use('/exercices', exercice);
 
+router.use((req, res, next) => {
+	res.status(404).json({ message: 'Not found.' });
+});
+
 module.exports = router;
