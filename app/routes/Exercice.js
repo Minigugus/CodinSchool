@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.get('/', session.check, (req, res) => {
 	res.status(200).json([
-		{
 			{
 				id: "hello-world",
 				name: "Hello World !",
