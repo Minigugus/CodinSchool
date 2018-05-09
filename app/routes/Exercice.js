@@ -10,23 +10,22 @@ const router = express.Router();
 router.get('/', session.check, (req, res) => {
 	res.status(200).json([
 		{
-			{
-				id: "hello-world",
-				name: "Hello World !",
-				description: "Le premier programme que tout developpeur doit connaître !",
-				score: 1,
-				skills_unlocked: [ 153, 406 ],
-				language: "c"
-			},
-			{
-				id: "somme-nombres",
-				name: "Somme de Nombres",
-				description: "Additionner 2 nombres choisis par l'utilisateur. C'est aussi simple que ça !",
-				score: 0.42,
-				skills_unlocked: [ 75, 153, 241 ],
-				language: "java"
-			}
-		]);
+			id: "hello-world",
+			name: "Hello World !",
+			description: "Le premier programme que tout developpeur doit connaître !",
+			score: 1,
+			skills_unlocked: [ 153, 406 ],
+			language: "c"
+		},
+		{
+			id: "somme-nombres",
+			name: "Somme de Nombres",
+			description: "Additionner 2 nombres choisis par l'utilisateur. C'est aussi simple que ça !",
+			score: 0.42,
+			skills_unlocked: [ 75, 153, 241 ],
+			language: "java"
+		}
+	]);
 });
 router.get('/:id', session.check, (req, res) => {
 	res.status(200).json({
