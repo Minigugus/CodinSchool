@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require("path");
 const express = require("express");
 
 const config = require('./config.js');
@@ -12,16 +13,19 @@ app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
 	console.info(`NETWORK ${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl}`);
-	next();
+	// if (req.originalUrl === '/login.html' || req.originalUrl.startsWith('/api/') || session.isValid(req))
+		next();
+	// else
+		// res.redirect(403, '/login.html');
 });
 
-app.use('/', express.static('public'));
+app.use(express.static('app/public'));
 
 app.use(session);
 app.use(config.api_url_base, routes);
 
 app.use((req, res, next) => {
-	res.status(404).redirect('/');
+	res.redirect(404, '/');
 });
 
 app.listen(config.port, (err) => {

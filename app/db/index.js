@@ -28,6 +28,7 @@ function query(text, params) {
 module.exports = {
 	pool: () => pool,
 
+	execute: (text, params) => query(text, params).then(x => x.rowCount),
 	query: query,
 	queryFirst: (text, params) => query(text, params).then(x => x.rows[0])
 };
