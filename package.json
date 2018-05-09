@@ -14,7 +14,7 @@
     "type": "git",
     "url": "http://iut.univ-littoral.fr/gitlab/prenom.magniez/CodinSchool.git"
   },
-  "author": "NOM Prenom",
+  "author": "NOM Prenom et Nom Prenom",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^2.0.1",

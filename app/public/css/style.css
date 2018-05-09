@@ -100,3 +100,18 @@ body {
 .top-right li:last-child {
   margin-right: 0;
 }
+
+.error {
+  font-size: 1.2em;
+  color:red;
+  font-weight: 500;
+}
+.width100 {
+  width: 100%;
+}
+.hidden {
+  display: none;
+}
+.margin0auto {
+  margin: 0 auto
+}
