@@ -29,7 +29,7 @@ router.get('/logout', (req, res) => {
 		.send();
 
 		*/
-router.get('/login', (req, res) => {
+router.post('/login', (req, res) => {
 	db.queryFirst('SELECT id, password_hash, name FROM account WHERE username = $1;', [ req.body.username ])
 		.then(user => ({ success: bcrypt.compare(req.body.password, user.password_hash), user: user }))
 		.then(result => {
