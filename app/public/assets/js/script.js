@@ -42,23 +42,6 @@ const toObj = (array) => {
 }
 
 
-//Fetch anything (Promise)
-const getPromiseAPI = (apiUrl, httpMethod) => {
-    return new Promise((resolve, reject) => {
-        let request = $.ajax({
-            url: apiBaseUrl + apiUrl,
-            method: httpMethod || "GET",
-            dataType: "json"
-        })
-        request.done(response => {
-            log("Success fetching " + apiUrl + ".")
-            resolve(toObj(response))
-        })
-        request.fail((jqXHR, textStatus) => {
-            reject(new Error("Fail fetching " + apiUrl + " : " + jqXHR.status))
-        })
-    })
-}
 
 //Get cookie string by name
 const getCookie = sKey => {
@@ -96,8 +79,51 @@ const getUrlParameters = () => {
     return data
 }
 
+//Show green around input
+const setInputGreen = (...ele) => {
+    for (let arg of ele) {
+        arg.addClass("is-valid")
+        arg.removeClass("is-invalid")
+    }
+}
+
+//Show red around input
+const setInputRed = (...ele) => {
+    for (let arg of ele) {
+        arg.addClass("is-invalid")
+        arg.removeClass("is-valid")
+    }
+}
+
+//Change the form error message and show it
+const setFormError = msg => {
+    error = $("#formError")
+    error.html(msg)
+    error.fadeIn()
+}
+
+//Loading message on a button (true = load/false = normal)
+const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='fa fa-spinner fa-spin'></i> " + msg) : ele.html(msg)
+
 
 /********** Main functions **********/
+//Fetch anything async (Promise)
+const getPromiseAPI = (apiUrl, httpMethod) => {
+    return new Promise((resolve, reject) => {
+        let request = $.ajax({
+            url: apiBaseUrl + apiUrl,
+            method: httpMethod || "GET",
+            dataType: "json"
+        })
+        request.done(response => {
+            log("Success fetching " + apiUrl + ".")
+            resolve(toObj(response))
+        })
+        request.fail((jqXHR, textStatus) => {
+            reject(new Error("Fail fetching " + apiUrl + " : " + jqXHR.status))
+        })
+    })
+}
 
 const fetchToSessionStorage = () => {
     if (!getSessionStorageObj("user") || !getSessionStorageObj("skills") || !getSessionStorageObj("languages")) {
@@ -121,7 +147,7 @@ const fetchToSessionStorage = () => {
 //Fetch exercices 
 const getExercices = dataTable => {
     let request = $.ajax({
-        url: "/api/exercices",
+        url: apiBaseUrl + "exercices",
         method: "GET",
         dataType: "json"
     })
@@ -208,8 +234,7 @@ const checkLogin = () => {
     })
 }
 
-
-//login 
+//send login request 
 const login = formData => {
     let formParam = {}
     for (let data in formData)
@@ -219,7 +244,7 @@ const login = formData => {
     $("#submitButton").html("<i class='fa fa-spinner fa-spin'></i> Connexion en cours")
 
     let request = $.ajax({
-        url: "/api/login",
+        url: apiBaseUrl + "login",
         method: "POST",
         data: formParam,
         contentType: "application/x-www-form-urlencoded; charset=UTF-8"
@@ -248,10 +273,87 @@ const login = formData => {
     })
 }
 
+//Check register form
+const checkRegister = () => {
+    $("form").submit((e) => {
+        e.preventDefault()
+        let formData = {
+            lastName: $('#inputLastName'),
+            firstName: $('#inputFirstName'),
+            username: $('#inputUsername'),
+            password1: $('#inputPassword1'),
+            password2: $('#inputPassword2')
+        }
+
+        let count = 0
+        let send = true
+
+        //Check if input is empty
+        for (let data in formData) {
+            if (formData[data].val() === '') {
+                setInputRed(formData[data])
+            } else {
+                setInputGreen(formData[data])
+                count++
+            }
+        }
+
+        if (!(count === Object.keys(formData).length)) {
+            //Some fields are empty, don't send form
+            setFormError("Tous les champs sont obligatoires.")
+            $("#formError").fadeIn()
+            send = false
+        }
+        if (send && formData.password1.val().length < 6) {
+            setInputRed(formData.password1, formData.password2)
+            setFormError("Le mot de passe doit être de 8 caractères minimum.")
+            send = false
+        }
+        if (send && formData.password1.val() !== formData.password2.val()) {
+            setInputRed(formData.password1, formData.password2)
+            //The password confirmation is the same as the first one
+            setFormError("Les mots de passe ne correspondent pas.")
+            send = false
+        }
+        if (send) {
+            let submitButton = $("#submitButton")
+            buttonLoading(submitButton, "Inscription en cours", true)
+            if (register(formData.username.val(), formData.password1.val(), formData.firstName.val() + " " + formData.lastName.val())) {
+                window.location.href = "work.html"
+            } else {
+                for (let data in formData) {
+                    setInputRed(formData[data])
+                }
+                setFormError("???????.")
+                //buttonLoading(submitButton, "Inscription")
+            }
+        }
+    })
+}
+
+//Send register request
+const register = (username, password, name) => {
+    let request = $.ajax({
+        url: apiBaseUrl + "register",
+        method: "POST",
+        data: {name, username, password},
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
+    })
+    request.done(response => {
+        log("Success registering.")
+        return true
+    })
+    request.fail((jqXHR, textStatus) => {
+        log("Fail registering : " + jqXHR.status)
+        return false
+    })
+}
+
+
 //logout
 const logout = () => {
     let request = $.ajax({
-        url: "/api/logout",
+        url: apiBaseUrl + "logout",
         method: "GET"
     })
     request.done(response => {

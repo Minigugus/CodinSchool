@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="img/favicon.ico">
+
+	<title>CodinSchool</title>
+
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/css/fontawesome-all.min.css" rel="stylesheet" />
+	<link href="assets/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CodinSchool</a>
+		<ul class="navbar-nav px-3 top-right">
+		</ul>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<main role="main" class="offset-md-4 col-md-4  px-4">
+				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<h1 class="h2 margin0auto">Inscription</h1>
+				</div>
+				<form>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="inputLastName">Nom</label>
+							<input type="text" class="form-control" id="inputLastName" maxlength="50" placeholder="Nom" value="sAuvagE">
+						</div>
+						<div class="form-group col-md-6">
+							<label for="inputFirstName">Prénom</label>
+							<input type="text" class="form-control" id="inputFirstName" maxlength="50" placeholder="Prénom" value="AntoInE">
+						</div>
+						<div class="form-group col-md-12">
+							<label for="inputUsername">Nom d'utilisateur</label>
+							<input type="text" class="form-control" id="inputUsername" maxlength="24" placeholder="Nom d'utilisateur" value="user">
+						</div>
+						<div class="form-group col-md-12">
+							<label for="inputPassword1">Mot de passe</label>
+							<input type="password" class="form-control" id="inputPassword1" maxlength="50" placeholder="Mot de passe" value="password">
+						</div>
+						<div class="form-group col-md-12">
+							<label for="inputPassword2">Confirmation du mot de passe</label>
+							<input type="password" class="form-control" id="inputPassword2" maxlength="50" placeholder="Mot de passe" value="password">
+						</div>
+						<div class="form-group col-md-12 text-center">
+							<button type="submit" class="btn btn-primary" id="submitButton">Inscription</button>
+						</div>
+						<div class="form-group error width100 text-center hidden" id="formError"></div>
+					</div>
+				</form>
+			</main>
+		</div>
+	</div>
+
+	<script src="assets/js/jquery-3.3.1.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/DataTables/datatables.min.js"></script>
+
+	<script src="assets/js/script.js"></script>
+	<script>
+		$(document).ready(function() {
+			$("#submitButton").click(checkRegister())
+		})
+	</script>
+</body>
+</html>
