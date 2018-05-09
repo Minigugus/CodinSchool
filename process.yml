@@ -1,5 +1,0 @@
-apps:
-  - script    : 'app/index.js'
-    name      : 'CodingSchool'
-    exec_mode : 'cluster'
-    instance  : 1

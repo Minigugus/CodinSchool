@@ -1,0 +1,16 @@
+{
+	"script"    : "app/index.js",
+	"name"      : "CodinSchool",
+	"exec_mode" : "cluster",
+	"instance"  : 1,
+	"env": {
+    	"NODE_ENV" : "development",
+		"DB_HOST"  : "localhost",
+		"DB_USER"  : "codinschool",
+		"DB_PASS"  : "dev",
+		"DB_NAME"  : "codinschool"	
+    },
+    "env_production": {
+    	"NODE_ENV" : "production"
+    }
+}
