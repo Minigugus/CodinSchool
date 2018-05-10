@@ -115,3 +115,13 @@ body {
 .margin0auto {
   margin: 0 auto
 }
+#notification {
+  text-align: center;
+  display: none;
+}
+#mainIframe {
+  display:block;
+  width:100%;
+  height:100vh;
+  overflow:hidden
+}

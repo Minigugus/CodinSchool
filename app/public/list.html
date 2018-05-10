@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="icon" href="img/favicon.ico">
+
+	<title>CodinSchool</title>
+
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="assets/css/style.css" rel="stylesheet" />
+	<style type="text/css">
+	html, body {
+		height: 100%; 
+	}
+</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<main role="main" class="col-md-12">
+				<div id="notification" class="col-md-12"></div>
+				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+					<h1 class="h2">Exercices</h1>
+					<div class="btn-toolbar mb-2 mb-md-0">
+						<div class="btn-group mr-2">
+							<button class="btn btn-sm btn-outline-secondary">Share</button>
+							<button class="btn btn-sm btn-outline-secondary">Export</button>
+						</div>
+						<button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+							<span data-feather="calendar"></span>
+							This week
+						</button>
+					</div>
+				</div>
+
+				<table class="display table" id="exercices">
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Nom</th>
+							<th>Description</th>
+							<th>Score</th>
+							<th>Compétences débloquées</th>
+							<th>Language utilisé</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="6" class="text-center">Chargement des exercices...</td>
+							<td style="display: none;"></td>
+							<td style="display: none;"></td>
+							<td style="display: none;"></td>
+							<td style="display: none;"></td>
+							<td style="display: none;"></td>
+						</tr>
+					</tbody>
+				</table>
+			</main>
+		</div>
+	</div>
+
+	<script src="assets/js/jquery-3.3.1.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="assets/DataTables/datatables.min.js"></script>
+
+	<script src="assets/js/script.js"></script>
+	<script>
+		checkLoggedIn()
+		fetchToSessionStorage()
+
+		$(document).ready(function() {
+		//If the page is not loaded in an iframe, redirect
+			if (!isInIframe())
+				redirectWithMsg("work.html", "La page que vous venez de visiter vous a redirigé.", "info")
+
+			loadUrlMsgNotification()
+
+			//Set the table as a datatable and include exercices
+			const dataTable = $('#exercices').DataTable(dataTableSettings)
+			//setExercices(dataTable)
+		})
+	</script>
+</body>
+</html>

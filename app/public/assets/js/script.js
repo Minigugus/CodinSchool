@@ -136,6 +136,7 @@ const loadUrlMsgNotification = () => {
     }
 }
 
+//Get a object containing the parameters or undefined if empty
 const getUrlParameters = () => {
     let parts = window.location.search.substr(1).split("&"),
         data = {}
@@ -148,6 +149,9 @@ const getUrlParameters = () => {
         return
     return data
 }
+
+//Return if the current window is in an iframe
+const isInIframe = () => (!window.frameElement) ? false : true
 
 /********** Main functions **********/
 //Fetch anything async (Promise)
@@ -165,12 +169,17 @@ const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
 }
 
 //If isn't set yet, set all needed data to sessionStorage
-//Comment verif le login ??
-const fetchToSessionStorage = () => {
+//if we never fetched or yes but more than 10 minutes ago, fetch all
+//reloadBool : true = reload page / false = don't reload page
+const fetchToSessionStorage = reloadBool => {
     if (!getSessionStorageObj("exercices") ||
         !getSessionStorageObj("login") ||
         !getSessionStorageObj("skills") ||
-        !getSessionStorageObj("languages")) {
+        !getSessionStorageObj("languages") ||
+        !getSessionStorageObj("lastFetch") ||
+        getSessionStorageObj("lastFetch") && getSessionStorageObj("lastFetch").time > (Date.now() - 600)
+    ) {
+        clearSessionStorage()
         Promise.all([
                 getPromiseAPI("exercices"),
                 getPromiseAPI("login"),
@@ -179,26 +188,40 @@ const fetchToSessionStorage = () => {
             ])
             .catch(e => e)
             .then(res => {
-                log(res)
-                //doSomething
+                setSessionStorageObj("exercices", res[0].data)
+                setSessionStorageObj("login", res[1].data)
+                setSessionStorageObj("skills", res[2].data)
+                setSessionStorageObj("languages", res[3].data)
+                setSessionStorageObj("lastFetch", {
+                    time: Date.now()
+                })
+                //Reload page (after 300ms to be sure sessionStorage is set)
+                if (reloadBool)
+                    setTimeout(() => location.reload(), 300)
             })
+    } else {
+        return false
     }
 }
 
-
-//Send login request
-const reqLogin = (username, password) => getPromiseAPI("login", "POST", {
-    username,
-    password
-})
-
-//Send register request
-const reqRegister = (username, password, name) => getPromiseAPI("register", "POST", {
-    username,
-    password,
-    name
-})
-
+//how to check if session valid ?
+const checkLoggedIn = () => {
+    getPromiseAPI("login")
+        .catch(e => e)
+        .then(res => {
+            switch (res.code) {
+                case "0":
+                    //User is logged in
+                    break;
+                case "10":
+                    redirectWithMsg("login.html", "Vous n'est pas connecté.", "danger")
+                    break;
+                default:
+                    redirectWithMsg("login.html", "Erreur serveur inconnue.", "danger")
+                    break;
+            }
+        })
+}
 
 
 //Set exercices to the table
@@ -236,6 +259,18 @@ const setExercices = (dataTable, exercices) => {
     */
 }
 
+//Send login request
+const reqLogin = (username, password) => getPromiseAPI("login", "POST", {
+    username,
+    password
+})
+
+//Send register request
+const reqRegister = (username, password, name) => getPromiseAPI("register", "POST", {
+    username,
+    password,
+    name
+})
 
 //Check login form 
 const checkLogin = event => {
@@ -273,7 +308,7 @@ const checkLogin = event => {
                 switch (result.code) {
                     case "0":
                         log("Ok logging in")
-                        window.location.href = "work.html"
+                        window.location.href = "landing.html"
                         break;
                     case "11":
                         log("Fail logging in", result)
@@ -367,6 +402,7 @@ const logout = () => {
         method: "GET"
     })
     request.done(response => {
+        clearSessionStorage()
         redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
     })
     request.fail((jqXHR, textStatus) => {
@@ -374,22 +410,4 @@ const logout = () => {
         jqXHR.responseJSON
         //doSomething
     })
-}
-
-
-
-//how to check if session valid ?
-const checkLoggedIn = () => {
-    const isLoggedIn = () => {
-        let cookie = getCookie("codingschool_session")
-        if (cookie === "fake") {
-            return true
-        } else {
-            return false
-        }
-    }
-    if (!isLoggedIn()) {
-        alert("Not logged in.\nCookies : " + document.cookie)
-        throw new Error("User is not logged in !")
-    }
 }

@@ -25,28 +25,14 @@
 		<div class="row">
 			<main role="main" class="offset-md-4 col-md-4  px-4">
 				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-					<h1 class="h2 margin0auto">Connexion</h1>
+					<h1 class="h2 margin0auto">Connexion réussie !</h1>
 				</div>
-				<form>
-					<div class="form-row">
-						<div class="form-group col-md-6 offset-md-3 text-center">
-							<label for="inputUsername">Nom d'utilisateur</label>
-							<input type="text" class="form-control text-center" id="inputUsername" placeholder="Nom d'utilisateur" value="user">
-						</div>
-						<div class="form-group col-md-6 offset-md-3 text-center">
-							<label for="inputPassword">Mot de passe</label>
-							<input type="password" class="form-control text-center" id="inputPassword" placeholder="Mot de passe" value="password">
-						</div>
-						<div class="form-group col-md-6 offset-md-3 text-center">
-							<button type="submit" class="btn btn-primary" id="submitButton">Connexion</button>
-						</div>
-						<div class="form-group error width100 text-center hidden" id="formError"></div>
-					</div>
-					<div class="text-center pb-2">
-						<a href="register.html">Vous n'avez pas de compte ? S'inscrire</a>
-					</div>
-				</form>
-				<div id="notification"></div>
+				<div class="text-center alert alert-success alert-dismissible fade show" role="alert">
+					<strong>Succès</strong> La connexion a été effectuée.<br>Vous allez être redirigé dans quelques secondes ...
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
 			</main>
 		</div>
 	</div>
@@ -57,9 +43,10 @@
 
 	<script src="assets/js/script.js"></script>
 	<script>
+		checkLoggedIn()
 		$(document).ready(function() {
-			$("form").submit(e => checkLogin(e))
-			loadUrlMsgNotification()
+			fetchToSessionStorage(false)
+			setTimeout(() => location.href = "work.html", 3000)
 		})
 	</script>
 </body>
