@@ -29,6 +29,18 @@ let dataTableSettings = {
     }
 }
 
+const api_errors = {
+//  CODE_ERREUR: [ CODE_HTTP, MESSAGE ]
+      0: [ 200, undefined ],
+      1: [ 400, 'Bad request' ],
+      2: [ 404, 'Not found' ],
+     10: [ 401, 'You must be authentificated to use this operation' ],
+     11: [ 403, 'Invalid username or password' ],
+     12: [ 403, 'Wrong old password' ],
+     13: [ 403, 'Access denied' ],
+    255: [ 505, 'Internal server error' ]
+}
+
 let log = (...el) => {
     for (let arg of el)
         console.log(arg)
@@ -108,19 +120,20 @@ const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='f
 
 /********** Main functions **********/
 //Fetch anything async (Promise)
-const getPromiseAPI = (apiUrl, httpMethod) => {
+const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
     return new Promise((resolve, reject) => {
         let request = $.ajax({
             url: apiBaseUrl + apiUrl,
             method: httpMethod || "GET",
-            dataType: "json"
+            dataType: "json",
+            data: formParam || null,
         })
         request.done(response => {
-            log("Success fetching " + apiUrl + ".")
-            resolve(toObj(response))
+            log("Success request " + apiUrl + ".")
+            resolve(response)
         })
         request.fail((jqXHR, textStatus) => {
-            reject(new Error("Fail fetching " + apiUrl + " : " + jqXHR.status))
+            reject(new Error("Fail request " + apiUrl + " : " + jqXHR.status))
         })
     })
 }
@@ -301,12 +314,6 @@ const checkRegister = () => {
         if (!(count === Object.keys(formData).length)) {
             //Some fields are empty, don't send form
             setFormError("Tous les champs sont obligatoires.")
-            $("#formError").fadeIn()
-            send = false
-        }
-        if (send && formData.password1.val().length < 6) {
-            setInputRed(formData.password1, formData.password2)
-            setFormError("Le mot de passe doit être de 8 caractères minimum.")
             send = false
         }
         if (send && formData.password1.val() !== formData.password2.val()) {
@@ -315,39 +322,34 @@ const checkRegister = () => {
             setFormError("Les mots de passe ne correspondent pas.")
             send = false
         }
+        if (send && formData.password1.val().length < 8) {
+            setInputRed(formData.password1, formData.password2)
+            setFormError("Le mot de passe doit être de 8 caractères minimum.")
+            send = false
+        }
         if (send) {
             let submitButton = $("#submitButton")
             buttonLoading(submitButton, "Inscription en cours", true)
-            if (register(formData.username.val(), formData.password1.val(), formData.firstName.val() + " " + formData.lastName.val())) {
-                window.location.href = "work.html"
+
+            const name = formData.firstName.val() + " " + formData.lastName.val()
+            if (register(formData.username.val(), formData.password1.val(), name)) {
+                //window.location.href = "work.html"
+                log("ok")
             } else {
                 for (let data in formData) {
                     setInputRed(formData[data])
                 }
                 setFormError("???????.")
-                //buttonLoading(submitButton, "Inscription")
+                buttonLoading(submitButton, "Inscription")
+                log("fail")
             }
         }
     })
 }
 
 //Send register request
-const register = (username, password, name) => {
-    let request = $.ajax({
-        url: apiBaseUrl + "register",
-        method: "POST",
-        data: {name, username, password},
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-    })
-    request.done(response => {
-        log("Success registering.")
-        return true
-    })
-    request.fail((jqXHR, textStatus) => {
-        log("Fail registering : " + jqXHR.status)
-        return false
-    })
-}
+const register = (username, password, name) => getPromiseAPI("register", "POST", {username,password,name})
+
 
 
 //logout
