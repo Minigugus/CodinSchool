@@ -2,12 +2,12 @@
 
 const express = require('express');
 
-const util = require('../util');
+const api = require('../api.js');
 
 const router = express.Router();
 
-router.get('/', util.check, (req, res) => {
-	res.status(200).json([
+router.get('/', api.check, (req, res) => {
+	api.reply(res, 0, [
 		{
 			id: 153,
 			name: "Manipulation des chaines de caractères",
