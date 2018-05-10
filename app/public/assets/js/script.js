@@ -29,18 +29,6 @@ let dataTableSettings = {
     }
 }
 
-const api_errors = {
-    0: [200, undefined],
-    1: [400, 'Bad request'],
-    2: [404, 'Not found'],
-    10: [401, 'You must be authentificated to use this operation'],
-    11: [403, 'Invalid username or password'],
-    12: [403, 'Wrong old password'],
-    13: [403, 'Access denied'],
-    14: [403, 'Username already registered'],
-    255: [505, 'Internal server error']
-}
-
 let log = (...el) => {
     for (let arg of el)
         console.log(arg)
@@ -52,8 +40,6 @@ const toObj = (array) => {
     array.forEach(x => obj[x.id] = x)
     return obj
 }
-
-
 
 //Get cookie string by name
 const getCookie = sKey => {
@@ -77,19 +63,14 @@ const getCookieObj = cname => {
     return json
 }
 
+//Convert html to unicode (ex : < = &#60;)
+const stripHtml = str => str.replace(/[\u00A0-\u9999<>\&]/gim, i => '&#' + i.charCodeAt(0) + ';')
+
+//SessionStorage2obj
 const getSessionStorageObj = key => JSON.parse(sessionStorage.getItem(key))
 const setSessionStorageObj = (key, obj) => sessionStorage.setItem(key, JSON.stringify(obj))
 const clearSessionStorage = () => sessionStorage.clear()
 
-const getUrlParameters = () => {
-    let parts = window.location.search.substr(1).split("&"),
-        data = {}
-    for (let i = 0, c = parts.length; i < c; i++) {
-        let temp = parts[i].split("=")
-        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
-    }
-    return data
-}
 
 //Show green around input
 const setInputGreen = (...ele) => {
@@ -117,6 +98,59 @@ const setFormError = msg => {
 //Loading message on a button (true = load/false = normal)
 const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='fa fa-spinner fa-spin'></i> " + msg) : ele.html(msg)
 
+//Redirect the user to a page with notification in url
+const redirectWithMsg = (url, msg, type) => window.location.href = url + "?msg=" + encodeURI(msg) + "&msgType=" + encodeURI(type)
+
+const getUrlParameters = () => {
+    let parts = window.location.search.substr(1).split("&"),
+        data = {}
+    for (let i = 0, c = parts.length; i < c; i++) {
+        let temp = parts[i].split("=")
+        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
+    }
+    //If there is nothing in url params, return undefined
+    if (Object.keys(data).length === 1 && data[""] == "undefined")
+        return
+    return data
+}
+
+//Show a notification from url (bootstrap alert), non xss vulnerable
+const loadUrlMsgNotification = () => {
+    const params = getUrlParameters()
+    if (!params || !params.msg || !params.msgType)
+        return
+
+    let setNotification = false,
+        notification = `
+    <div class="alert alert-{{msgColor}} alert-dismissible fade show" role="alert">
+        <strong>{{msgType}}</strong> {{msg}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>`
+    //Notification start message
+    const colors = {
+        "primary": "",
+        "secondary": "",
+        "success": "Succès !",
+        "danger": "Erreur !",
+        "warning": "Attention !",
+        "info": "Information !",
+        "light": "",
+        "dark": ""
+    }
+    for (let type in colors) {
+        if (type === params.msgType)
+            setNotification = true
+    }
+    if (setNotification) {
+        notification = notification.replace(/{{msgColor}}/g, stripHtml(params.msgType))
+        notification = notification.replace(/{{msgType}}/g, stripHtml(colors[params.msgType]))
+        notification = notification.replace(/{{msg}}/g, stripHtml(params.msg))
+        $("#notification").html(notification)
+        $("#notification").fadeIn()
+    }
+}
 
 /********** Main functions **********/
 //Fetch anything async (Promise)
@@ -133,48 +167,49 @@ const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
     })
 }
 
+//If isn't set yet, set all needed data to sessionStorage
+//Comment verif le login ??
 const fetchToSessionStorage = () => {
-    if (!getSessionStorageObj("user") || !getSessionStorageObj("skills") || !getSessionStorageObj("languages")) {
-        //Fetch asynchronously
-        (async () => {
-            try {
-                const res = await Promise.all([
-                    getPromiseAPI("user"),
-                    getPromiseAPI("skills"),
-                    getPromiseAPI("languages")
-                ])
-                //blabla
-            } catch (err) {
-                console.error(e)
-                return false
-            }
-        })()
+    if (!getSessionStorageObj("exercices") ||
+        !getSessionStorageObj("login") ||
+        !getSessionStorageObj("skills") ||
+        !getSessionStorageObj("languages")) {
+        Promise.all([
+                getPromiseAPI("exercices"),
+                getPromiseAPI("login"),
+                getPromiseAPI("skills"),
+                getPromiseAPI("languages")
+            ])
+            .catch(e => e)
+            .then(res => {
+                log(res)
+                //doSomething
+            })
     }
 }
 
-//Fetch exercices 
-const getExercices = dataTable => {
-    let request = $.ajax({
-        url: apiBaseUrl + "exercices",
-        method: "GET",
-        dataType: "json"
-    })
-    request.done(response => {
-        log("Success fetching exercices. Fetching skills and languages...")
-        setExercices(dataTable, response)
-    })
-    request.fail((jqXHR, textStatus) => {
-        log("Fail fetching exercices : " + jqXHR.status)
-        dataTable.clear().draw()
-        //doSomething
-    })
-}
+
+//Send login request
+const reqLogin = (username, password) => getPromiseAPI("login", "POST", {
+    username,
+    password
+})
+
+//Send register request
+const reqRegister = (username, password, name) => getPromiseAPI("register", "POST", {
+    username,
+    password,
+    name
+})
+
+
 
 //Set exercices to the table
 const setExercices = (dataTable, exercices) => {
     dataTable.clear().draw()
     setToTable(res[0], res[1])
     //Set everything to the table
+    /*
     const setToTable = (fetchedSkills, fetchedLanguages) => {
         let skillsString = ""
         for (let work of exercices) {
@@ -198,22 +233,11 @@ const setExercices = (dataTable, exercices) => {
             ])
         ).draw(false)
     }
+    */
 }
 
-//Send login request
-const login = (username, password) => getPromiseAPI("login", "POST", {
-    username,
-    password
-})
 
-//Send register request
-const register = (username, password, name) => getPromiseAPI("register", "POST", {
-    username,
-    password,
-    name
-})
-
-//send login form 
+//Check login form 
 const checkLogin = event => {
     event.preventDefault()
     const formData = {
@@ -242,7 +266,7 @@ const checkLogin = event => {
         const submitButton = $("#submitButton")
         buttonLoading(submitButton, "Connexion en cours", true)
 
-        login(formData.username.val(), formData.password.val())
+        reqLogin(formData.username.val(), formData.password.val())
             .catch(e => e)
             .then(result => {
                 buttonLoading(submitButton, "Connexion")
@@ -255,7 +279,7 @@ const checkLogin = event => {
                         log("Fail logging in", result)
                         setInputRed(formData.username)
                         setInputRed(formData.password)
-                        setFormError("Nom d'utilisateur ou mot de pass incorrect.")
+                        setFormError("Nom d'utilisateur ou mot de passe incorrect.")
                         break;
                     default:
                         setFormError("Erreur serveur inconnue.")
@@ -313,7 +337,7 @@ const checkRegister = (event) => {
         buttonLoading(submitButton, "Inscription en cours", true)
 
         const name = formData.firstName.val() + " " + formData.lastName.val()
-        register(formData.username.val(), formData.password1.val(), name)
+        reqRegister(formData.username.val(), formData.password1.val(), name)
             .catch(e => e)
             .then(result => {
                 buttonLoading(submitButton, "Inscription")
@@ -336,7 +360,6 @@ const checkRegister = (event) => {
 }
 
 
-
 //logout
 const logout = () => {
     let request = $.ajax({
@@ -344,7 +367,7 @@ const logout = () => {
         method: "GET"
     })
     request.done(response => {
-        window.location.href = "login.html"
+        redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
     })
     request.fail((jqXHR, textStatus) => {
         log("Failed to disconnect : " + jqXHR.status)
