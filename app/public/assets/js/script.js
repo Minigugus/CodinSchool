@@ -101,19 +101,6 @@ const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='f
 //Redirect the user to a page with notification in url
 const redirectWithMsg = (url, msg, type) => window.location.href = url + "?msg=" + encodeURI(msg) + "&msgType=" + encodeURI(type)
 
-const getUrlParameters = () => {
-    let parts = window.location.search.substr(1).split("&"),
-        data = {}
-    for (let i = 0, c = parts.length; i < c; i++) {
-        let temp = parts[i].split("=")
-        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
-    }
-    //If there is nothing in url params, return undefined
-    if (Object.keys(data).length === 1 && data[""] == "undefined")
-        return
-    return data
-}
-
 //Show a notification from url (bootstrap alert), non xss vulnerable
 const loadUrlMsgNotification = () => {
     const params = getUrlParameters()
@@ -147,6 +134,19 @@ const loadUrlMsgNotification = () => {
         $("#notification").html(notification)
         $("#notification").fadeIn()
     }
+}
+
+const getUrlParameters = () => {
+    let parts = window.location.search.substr(1).split("&"),
+        data = {}
+    for (let i = 0, c = parts.length; i < c; i++) {
+        let temp = parts[i].split("=")
+        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
+    }
+    //If there is nothing in url params, return undefined
+    if (Object.keys(data).length === 1 && data[""] == "undefined")
+        return
+    return data
 }
 
 /********** Main functions **********/
@@ -203,6 +203,9 @@ const reqRegister = (username, password, name) => getPromiseAPI("register", "POS
 
 //Set exercices to the table
 const setExercices = (dataTable, exercices) => {
+    const exercices = getSessionStorageObj("exercices")
+    if (!exercices)
+        return //redirect?doSomething
     dataTable.clear().draw()
     setToTable(res[0], res[1])
     //Set everything to the table
@@ -367,7 +370,8 @@ const logout = () => {
         redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
     })
     request.fail((jqXHR, textStatus) => {
-        log("Failed to disconnect : " + jqXHR.status)
+        log("Failed to disconnect : ", jqXHR.status)
+        jqXHR.responseJSON
         //doSomething
     })
 }

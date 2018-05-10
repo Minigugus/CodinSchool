@@ -76,6 +76,7 @@
 						</button>
 					</div>
 				</div>
+				<div id="notification" class="hidden"></div>
 
 				<table class="display table" id="exercices">
 					<thead>
@@ -110,6 +111,7 @@
 	<script src="assets/js/script.js"></script>
 	<script>
 		$(document).ready(function() {
+			loadUrlMsgNotification()
 
 			//Check if the user is logged in
 			//checkLoggedIn()
