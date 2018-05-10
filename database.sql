@@ -24,3 +24,18 @@ CREATE TABLE language (
 	lan_cmd_compile varchar(200),
 	lan_cmd_exec varchar(200) NOT NULL
 );
+
+DROP TABLE IF EXISTS skill CASCADE;
+CREATE TABLE skill (
+	ski_id integer PRIMARY KEY NOT NULL,
+	ski_name varchar(100) NOT NULL
+);
+
+-- DROP TABLE IF EXISTS exercice CASCADE;
+-- CREATE TABLE exercice (
+-- 	exe_id varchar(20) PRIMARY KEY NOT NULL,
+-- 	exe_name varchar(100) NOT NULL,
+-- 	exe_description varchar(2000),
+-- 	exe_language varchar(10) NOT NULL REFERENCES language (lan_id),
+-- 	exe_skills integer[] NOT NULL DEFAULT '{}',
+-- );
