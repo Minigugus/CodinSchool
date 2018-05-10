@@ -84,7 +84,8 @@
 
 			const user = getSessionStorageObj("login")
 			if (!user) {
-				setTimeout(() => window.location.href = "work.html", 3000)
+				//Will never be executed. Just to wait fetchToSessionStorage has finished and reloaded page
+				setTimeout(() => window.location.href = "work.html", 5000)
 			}
 			else {
 				//Set username
