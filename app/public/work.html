@@ -13,7 +13,7 @@
 	<link href="assets/css/style.css" rel="stylesheet" />
 </head>
 
-<body>
+<body style="overflow:hidden">
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
 		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CodinSchool</a>
 		<ul class="navbar-nav px-3 top-right">
@@ -61,45 +61,11 @@
 					</ul>
 				</div>
 			</nav>
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" style="margin-right:0!important;padding-right: 0 !important;">
+				<div id="notification" class="col-md-12"></div>
 
-			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-					<h1 class="h2">Exercices</h1>
-					<div class="btn-toolbar mb-2 mb-md-0">
-						<div class="btn-group mr-2">
-							<button class="btn btn-sm btn-outline-secondary">Share</button>
-							<button class="btn btn-sm btn-outline-secondary">Export</button>
-						</div>
-						<button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-							<span data-feather="calendar"></span>
-							This week
-						</button>
-					</div>
-				</div>
-				<div id="notification" class="hidden"></div>
+				<iframe id="mainIframe" frameborder="0" scrolling="yes" seamless="seamless"></iframe>
 
-				<table class="display table" id="exercices">
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>Nom</th>
-							<th>Description</th>
-							<th>Score</th>
-							<th>Compétences débloquées</th>
-							<th>Language utilisé</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td colspan="6" class="text-center">Chargement des exercices...</td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-							<td style="display: none;"></td>
-						</tr>
-					</tbody>
-				</table>
 			</main>
 		</div>
 	</div>
@@ -110,24 +76,28 @@
 
 	<script src="assets/js/script.js"></script>
 	<script>
+		checkLoggedIn()
+		fetchToSessionStorage(true)
+
 		$(document).ready(function() {
 			loadUrlMsgNotification()
 
-			//Check if the user is logged in
-			//checkLoggedIn()
+			const user = getSessionStorageObj("login")
+			if (!user) {
+				setTimeout(() => window.location.href = "work.html", 3000)
+			}
+			else {
+				//Set username
+				$("#username").html(user.acc_name || "")
+			}
 
-			//Set username
-			//$("#username").html(getCookieObj("codingschool_user").name)
+			//Load iframe
+			$("#mainIframe").attr("src", "list.html");
+
 			$("#logout").click(event => {
 				event.preventDefault()
 				logout()
 			})
-
-			//Set the table as a datatable and set width of cols
-			let dataTable = $('#exercices').DataTable(dataTableSettings)
-
-			//Fetch exercices
-			//getExercices(dataTable)
 		})
 	</script>
 </body>
