@@ -2,13 +2,12 @@
 
 const express = require('express');
 
-const util = require('../util');
+const api = require('../api.js');
 
 const router = express.Router();
 
-
-router.get('/', util.check, (req, res) => {
-	res.status(200).json([
+router.get('/', api.check, (req, res) => {
+	api.reply(res, 0, [
 		{
 			id: "hello-world",
 			name: "Hello World !",
@@ -27,8 +26,8 @@ router.get('/', util.check, (req, res) => {
 		}
 	]);
 });
-router.get('/:id', util.check, (req, res) => {
-	res.status(200).json({
+router.get('/:id', api.check, (req, res) => {
+	api.reply(res, 0, {
 		id: "hello-world",
 		name: "Hello World !",
 		description: "Le premier programme que tout developpeur doit connaître !",
