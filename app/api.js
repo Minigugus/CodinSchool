@@ -16,11 +16,13 @@ const api_errors = {
 	 11: [ 403, 'Invalid username or password' ],
 	 12: [ 403, 'Wrong old password' ],
 	 13: [ 403, 'Access denied' ],
+	 14: [ 403, 'Username already registered' ],
 
 	255: [ 505, 'Internal server error' ]
 }, api_codes = Object.keys(api_errors);
 
 const reply = (res, code, data) => {
+	code = `${code}`;
 	if (api_codes.indexOf(code) === -1)
 		error(res, `Unregistered API code`, new Error(`Code ${code} not found.`));
 	else
