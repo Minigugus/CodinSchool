@@ -43,6 +43,7 @@
 						<div class="form-group error width100 text-center hidden" id="formError"></div>
 					</div>
 				</form>
+				<div id="notification" class="hidden"></div>
 			</main>
 		</div>
 	</div>
@@ -55,6 +56,7 @@
 	<script>
 		$(document).ready(function() {
 			$("form").submit(e => checkLogin(e))
+			loadUrlMsgNotification()
 		})
 	</script>
 </body>
