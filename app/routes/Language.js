@@ -2,10 +2,12 @@
 
 const express = require('express');
 
+const api = require('../api.js');
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
-	res.status(200).json([
+	api.reply(res, 0, [
 		{
 			id: "c",
 			name: "C",
