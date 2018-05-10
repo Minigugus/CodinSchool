@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const db = require('../db');
 const config = require('../config.js');
 const util = require('../util');
-const config = require('../config.js');
 
 const router = express.Router();
 
