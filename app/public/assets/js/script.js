@@ -30,15 +30,15 @@ let dataTableSettings = {
 }
 
 const api_errors = {
-//  CODE_ERREUR: [ CODE_HTTP, MESSAGE ]
-      0: [ 200, undefined ],
-      1: [ 400, 'Bad request' ],
-      2: [ 404, 'Not found' ],
-     10: [ 401, 'You must be authentificated to use this operation' ],
-     11: [ 403, 'Invalid username or password' ],
-     12: [ 403, 'Wrong old password' ],
-     13: [ 403, 'Access denied' ],
-    255: [ 505, 'Internal server error' ]
+    0: [200, undefined],
+    1: [400, 'Bad request'],
+    2: [404, 'Not found'],
+    10: [401, 'You must be authentificated to use this operation'],
+    11: [403, 'Invalid username or password'],
+    12: [403, 'Wrong old password'],
+    13: [403, 'Access denied'],
+    14: [403, 'Username already registered'],
+    255: [505, 'Internal server error']
 }
 
 let log = (...el) => {
@@ -128,13 +128,8 @@ const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
             dataType: "json",
             data: formParam || null,
         })
-        request.done(response => {
-            log("Success request " + apiUrl + ".")
-            resolve(response)
-        })
-        request.fail((jqXHR, textStatus) => {
-            reject(new Error("Fail request " + apiUrl + " : " + jqXHR.status))
-        })
+        request.done(response => resolve(response))
+        request.fail(jqXHR => reject(jqXHR.responseJSON))
     })
 }
 
@@ -205,150 +200,140 @@ const setExercices = (dataTable, exercices) => {
     }
 }
 
-//Check login form
-const checkLogin = () => {
-    $("form").submit(() => {
-        let formData = {}
-
-        formData.email = {
-            obj: $('#inputEmail4'),
-            val: $('#inputEmail4').val()
-        }
-        formData.password = {
-            obj: $('#inputPassword4'),
-            val: $('#inputPassword4').val()
-        }
-
-        let count = 0
-        //Check if input is empty
-        for (let data in formData) {
-            if (formData[data].val === '') {
-                //Red input
-                formData[data].obj.addClass("is-invalid")
-                formData[data].obj.removeClass("is-valid")
-            } else {
-                //Green input
-                formData[data].obj.addClass("is-valid")
-                formData[data].obj.removeClass("is-invalid")
-                count++
-            }
-        }
-
-        if (!(count === Object.keys(formData).length)) {
-            //Some fields are empty, don't send form
-            //Show error message
-            $("#formError").html("Tous les champs sont obligatoires.")
-            $("#formError").fadeIn()
-        } else {
-            //Send form
-            login(formData)
-        }
-        return false
-    })
-}
-
-//send login request 
-const login = formData => {
-    let formParam = {}
-    for (let data in formData)
-        formParam[data] = formData[data].val
-
-    //Loading message on login button
-    $("#submitButton").html("<i class='fa fa-spinner fa-spin'></i> Connexion en cours")
-
-    let request = $.ajax({
-        url: apiBaseUrl + "login",
-        method: "POST",
-        data: formParam,
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-    })
-    request.done(response => {
-        log("Success logging in.")
-        window.location.href = "work.html"
-    })
-    request.fail((jqXHR, textStatus) => {
-        log("Fail logging in : " + jqXHR.status)
-
-        //Show red on inputs
-        for (let data in formData) {
-            formData[data].obj.addClass("is-invalid")
-        }
-        //Show error message
-        $("#formError").html("Nom d'utilisateur ou mot de passe incorrect.")
-        $("#formError").fadeIn()
-    })
-    request.always(() => {
-        //Reset button message
-        //Fake timeout pour test !
-        setTimeout(() => {
-            $("#submitButton").html("Connexion")
-        }, 1000)
-    })
-}
-
-//Check register form
-const checkRegister = () => {
-    $("form").submit((e) => {
-        e.preventDefault()
-        let formData = {
-            lastName: $('#inputLastName'),
-            firstName: $('#inputFirstName'),
-            username: $('#inputUsername'),
-            password1: $('#inputPassword1'),
-            password2: $('#inputPassword2')
-        }
-
-        let count = 0
-        let send = true
-
-        //Check if input is empty
-        for (let data in formData) {
-            if (formData[data].val() === '') {
-                setInputRed(formData[data])
-            } else {
-                setInputGreen(formData[data])
-                count++
-            }
-        }
-
-        if (!(count === Object.keys(formData).length)) {
-            //Some fields are empty, don't send form
-            setFormError("Tous les champs sont obligatoires.")
-            send = false
-        }
-        if (send && formData.password1.val() !== formData.password2.val()) {
-            setInputRed(formData.password1, formData.password2)
-            //The password confirmation is the same as the first one
-            setFormError("Les mots de passe ne correspondent pas.")
-            send = false
-        }
-        if (send && formData.password1.val().length < 8) {
-            setInputRed(formData.password1, formData.password2)
-            setFormError("Le mot de passe doit être de 8 caractères minimum.")
-            send = false
-        }
-        if (send) {
-            let submitButton = $("#submitButton")
-            buttonLoading(submitButton, "Inscription en cours", true)
-
-            const name = formData.firstName.val() + " " + formData.lastName.val()
-            if (register(formData.username.val(), formData.password1.val(), name)) {
-                //window.location.href = "work.html"
-                log("ok")
-            } else {
-                for (let data in formData) {
-                    setInputRed(formData[data])
-                }
-                setFormError("???????.")
-                buttonLoading(submitButton, "Inscription")
-                log("fail")
-            }
-        }
-    })
-}
+//Send login request
+const login = (username, password) => getPromiseAPI("login", "POST", {
+    username,
+    password
+})
 
 //Send register request
-const register = (username, password, name) => getPromiseAPI("register", "POST", {username,password,name})
+const register = (username, password, name) => getPromiseAPI("register", "POST", {
+    username,
+    password,
+    name
+})
+
+//send login form 
+const checkLogin = event => {
+    event.preventDefault()
+    const formData = {
+        username: $('#inputUsername'),
+        password: $('#inputPassword')
+    }
+
+    let count = 0
+    let send = true
+
+    const checkEmpty = ele => {
+        if (ele.val() === '') {
+            setInputRed(ele)
+            send = false
+        }
+    }
+    //Check if input is empty
+    checkEmpty(formData.username)
+    checkEmpty(formData.password)
+
+    if (!send)
+        setFormError("Tous les champs sont obligatoires.")
+
+    //Everything is ok, we can send the request
+    if (send) {
+        const submitButton = $("#submitButton")
+        buttonLoading(submitButton, "Connexion en cours", true)
+
+        login(formData.username.val(), formData.password.val())
+            .catch(e => e)
+            .then(result => {
+                buttonLoading(submitButton, "Connexion")
+                switch (result.code) {
+                    case "0":
+                        log("Ok logging in")
+                        window.location.href = "work.html"
+                        break;
+                    case "11":
+                        log("Fail logging in", result)
+                        setInputRed(formData.username)
+                        setInputRed(formData.password)
+                        setFormError("Nom d'utilisateur ou mot de pass incorrect.")
+                        break;
+                    default:
+                        setFormError("Erreur serveur inconnue.")
+                        break;
+                }
+            })
+    }
+}
+
+
+//Check register form
+const checkRegister = (event) => {
+    event.preventDefault()
+    const formData = {
+        lastName: $('#inputLastName'),
+        firstName: $('#inputFirstName'),
+        username: $('#inputUsername'),
+        password1: $('#inputPassword1'),
+        password2: $('#inputPassword2')
+    }
+
+    let count = 0
+    let send = true
+
+    //Check if input is empty
+    for (let data in formData) {
+        if (formData[data].val() === '') {
+            setInputRed(formData[data])
+        } else {
+            setInputGreen(formData[data])
+            count++
+        }
+    }
+
+    //Check if inputs are not empty
+    if (!(count === Object.keys(formData).length)) {
+        setFormError("Tous les champs sont obligatoires.")
+        send = false
+    }
+    //Check if password is 8 chars min
+    if (send && formData.password1.val().length < 8) {
+        setInputRed(formData.password1, formData.password2)
+        setFormError("Le mot de passe doit être de 8 caractères minimum.")
+        send = false
+    }
+    //Check if the password confirmation is the same as the original one
+    if (send && formData.password1.val() !== formData.password2.val()) {
+        setInputRed(formData.password1, formData.password2)
+        setFormError("Les mots de passe ne correspondent pas.")
+        send = false
+    }
+    //Everything is ok, we can send the request
+    if (send) {
+        const submitButton = $("#submitButton")
+        buttonLoading(submitButton, "Inscription en cours", true)
+
+        const name = formData.firstName.val() + " " + formData.lastName.val()
+        register(formData.username.val(), formData.password1.val(), name)
+            .catch(e => e)
+            .then(result => {
+                buttonLoading(submitButton, "Inscription")
+                switch (result.code) {
+                    case "0":
+                        log("Ok registering")
+                        window.location.href = "work.html"
+                        break;
+                    case "14":
+                        log("Fail registering", result)
+                        setInputRed(formData.username)
+                        setFormError("Ce nom d'utilisateur est déjà enregistré.")
+                        break;
+                    default:
+                        setFormError("Erreur serveur inconnue.")
+                        break;
+                }
+            })
+    }
+}
 
 
 
