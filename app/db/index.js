@@ -16,11 +16,11 @@ function query(text, params) {
 	let startDate = Date.now();
 	return pool.query(text, params)
 		.then(res => {
-			console.info(`DB SUCCESS ${Date.now() - startDate}ms ${text} - ${params.length} parameter(s)`);
+			console.info(`DB SUCCESS ${Date.now() - startDate}ms ${text} - ${params ? params.length : 0} parameter(s)`);
 			return res;
 		})
 		.catch(err => {
-			console.error(`DB FAIL ${Date.now() - startDate}ms ${text} - ${params.length} parameter(s) - ${err}`);
+			console.error(`DB FAIL ${Date.now() - startDate}ms ${text} - ${params ? params.length : 0} parameter(s) - ${err}`);
 			throw err;
 		});
 }
