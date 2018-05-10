@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 
 const db = require('../db');
+const config = require('../config.js');
 const util = require('../util');
 
 const router = express.Router();
