@@ -30,5 +30,6 @@ module.exports = {
 
 	execute: (text, params) => query(text, params).then(x => x.rowCount),
 	query: query,
-	queryFirst: (text, params) => query(text, params).then(x => x.rows[0])
+	queryFirst: (text, params) => query(text, params).then(x => x.rows[0]),
+	queryAll: (text, params) => query(text, params).then(x => x.rows)
 };

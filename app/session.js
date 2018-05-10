@@ -10,13 +10,13 @@ const db = require('./db');
 const router = express.Router();
 
 router.use(session({
-    store: new pgSession({
-        pool: db.pool()
-    }),
-    name: config.session_cookie_name,
-    secret: config.session_secret,
-    saveUninitialized: false,
-    resave: false
+	store: new pgSession({
+		pool: db.pool()
+	}),
+	name: config.session_cookie_name,
+	secret: config.session_secret,
+	saveUninitialized: false,
+	resave: false
 }));
 
 module.exports = router;
