@@ -120,14 +120,7 @@ const loadUrlMsgNotification = () => {
     if (!params || !params.msg || !params.msgType)
         return
 
-    let setNotification = false,
-        notification = `
-    <div class="alert alert-{{msgColor}} alert-dismissible fade show" role="alert">
-        <strong>{{msgType}}</strong> {{msg}}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>`
+    let setNotification = false
     //Notification start message
     const colors = {
         "primary": "",
@@ -140,13 +133,17 @@ const loadUrlMsgNotification = () => {
         "dark": ""
     }
     for (let type in colors) {
-        if (type === params.msgType)
+        if (type === params.msgType) {
             setNotification = true
+            break;
+        }
     }
     if (setNotification) {
-        notification = notification.replace(/{{msgColor}}/g, stripHtml(params.msgType))
-        notification = notification.replace(/{{msgType}}/g, stripHtml(colors[params.msgType]))
-        notification = notification.replace(/{{msg}}/g, stripHtml(params.msg))
+        notification = `<div class="alert alert-${stripHtml(params.msgType)} alert-dismissible fade show" role="alert">
+        <strong>${stripHtml(colors[params.msgType])}</strong> ${stripHtml(params.msg)}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button></div>`
         $("#notification").html(notification)
         $("#notification").fadeIn()
     }
@@ -223,14 +220,14 @@ const setExercices = (dataTable, exercices) => {
         }
         let count = 0
         dataTable.rows.add(
-            exercices.map(x => [
-                ++count,
-                x.name,
-                x.description,
-                x.score,
-                x.skills_unlocked,
-                x.language
-            ])
+        exercices.map(x => [
+        ++count,
+        x.name,
+        x.description,
+        x.score,
+        x.skills_unlocked,
+        x.language
+        ])
         ).draw(false)
     }
     */
