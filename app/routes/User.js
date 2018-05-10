@@ -18,7 +18,7 @@ router.get('/login', api.check, (req, res) =>
 
 router.post('/login', api.parsers.url, api.validate('username', 'password'), (req, res) =>
 	db.queryFirst('SELECT acc_id, acc_password_hash, acc_name FROM account WHERE acc_username = $1;', [ req.body.username ])
-		.then(user => bcrypt.compare(req.body.password, user.acc_password_hash)
+		.then(user => (user ? bcrypt.compare(req.body.password, user.acc_password_hash) : Promise.resolve(false))
 			.then(success => {
 				if (!success)
 					api.reply(res, 11);
