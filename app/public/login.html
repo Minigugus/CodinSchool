@@ -30,12 +30,12 @@
 				<form>
 					<div class="form-row">
 						<div class="form-group col-md-6 offset-md-3 text-center">
-							<label for="inputEmail4">Email</label>
-							<input type="email" class="form-control text-center" id="inputEmail4" placeholder="Email" value="test@gmail.com">
+							<label for="inputUsername">Nom d'utilisateur</label>
+							<input type="text" class="form-control text-center" id="inputUsername" placeholder="Nom d'utilisateur" value="user">
 						</div>
 						<div class="form-group col-md-6 offset-md-3 text-center">
-							<label for="inputPassword4">Mot de passe</label>
-							<input type="password" class="form-control text-center" id="inputPassword4" placeholder="Mot de passe" value="test">
+							<label for="inputPassword">Mot de passe</label>
+							<input type="password" class="form-control text-center" id="inputPassword" placeholder="Mot de passe" value="password">
 						</div>
 						<div class="form-group col-md-6 offset-md-3 text-center">
 							<button type="submit" class="btn btn-primary" id="submitButton">Connexion</button>
@@ -43,6 +43,7 @@
 						<div class="form-group error width100 text-center hidden" id="formError"></div>
 					</div>
 				</form>
+				<div id="notification" class="hidden"></div>
 			</main>
 		</div>
 	</div>
@@ -54,7 +55,8 @@
 	<script src="assets/js/script.js"></script>
 	<script>
 		$(document).ready(function() {
-			checkLogin()
+			$("form").submit(e => checkLogin(e))
+			loadUrlMsgNotification()
 		})
 	</script>
 </body>

@@ -41,8 +41,6 @@ const toObj = (array) => {
     return obj
 }
 
-
-
 //Get cookie string by name
 const getCookie = sKey => {
     if (!sKey) {
@@ -65,19 +63,14 @@ const getCookieObj = cname => {
     return json
 }
 
+//Convert html to unicode (ex : < = &#60;)
+const stripHtml = str => str.replace(/[\u00A0-\u9999<>\&]/gim, i => '&#' + i.charCodeAt(0) + ';')
+
+//SessionStorage2obj
 const getSessionStorageObj = key => JSON.parse(sessionStorage.getItem(key))
 const setSessionStorageObj = (key, obj) => sessionStorage.setItem(key, JSON.stringify(obj))
 const clearSessionStorage = () => sessionStorage.clear()
 
-const getUrlParameters = () => {
-    let parts = window.location.search.substr(1).split("&"),
-        data = {}
-    for (let i = 0, c = parts.length; i < c; i++) {
-        let temp = parts[i].split("=")
-        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
-    }
-    return data
-}
 
 //Show green around input
 const setInputGreen = (...ele) => {
@@ -105,68 +98,115 @@ const setFormError = msg => {
 //Loading message on a button (true = load/false = normal)
 const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='fa fa-spinner fa-spin'></i> " + msg) : ele.html(msg)
 
+//Redirect the user to a page with notification in url
+const redirectWithMsg = (url, msg, type) => window.location.href = url + "?msg=" + encodeURI(msg) + "&msgType=" + encodeURI(type)
+
+const getUrlParameters = () => {
+    let parts = window.location.search.substr(1).split("&"),
+        data = {}
+    for (let i = 0, c = parts.length; i < c; i++) {
+        let temp = parts[i].split("=")
+        data[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1])
+    }
+    //If there is nothing in url params, return undefined
+    if (Object.keys(data).length === 1 && data[""] == "undefined")
+        return
+    return data
+}
+
+//Show a notification from url (bootstrap alert), non xss vulnerable
+const loadUrlMsgNotification = () => {
+    const params = getUrlParameters()
+    if (!params || !params.msg || !params.msgType)
+        return
+
+    let setNotification = false
+    //Notification start message
+    const colors = {
+        "primary": "",
+        "secondary": "",
+        "success": "Succès !",
+        "danger": "Erreur !",
+        "warning": "Attention !",
+        "info": "Information !",
+        "light": "",
+        "dark": ""
+    }
+    for (let type in colors) {
+        if (type === params.msgType) {
+            setNotification = true
+            break;
+        }
+    }
+    if (setNotification) {
+        notification = `<div class="alert alert-${stripHtml(params.msgType)} alert-dismissible fade show" role="alert">
+        <strong>${stripHtml(colors[params.msgType])}</strong> ${stripHtml(params.msg)}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button></div>`
+        $("#notification").html(notification)
+        $("#notification").fadeIn()
+    }
+}
 
 /********** Main functions **********/
 //Fetch anything async (Promise)
-const getPromiseAPI = (apiUrl, httpMethod) => {
+const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
     return new Promise((resolve, reject) => {
         let request = $.ajax({
             url: apiBaseUrl + apiUrl,
             method: httpMethod || "GET",
-            dataType: "json"
+            dataType: "json",
+            data: formParam || null,
         })
-        request.done(response => {
-            log("Success fetching " + apiUrl + ".")
-            resolve(toObj(response))
-        })
-        request.fail((jqXHR, textStatus) => {
-            reject(new Error("Fail fetching " + apiUrl + " : " + jqXHR.status))
-        })
+        request.done(response => resolve(response))
+        request.fail(jqXHR => reject(jqXHR.responseJSON))
     })
 }
 
+//If isn't set yet, set all needed data to sessionStorage
+//Comment verif le login ??
 const fetchToSessionStorage = () => {
-    if (!getSessionStorageObj("user") || !getSessionStorageObj("skills") || !getSessionStorageObj("languages")) {
-        //Fetch asynchronously
-        (async () => {
-            try {
-                const res = await Promise.all([
-                    getPromiseAPI("user"),
-                    getPromiseAPI("skills"),
-                    getPromiseAPI("languages")
-                ])
-                //blabla
-            } catch (err) {
-                console.error(e)
-                return false
-            }
-        })()
+    if (!getSessionStorageObj("exercices") ||
+        !getSessionStorageObj("login") ||
+        !getSessionStorageObj("skills") ||
+        !getSessionStorageObj("languages")) {
+        Promise.all([
+                getPromiseAPI("exercices"),
+                getPromiseAPI("login"),
+                getPromiseAPI("skills"),
+                getPromiseAPI("languages")
+            ])
+            .catch(e => e)
+            .then(res => {
+                log(res)
+                //doSomething
+            })
     }
 }
 
-//Fetch exercices 
-const getExercices = dataTable => {
-    let request = $.ajax({
-        url: apiBaseUrl + "exercices",
-        method: "GET",
-        dataType: "json"
-    })
-    request.done(response => {
-        log("Success fetching exercices. Fetching skills and languages...")
-        setExercices(dataTable, response)
-    })
-    request.fail((jqXHR, textStatus) => {
-        log("Fail fetching exercices : " + jqXHR.status)
-        dataTable.clear().draw()
-        //doSomething
-    })
-}
+
+//Send login request
+const reqLogin = (username, password) => getPromiseAPI("login", "POST", {
+    username,
+    password
+})
+
+//Send register request
+const reqRegister = (username, password, name) => getPromiseAPI("register", "POST", {
+    username,
+    password,
+    name
+})
+
+
 
 //Set exercices to the table
 const setExercices = (dataTable, exercices) => {
     dataTable.clear().draw()
     setToTable(res[0], res[1])
     //Set everything to the table
+    /*
     const setToTable = (fetchedSkills, fetchedLanguages) => {
         let skillsString = ""
         for (let work of exercices) {
@@ -180,173 +220,140 @@ const setExercices = (dataTable, exercices) => {
         }
         let count = 0
         dataTable.rows.add(
-            exercices.map(x => [
-                ++count,
-                x.name,
-                x.description,
-                x.score,
-                x.skills_unlocked,
-                x.language
-            ])
+        exercices.map(x => [
+        ++count,
+        x.name,
+        x.description,
+        x.score,
+        x.skills_unlocked,
+        x.language
+        ])
         ).draw(false)
+    }
+    */
+}
+
+
+//Check login form 
+const checkLogin = event => {
+    event.preventDefault()
+    const formData = {
+        username: $('#inputUsername'),
+        password: $('#inputPassword')
+    }
+
+    let count = 0
+    let send = true
+
+    const checkEmpty = ele => {
+        if (ele.val() === '') {
+            setInputRed(ele)
+            send = false
+        }
+    }
+    //Check if input is empty
+    checkEmpty(formData.username)
+    checkEmpty(formData.password)
+
+    if (!send)
+        setFormError("Tous les champs sont obligatoires.")
+
+    //Everything is ok, we can send the request
+    if (send) {
+        const submitButton = $("#submitButton")
+        buttonLoading(submitButton, "Connexion en cours", true)
+
+        reqLogin(formData.username.val(), formData.password.val())
+            .catch(e => e)
+            .then(result => {
+                buttonLoading(submitButton, "Connexion")
+                switch (result.code) {
+                    case "0":
+                        log("Ok logging in")
+                        window.location.href = "work.html"
+                        break;
+                    case "11":
+                        log("Fail logging in", result)
+                        setInputRed(formData.username)
+                        setInputRed(formData.password)
+                        setFormError("Nom d'utilisateur ou mot de passe incorrect.")
+                        break;
+                    default:
+                        setFormError("Erreur serveur inconnue.")
+                        break;
+                }
+            })
     }
 }
 
-//Check login form
-const checkLogin = () => {
-    $("form").submit(() => {
-        let formData = {}
-
-        formData.email = {
-            obj: $('#inputEmail4'),
-            val: $('#inputEmail4').val()
-        }
-        formData.password = {
-            obj: $('#inputPassword4'),
-            val: $('#inputPassword4').val()
-        }
-
-        let count = 0
-        //Check if input is empty
-        for (let data in formData) {
-            if (formData[data].val === '') {
-                //Red input
-                formData[data].obj.addClass("is-invalid")
-                formData[data].obj.removeClass("is-valid")
-            } else {
-                //Green input
-                formData[data].obj.addClass("is-valid")
-                formData[data].obj.removeClass("is-invalid")
-                count++
-            }
-        }
-
-        if (!(count === Object.keys(formData).length)) {
-            //Some fields are empty, don't send form
-            //Show error message
-            $("#formError").html("Tous les champs sont obligatoires.")
-            $("#formError").fadeIn()
-        } else {
-            //Send form
-            login(formData)
-        }
-        return false
-    })
-}
-
-//send login request 
-const login = formData => {
-    let formParam = {}
-    for (let data in formData)
-        formParam[data] = formData[data].val
-
-    //Loading message on login button
-    $("#submitButton").html("<i class='fa fa-spinner fa-spin'></i> Connexion en cours")
-
-    let request = $.ajax({
-        url: apiBaseUrl + "login",
-        method: "POST",
-        data: formParam,
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-    })
-    request.done(response => {
-        log("Success logging in.")
-        window.location.href = "work.html"
-    })
-    request.fail((jqXHR, textStatus) => {
-        log("Fail logging in : " + jqXHR.status)
-
-        //Show red on inputs
-        for (let data in formData) {
-            formData[data].obj.addClass("is-invalid")
-        }
-        //Show error message
-        $("#formError").html("Nom d'utilisateur ou mot de passe incorrect.")
-        $("#formError").fadeIn()
-    })
-    request.always(() => {
-        //Reset button message
-        //Fake timeout pour test !
-        setTimeout(() => {
-            $("#submitButton").html("Connexion")
-        }, 1000)
-    })
-}
 
 //Check register form
-const checkRegister = () => {
-    $("form").submit((e) => {
-        e.preventDefault()
-        let formData = {
-            lastName: $('#inputLastName'),
-            firstName: $('#inputFirstName'),
-            username: $('#inputUsername'),
-            password1: $('#inputPassword1'),
-            password2: $('#inputPassword2')
-        }
+const checkRegister = (event) => {
+    event.preventDefault()
+    const formData = {
+        lastName: $('#inputLastName'),
+        firstName: $('#inputFirstName'),
+        username: $('#inputUsername'),
+        password1: $('#inputPassword1'),
+        password2: $('#inputPassword2')
+    }
 
-        let count = 0
-        let send = true
+    let count = 0
+    let send = true
 
-        //Check if input is empty
-        for (let data in formData) {
-            if (formData[data].val() === '') {
-                setInputRed(formData[data])
-            } else {
-                setInputGreen(formData[data])
-                count++
-            }
+    //Check if input is empty
+    for (let data in formData) {
+        if (formData[data].val() === '') {
+            setInputRed(formData[data])
+        } else {
+            setInputGreen(formData[data])
+            count++
         }
+    }
 
-        if (!(count === Object.keys(formData).length)) {
-            //Some fields are empty, don't send form
-            setFormError("Tous les champs sont obligatoires.")
-            $("#formError").fadeIn()
-            send = false
-        }
-        if (send && formData.password1.val().length < 6) {
-            setInputRed(formData.password1, formData.password2)
-            setFormError("Le mot de passe doit être de 8 caractères minimum.")
-            send = false
-        }
-        if (send && formData.password1.val() !== formData.password2.val()) {
-            setInputRed(formData.password1, formData.password2)
-            //The password confirmation is the same as the first one
-            setFormError("Les mots de passe ne correspondent pas.")
-            send = false
-        }
-        if (send) {
-            let submitButton = $("#submitButton")
-            buttonLoading(submitButton, "Inscription en cours", true)
-            if (register(formData.username.val(), formData.password1.val(), formData.firstName.val() + " " + formData.lastName.val())) {
-                window.location.href = "work.html"
-            } else {
-                for (let data in formData) {
-                    setInputRed(formData[data])
+    //Check if inputs are not empty
+    if (!(count === Object.keys(formData).length)) {
+        setFormError("Tous les champs sont obligatoires.")
+        send = false
+    }
+    //Check if password is 8 chars min
+    if (send && formData.password1.val().length < 8) {
+        setInputRed(formData.password1, formData.password2)
+        setFormError("Le mot de passe doit être de 8 caractères minimum.")
+        send = false
+    }
+    //Check if the password confirmation is the same as the original one
+    if (send && formData.password1.val() !== formData.password2.val()) {
+        setInputRed(formData.password1, formData.password2)
+        setFormError("Les mots de passe ne correspondent pas.")
+        send = false
+    }
+    //Everything is ok, we can send the request
+    if (send) {
+        const submitButton = $("#submitButton")
+        buttonLoading(submitButton, "Inscription en cours", true)
+
+        const name = formData.firstName.val() + " " + formData.lastName.val()
+        reqRegister(formData.username.val(), formData.password1.val(), name)
+            .catch(e => e)
+            .then(result => {
+                buttonLoading(submitButton, "Inscription")
+                switch (result.code) {
+                    case "0":
+                        log("Ok registering")
+                        window.location.href = "work.html"
+                        break;
+                    case "14":
+                        log("Fail registering", result)
+                        setInputRed(formData.username)
+                        setFormError("Ce nom d'utilisateur est déjà enregistré.")
+                        break;
+                    default:
+                        setFormError("Erreur serveur inconnue.")
+                        break;
                 }
-                setFormError("???????.")
-                //buttonLoading(submitButton, "Inscription")
-            }
-        }
-    })
-}
-
-//Send register request
-const register = (username, password, name) => {
-    let request = $.ajax({
-        url: apiBaseUrl + "register",
-        method: "POST",
-        data: {name, username, password},
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-    })
-    request.done(response => {
-        log("Success registering.")
-        return true
-    })
-    request.fail((jqXHR, textStatus) => {
-        log("Fail registering : " + jqXHR.status)
-        return false
-    })
+            })
+    }
 }
 
 
@@ -357,7 +364,7 @@ const logout = () => {
         method: "GET"
     })
     request.done(response => {
-        window.location.href = "login.html"
+        redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
     })
     request.fail((jqXHR, textStatus) => {
         log("Failed to disconnect : " + jqXHR.status)
