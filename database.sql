@@ -13,7 +13,7 @@ CREATE TABLE account (
 	acc_id serial PRIMARY KEY NOT NULL,
 	acc_username varchar(24) NOT NULL UNIQUE,
 	acc_password_hash char(60) NOT NULL,
-	acc_name varchar(100) NOT NULL
+	acc_name varchar(50) NOT NULL
 );
 
 DROP TABLE IF EXISTS language CASCADE;

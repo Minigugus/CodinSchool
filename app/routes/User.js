@@ -52,7 +52,12 @@ router.post('/register', api.parsers.url, api.validate('username', 'password', '
 	bcrypt.hash(req.body.password, config.bcrypt_rounds)
 		.then(password_hash => db.queryFirst('INSERT INTO account (acc_username, acc_password_hash, acc_name) VALUES ($1, $2, $3) RETURNING *;', [ req.body.username, password_hash, req.body.name ]))
 		.then(user => api.reply(res, 0, { id: user.id, name: user.name }))
-		.catch(err => api.error(res, 'Register failed', err));
+		.catch(err => {
+			if (err.code && err.code === "23505")
+				api.reply(res, 14);
+			else
+				api.error(res, 'Register failed', err)
+		});
 });
 
 module.exports = router;
