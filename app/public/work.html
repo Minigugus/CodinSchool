@@ -78,11 +78,10 @@
 	<script>
 		checkLoggedIn()
 		$(document).ready(function() {
-			let user
-
 			//Set username if data has already been fetched
-			if (!fetchToSessionStorage("work.html") && (user = getSessionStorageObj("login")))
-				$("#username").html(stripHtml(user.acc_name) || "")
+			const user = getSessionStorageObj("login")
+			if (!fetchToSessionStorage("work.html") && user)
+				$("#username").html(stripHtml(user.name) || "")
 
 			loadUrlMsgNotification()
 
