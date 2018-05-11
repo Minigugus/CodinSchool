@@ -177,7 +177,7 @@ const fetchToSessionStorage = reloadBool => {
         !getSessionStorageObj("skills") ||
         !getSessionStorageObj("languages") ||
         !getSessionStorageObj("lastFetch") ||
-        getSessionStorageObj("lastFetch") && getSessionStorageObj("lastFetch").time > (Date.now() - 600)
+        (getSessionStorageObj("lastFetch") && getSessionStorageObj("lastFetch").time > (Date.now()*1000 - 600))
     ) {
         clearSessionStorage()
         Promise.all([
@@ -193,7 +193,7 @@ const fetchToSessionStorage = reloadBool => {
                 setSessionStorageObj("skills", res[2].data)
                 setSessionStorageObj("languages", res[3].data)
                 setSessionStorageObj("lastFetch", {
-                    time: Date.now()
+                    time: Date.now()*1000
                 })
                 //Reload page (after 300ms to be sure sessionStorage is set)
                 if (reloadBool)
@@ -226,13 +226,14 @@ const checkLoggedIn = () => {
 
 //Set exercices to the table
 const setExercices = (dataTable, exercices) => {
+    /*
     const exercices = getSessionStorageObj("exercices")
     if (!exercices)
         return //redirect?doSomething
     dataTable.clear().draw()
     setToTable(res[0], res[1])
     //Set everything to the table
-    /*
+    
     const setToTable = (fetchedSkills, fetchedLanguages) => {
         let skillsString = ""
         for (let work of exercices) {
@@ -379,7 +380,7 @@ const checkRegister = (event) => {
                 switch (result.code) {
                     case "0":
                         log("Ok registering")
-                        window.location.href = "work.html"
+                        redirectWithMsg("login.html", "Votre compte a été créé.", "success")
                         break;
                     case "14":
                         log("Fail registering", result)

@@ -89,7 +89,7 @@
 			}
 			else {
 				//Set username
-				$("#username").html(user.acc_name || "")
+				$("#username").html(stripHtml(user.acc_name) || "")
 			}
 
 			//Load iframe
