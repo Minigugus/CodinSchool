@@ -6,10 +6,10 @@ DROP TABLE IF EXISTS account CASCADE;
 DROP TABLE IF EXISTS language CASCADE;
 DROP TABLE IF EXISTS skill CASCADE;
 DROP TABLE IF EXISTS exercice CASCADE;
-DROP TABLE IF EXISTS skill_unlockable CASCADE;
+DROP TABLE IF EXISTS exercice_skill_unlockable CASCADE;
 DROP TABLE IF EXISTS exercice_test CASCADE;
-DROP TABLE IF EXISTS score_test CASCADE;
-DROP TABLE IF EXISTS score_exercice CASCADE;
+DROP TABLE IF EXISTS exercice_test_score CASCADE;
+DROP TABLE IF EXISTS exercice_best_eval CASCADE;
 
 -- from module `connect-pg-simple`.
 CREATE TABLE "session" (
@@ -55,7 +55,7 @@ CREATE TABLE exercice (
 	exe_default_code varchar(5000) NOT NULL DEFAULT ''
 );
 
-CREATE TABLE skill_unlockable (
+CREATE TABLE exercice_skill_unlockable (
 	exe_id varchar(20) NOT NULL REFERENCES exercice (exe_id),
 	ski_id integer NOT NULL REFERENCES skill (ski_id),
 	PRIMARY KEY(exe_id, ski_id)
@@ -71,7 +71,7 @@ CREATE TABLE exercice_test (
 	PRIMARY KEY(exe_id, tes_id)
 );
 
-CREATE TABLE score_test (
+CREATE TABLE exercice_test_score (
 	acc_id integer NOT NULL REFERENCES account (acc_id),
 	exe_id varchar(20) NOT NULL,
 	tes_id integer NOT NULL,
@@ -80,24 +80,33 @@ CREATE TABLE score_test (
 	FOREIGN KEY(exe_id, tes_id) REFERENCES exercice_test (exe_id, tes_id)
 );
 
-CREATE TABLE score_exercice (
+CREATE TABLE exercice_best_eval (
 	acc_id integer NOT NULL REFERENCES account (acc_id),
 	exe_id varchar(20) NOT NULL REFERENCES exercice (exe_id),
 	sco_code varchar(5000) NOT NULL,
 	PRIMARY KEY(acc_id, exe_id)
 );
 
-CREATE VIEW score_account AS
-SELECT A.acc_id, E.exe_id, COUNT(ST.sco_passed) AS exe_test_passed, (SELECT COUNT(*) FROM exercice_test WHERE exe_id = E.exe_id) AS exe_nb_tests FROM exercice E
-INNER JOIN (SELECT * FROM score_test WHERE sco_passed=true) ST ON ST.exe_id=E.exe_id
-INNER JOIN account A ON A.acc_id=ST.acc_id
-GROUP BY A.acc_id, E.exe_id;
+CREATE OR REPLACE VIEW exercice_description AS
+SELECT *, (SELECT COUNT(*) FROM exercice_test WHERE exe_id = E.exe_id) AS exe_nb_tests FROM exercice E;
 
-CREATE VIEW skill_account AS
-SELECT SA.acc_id, S.ski_id, COUNT(*) AS ski_level, (SELECT COUNT(*) FROM skill_unlockable WHERE ski_id = S.ski_id) AS ski_level_max FROM skill S
-INNER JOIN skill_unlockable SU ON SU.ski_id=S.ski_id
-INNER JOIN score_account SA ON SA.exe_id=SU.exe_id
--- WHERE SA.exe_test_passed=NULL OR SA.exe_test_passed=SA.exe_nb_tests
-GROUP BY SA.acc_id, S.ski_id;
+CREATE OR REPLACE VIEW skill_description AS
+SELECT *, (SELECT COUNT(*) FROM exercice_skill_unlockable WHERE ski_id = S.ski_id) AS ski_level_max FROM skill S;
+
+CREATE OR REPLACE VIEW exercice_score AS
+SELECT
+	A.acc_id,
+	E.exe_id,
+	(SELECT COUNT(*) FROM exercice_test_score WHERE acc_id=A.acc_id AND exe_id=E.exe_id AND sco_passed) AS exe_test_passed
+FROM account A
+NATURAL JOIN exercice E;
+
+CREATE OR REPLACE VIEW skill_score AS
+SELECT
+	A.acc_id,
+	S.ski_id,
+	(SELECT COUNT(*) FROM exercice_score ES, exercice_skill_unlockable SU, exercice_description E WHERE SU.exe_id=ES.exe_id AND ES.exe_id=E.exe_id AND ES.acc_id=A.acc_id AND SU.ski_id=S.ski_id AND ES.exe_test_passed=E.exe_nb_tests) AS ski_level
+FROM account A
+NATURAL JOIN skill S;
 
 COMMIT;
