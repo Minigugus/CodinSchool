@@ -2,6 +2,7 @@
 
 const path = require("path");
 const express = require("express");
+const compression = require("compression");
 
 const config = require('./config.js');
 const routes = require('./routes');
@@ -17,6 +18,8 @@ app.use((req, res, next) => {
 	// else
 		// res.redirect(403, '/login.html');
 });
+
+app.use(compression());
 
 app.use(express.static('app/public'));
 
