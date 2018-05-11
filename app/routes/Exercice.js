@@ -4,9 +4,9 @@ const express = require('express');
 
 const api = require('../api.js');
 
-const router = express.Router();
+const USER = express.Router(), ADMIN = express.Router();
 
-router.get('/', api.check, (req, res) => {
+USER.get('/', api.check, (req, res) => {
 	api.reply(res, 0, [
 		{
 			id: "hello-world",
@@ -26,7 +26,7 @@ router.get('/', api.check, (req, res) => {
 		}
 	]);
 });
-router.get('/:id', api.check, (req, res) => {
+USER.get('/:id', api.check, (req, res) => {
 	api.reply(res, 0, {
 		id: "hello-world",
 		name: "Hello World !",
@@ -47,4 +47,7 @@ router.get('/:id', api.check, (req, res) => {
 });
 // router.post('/:id', (req, res) => { });
 
-module.exports = router;
+module.exports = {
+	user: USER,
+	admin: ADMIN
+};

@@ -86,4 +86,18 @@ CREATE TABLE score_exercice (
 	PRIMARY KEY(acc_id, exe_id)
 );
 
+CREATE VIEW score_account AS
+SELECT A.acc_id, E.exe_id, COUNT(*) AS exe_test_passed, (SELECT COUNT(*) FROM score_test WHERE acc_id = A.acc_id AND exe_id = E.exe_id) AS exe_nb_tests FROM exercice E
+INNER JOIN score_test ST ON ST.exe_id=E.exe_id
+INNER JOIN account A ON A.acc_id=ST.acc_id
+WHERE ST.sco_passed=true
+GROUP BY A.acc_id, E.exe_id;
+
+CREATE VIEW skill_account AS
+SELECT SA.acc_id, S.ski_id, COUNT(*) AS ski_level, (SELECT COUNT(*) FROM skill_unlockable WHERE ski_id = S.ski_id) AS ski_level_max FROM skill S
+RIGHT JOIN skill_unlockable SU ON SU.ski_id=S.ski_id
+INNER JOIN score_account SA ON SA.exe_id=SU.exe_id
+WHERE SA.exe_test_passed=NULL OR SA.exe_test_passed=SA.exe_nb_tests
+GROUP BY SA.acc_id, S.ski_id;
+
 COMMIT;

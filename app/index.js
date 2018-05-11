@@ -4,7 +4,6 @@ const path = require("path");
 const express = require("express");
 
 const config = require('./config.js');
-const session = require('./session.js');
 const routes = require('./routes');
 
 const app = express();
@@ -21,7 +20,6 @@ app.use((req, res, next) => {
 
 app.use(express.static('app/public'));
 
-app.use(session);
 app.use(config.api_url_base, routes);
 
 app.use((req, res, next) => {
