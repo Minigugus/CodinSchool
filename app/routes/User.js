@@ -12,7 +12,7 @@ const USER = express.Router(), ADMIN = express.Router();
 USER.get('/login', api.check, (req, res) =>
 	db.queryFirst('SELECT acc_id, acc_name FROM account WHERE acc_id = $1;', [ req.session.account_id ])
 		.then(user => (user || Promise.reject(new Error(`Account ID ${req.session.account_id} not found !`))))
-		.then(user => api.reply(res, 0, user))
+		.then(user => api.reply(res, 0, { id: user.acc_id, name: user.acc_name }))
 		.catch(err => api.error(res, 'Get logged user failed', err))
 );
 
