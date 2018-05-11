@@ -192,7 +192,7 @@ const fetchToSessionStorage = redirUrl => {
                 setSessionStorageObj("exercices", res[0].data)
                 setSessionStorageObj("login", res[1].data)
                 setSessionStorageObj("skills", res[2].data)
-                setSessionStorageObj("languages", res[2].data)
+                setSessionStorageObj("languages", res[3].data)
                 setSessionStorageObj("lastFetch", {
                     time: currentTime
                 })
