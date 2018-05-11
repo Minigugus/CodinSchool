@@ -70,10 +70,10 @@
 	<script src="assets/js/script.js"></script>
 	<script>
 		checkLoggedIn()
-		fetchToSessionStorage()
+		fetchToSessionStorage("list.html")
 
 		$(document).ready(function() {
-		//If the page is not loaded in an iframe, redirect
+			//If the page is not loaded in an iframe, redirect
 			if (!isInIframe())
 				redirectWithMsg("work.html", "La page que vous venez de visiter vous a redirigé.", "info")
 

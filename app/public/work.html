@@ -77,20 +77,14 @@
 	<script src="assets/js/script.js"></script>
 	<script>
 		checkLoggedIn()
-		fetchToSessionStorage(true)
-
 		$(document).ready(function() {
-			loadUrlMsgNotification()
+			let user
 
-			const user = getSessionStorageObj("login")
-			if (!user) {
-				//Will never be executed. Just to wait fetchToSessionStorage has finished and reloaded page
-				setTimeout(() => window.location.href = "work.html", 5000)
-			}
-			else {
-				//Set username
+			//Set username if data has already been fetched
+			if (!fetchToSessionStorage("work.html") && (user = getSessionStorageObj("login")))
 				$("#username").html(stripHtml(user.acc_name) || "")
-			}
+
+			loadUrlMsgNotification()
 
 			//Load iframe
 			$("#mainIframe").attr("src", "list.html");

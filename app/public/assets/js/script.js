@@ -170,14 +170,15 @@ const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
 
 //If isn't set yet, set all needed data to sessionStorage
 //if we never fetched or yes but more than 10 minutes ago, fetch all
-//reloadBool : true = reload page / false = don't reload page
-const fetchToSessionStorage = reloadBool => {
+//redirUrl : set = url to redirect to, undefined don't redirect
+const fetchToSessionStorage = redirUrl => {
+    const currentTime = Math.trunc(Date.now() / 1000)
     if (!getSessionStorageObj("exercices") ||
         !getSessionStorageObj("login") ||
         !getSessionStorageObj("skills") ||
         !getSessionStorageObj("languages") ||
         !getSessionStorageObj("lastFetch") ||
-        (getSessionStorageObj("lastFetch") && getSessionStorageObj("lastFetch").time > (Date.now()*1000 - 600))
+        (getSessionStorageObj("lastFetch") && getSessionStorageObj("lastFetch").time < currentTime - 600)
     ) {
         clearSessionStorage()
         Promise.all([
@@ -191,13 +192,14 @@ const fetchToSessionStorage = reloadBool => {
                 setSessionStorageObj("exercices", res[0].data)
                 setSessionStorageObj("login", res[1].data)
                 setSessionStorageObj("skills", res[2].data)
-                setSessionStorageObj("languages", res[3].data)
+                setSessionStorageObj("languages", res[2].data)
                 setSessionStorageObj("lastFetch", {
-                    time: Date.now()*1000
+                    time: currentTime
                 })
-                //Reload page (after 300ms to be sure sessionStorage is set)
-                if (reloadBool)
-                    setTimeout(() => location.reload(), 300)
+
+                //Reload page (after 100ms to be sure sessionStorage is set)
+                if (redirUrl)
+                    setTimeout(() => location.href = redirUrl, 100)
             })
     } else {
         return false
@@ -214,7 +216,7 @@ const checkLoggedIn = () => {
                     //User is logged in
                     break;
                 case "10":
-                    redirectWithMsg("login.html", "Vous n'est pas connecté.", "danger")
+                    redirectWithMsg("login.html", "Vous n'êtes pas connecté.", "danger")
                     break;
                 default:
                     redirectWithMsg("login.html", "Erreur serveur inconnue.", "danger")

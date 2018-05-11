@@ -2,39 +2,19 @@ TODO LIST/QUESTION LIST/NOTEPAD
 ==================
 All : 
 
-
-
-
-
-
-
 ==================
 rigwild : 
 Comment check le login ?
 - Faire une requête GET à /login à chaque fois ?
-- Vérifier un cookie (comment faire ??)
+- Vérifier un cookie (comment faire ??) <-----------
 Actuellement : check à chaque fois avec /login (et ça a l'air de marcher niquel).
 
-
-Fait :
-- fetchToSessionStorage() fini. Si il manque une des données, il clear tout et ira refetch.
-- Ajout système de notification.
-- Adaptation en mode iframe.
-- Ajout d'une landing page au login pour fetch tout dans sessionStorage et être tranquille après.
-- Ajout d'une valeur dans sessionStorage avec le timestamp du dernier fetch -> fetch auto toutes les 10 minutes.
-- Reload la page après que le fetch complet s'est terminé pour éviter les bugs (true/false).
-- Ajout de multiples redirections (non logged in / login / register / list des exos en dehors de son iframe)
 
 TODO :
 - fix setExercices avec les news fn
 - ajout bouton refresh de sessionStorage
 - ajout des sprites en fonction des langages (+reduire la taille des sprites pour chargement + rapide)
-
-
-Petite vidéo de récap : 
-https://youtu.be/LGMN74064jw
-
-Tu peux git pull ;)
+- Ajout des sprites à la landing page pour les mettre en cache ?
 
 ==================
 RoBot :

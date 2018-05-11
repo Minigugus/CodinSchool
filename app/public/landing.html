@@ -44,10 +44,9 @@
 	<script src="assets/js/script.js"></script>
 	<script>
 		checkLoggedIn()
-		$(document).ready(function() {
-			fetchToSessionStorage(true)
-			setTimeout(() => location.href = "work.html", 3000)
-		})
+
+		//Redirect when data has ben fetched
+		fetchToSessionStorage("work.html")
 	</script>
 </body>
 </html>
