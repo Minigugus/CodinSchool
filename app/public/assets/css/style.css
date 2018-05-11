@@ -125,3 +125,7 @@ body {
   height:100vh;
   overflow:hidden
 }
+
+table.dataTable {
+    border-collapse: collapse !important;
+}
