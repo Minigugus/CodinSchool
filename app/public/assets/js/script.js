@@ -3,7 +3,7 @@
 //Api url
 let apiBaseUrl = "/api/"
 
-//DataTables french translation
+//DataTables french translation and columns size
 let dataTableSettings = {
     language: {
         sProcessing: "Traitement en cours...",
@@ -26,7 +26,13 @@ let dataTableSettings = {
             sSortAscending: ": activer pour trier la colonne par ordre croissant",
             sSortDescending: ": activer pour trier la colonne par ordre d&eacute;croissant"
         }
-    }
+    },
+    columnDefs: [{
+        className: "text-center",
+        targets: [0, 3, 4, 5]
+    }],
+
+    responsive: true
 }
 
 let log = (...el) => {
@@ -233,7 +239,7 @@ const setExercices = dataTable => {
     let languages = getSessionStorageObj("languages")
 
     if (!exercices || !skills || !languages)
-        return //redirect?doSomething
+        return //redirect?? doSomething
 
     dataTable.clear().draw()
 
@@ -268,6 +274,7 @@ const setExercices = dataTable => {
             x.language
         ])
     ).draw(false)
+    dataTable.columns.adjust().draw()
 }
 
 //Send login request
