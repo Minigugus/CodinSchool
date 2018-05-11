@@ -51,7 +51,7 @@ USER.get('/logout', api.check, (req, res) =>
 USER.post('/register', api.parsers.url, api.validate('username', 'password', 'name'), (req, res) =>
 	bcrypt.hash(req.body.password, config.bcrypt_rounds)
 		.then(password_hash => db.queryFirst('INSERT INTO account (acc_username, acc_password_hash, acc_name) VALUES ($1, $2, $3) RETURNING *;', [ req.body.username, password_hash, req.body.name ]))
-		.then(user => api.reply(res, 0, { id: user.id, name: user.name }))
+		.then(user => api.reply(res, 0, { id: user.acc_id, name: user.acc_name }))
 		.catch(err => {
 			if (err.code && err.code === "23505")
 				api.reply(res, 14);
