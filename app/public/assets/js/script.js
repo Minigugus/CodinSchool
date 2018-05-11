@@ -227,39 +227,47 @@ const checkLoggedIn = () => {
 
 
 //Set exercices to the table
-const setExercices = (dataTable, exercices) => {
-    /*
-    const exercices = getSessionStorageObj("exercices")
-    if (!exercices)
+const setExercices = dataTable => {
+    let exercices = getSessionStorageObj("exercices")
+    let skills = getSessionStorageObj("skills")
+    let languages = getSessionStorageObj("languages")
+
+    if (!exercices || !skills || !languages)
         return //redirect?doSomething
+
     dataTable.clear().draw()
-    setToTable(res[0], res[1])
-    //Set everything to the table
-    
-    const setToTable = (fetchedSkills, fetchedLanguages) => {
-        let skillsString = ""
-        for (let work of exercices) {
-            for (let skill_id of work.skills_unlocked) {
-                if (fetchedSkills) {
-                    skillsString += (fetchedSkills[skill_id]) ? "[" + fetchedSkills[skill_id].name + "]<br>" : ""
-                }
-            }
-            work.language = (fetchedLanguages) ? fetchedLanguages[work.language].name : ""
-            work.skills_unlocked = skillsString
-        }
-        let count = 0
-        dataTable.rows.add(
-        exercices.map(x => [
-        ++count,
-        x.name,
-        x.description,
-        x.score,
-        x.skills_unlocked,
-        x.language
-        ])
-        ).draw(false)
+
+    //Affect the id to be the object key
+    languages = toObj(languages)
+    skills = toObj(skills)
+
+
+    let str_skills_unlocked = ""
+    for (let anExercice of exercices) {
+        //Set the language
+        anExercice.language = languages[anExercice.language].name || ""
+
+        //Set the skills
+        for (let aSkillId of anExercice.skills_unlocked)
+            str_skills_unlocked += (skills[aSkillId]) ? skills[aSkillId] + ", " : ""
+
+        if (str_skills_unlocked !== "") //Delete the last comma
+            str_skills_unlocked = str_skills_unlocked.slice(0, -2)
+        anExercice.skills_unlocked = str_skills_unlocked
+        str_skills_unlocked = ""
     }
-    */
+
+    let count = 0
+    dataTable.rows.add(
+        exercices.map(x => [
+            ++count,
+            x.name,
+            x.description,
+            x.score,
+            x.skills_unlocked,
+            x.language
+        ])
+    ).draw(false)
 }
 
 //Send login request
@@ -276,7 +284,7 @@ const reqRegister = (username, password, name) => getPromiseAPI("register", "POS
 })
 
 //Check login form 
-const checkLogin = event => {
+const checkLoginForm = event => {
     event.preventDefault()
     const formData = {
         username: $('#inputUsername'),
@@ -329,7 +337,7 @@ const checkLogin = event => {
 
 
 //Check register form
-const checkRegister = (event) => {
+const checkRegisterForm = (event) => {
     event.preventDefault()
     const formData = {
         lastName: $('#inputLastName'),
