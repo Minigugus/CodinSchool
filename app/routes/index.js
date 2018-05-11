@@ -3,19 +3,29 @@
 const express = require('express');
 
 const api = require('../api.js');
+const session = require('../session.js');
 
 const exercice = require('./Exercice.js');
 const language = require('./Language.js');
 const skill = require('./Skill.js');
 const user = require('./User.js');
 
-const router = express.Router();
+const API = express.Router(), USER = express.Router(), ADMIN = express.Router();
 
-router.use('/languages', language);
-router.use('/', user);
-router.use('/skills', skill);
-router.use('/exercices', exercice);
+USER.use(session);
+USER.use('/languages', language.user);
+USER.use('/', user.user);
+USER.use('/skills', skill.user);
+USER.use('/exercices', exercice.user);
 
-router.use((req, res, next) => api.reply(res, 2));
+ADMIN.use('/languages', language.admin);
+ADMIN.use('/', user.admin);
+ADMIN.use('/skills', skill.admin);
+ADMIN.use('/exercices', exercice.admin);
 
-module.exports = router;
+API.use('/', USER);
+API.use('/admin', ADMIN);
+
+API.use((req, res, next) => api.reply(res, 2));
+
+module.exports = API;

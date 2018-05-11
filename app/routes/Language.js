@@ -5,9 +5,9 @@ const express = require('express');
 const db = require('../db');
 const api = require('../api.js');
 
-const API = express.Router(), ADMIN = express.Router();
+const USER = express.Router(), ADMIN = express.Router();
 
-API.get('/', (req, res) => {
+USER.get('/', (req, res) => {
 	db.queryAll('SELECT lan_id, lan_name FROM language')
 		.then(rows => rows.map(x => ({ id: x.lan_id, name: x.lan_name })))
 		.then(languages => api.reply(res, 0, languages))
@@ -19,5 +19,7 @@ ADMIN.get('/', (req, res) => {
 		.then(languages => api.reply(res, 0, languages))
 });
 
-module.exports = API;
-module.exports.admin = ADMIN;
+module.exports = {
+	user: USER,
+	admin: ADMIN
+};
