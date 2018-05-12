@@ -1,5 +1,7 @@
 'use strict';
 
+const log_error = require('debug')('codinschool:api:error');
+
 const bodyParser = require('body-parser');
 
 const config = require('./config.js');
@@ -34,7 +36,7 @@ const reply = (res, code, data) => {
 	}
 };
 const error = (res, msg, err) => {
-	console.error(`API ERROR ${msg} : ${err}`);
+	log_error(`${msg} : ${err}`);
 	reply(res, 255, config.production ? undefined : ({ message: msg, error: err }));
 };
 

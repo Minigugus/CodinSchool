@@ -1,5 +1,8 @@
 'use strict';
 
+const log_info = require('debug')('codinschool:info');
+const log_error = require('debug')('codinschool:error');
+
 const path = require("path");
 const express = require("express");
 const compression = require("compression");
@@ -12,18 +15,13 @@ const app = express();
 
 app.set('trust proxy', 1);
 
-app.use((req, res, next) => {
-	console.info(`NETWORK ${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl}`);
-	next();
-});
-
 app.use(compression());
 
-app.use(routes);
+app.use(config.root, routes);
 
 app.listen(config.port, (err) => {
 	if (err)
-		console.error(`FATAL Server listen failed : ${err}`);
+		log_error(`Server listen failed : ${err}`);
 	else
-		console.info(`INFO Server listening port ${config.port}. http://localhost:${config.port}/`);
+		log_info(`Server listening port ${config.port}. http://localhost:${config.port}${config.root}`);
 });

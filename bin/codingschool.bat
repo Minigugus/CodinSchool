@@ -4,6 +4,8 @@ cd %~dp0../
 
 setlocal
 
+set DEBUG="*"
+
 set DB_HOST=localhost
 set DB_USER=root
 set DB_PASS=root

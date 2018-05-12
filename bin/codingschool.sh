@@ -2,6 +2,7 @@
 
 cd $(dirname $(dirname $(readlink -f $0)))
 
+DEBUG="*" \
 DB_HOST=localhost \
 DB_USER=codinschool \
 DB_PASS=dev \
