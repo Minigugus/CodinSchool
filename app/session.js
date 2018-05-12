@@ -16,7 +16,11 @@ router.use(session({
 	name: config.session_cookie_name,
 	secret: config.session_secret,
 	saveUninitialized: false,
-	resave: false
+	resave: false,
+	cookie: {
+		httpOnly: false,
+		secure: config.session_cookie_secure
+	}
 }));
 
 module.exports = router;
