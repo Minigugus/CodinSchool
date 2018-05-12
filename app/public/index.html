@@ -76,7 +76,8 @@
 				<!-- Show the exercices list -->
 				<section id="listExercices">
 					<main class="col-md-12">
-						<div id="notification" class="col-md-12"></div>
+						<div id="notification" class="col-md-12">
+						</div>
 						<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 							<h1 class="h2">Exercices</h1>
 						</div>
@@ -94,13 +95,13 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td class="text-center">Chargement des exercices...</td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
+									<td colspan="7" class="text-center">Chargement des exercices...</td>
+									<td class="hidden"></td>
+									<td class="hidden"></td>
+									<td class="hidden"></td>
+									<td class="hidden"></td>
+									<td class="hidden"></td>
+									<td class="hidden"></td>
 								</tr>
 							</tbody>
 							<tfoot>
@@ -115,41 +116,40 @@
 								</tr>
 							</tfoot>
 						</table>
-					</div>
-				</main>
-			</section>
-			<!-- /listExercices -->
+					</main>
+				</section>
+				<!-- /listExercices -->
+
+			</div>
+			<!-- /content -->
 
 		</div>
-		<!-- /content -->
-
 	</div>
-</div>
 
-<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="assets/js/datatables.min.js"></script>
-<script type="text/javascript" src="assets/js/script.js"></script>
-<script>
-	checkLoggedIn()
-	$(document).ready(function() {
-		//Set username if data has already been fetched
-		const user = getSessionStorageObj("login")
-		if (!fetchToSessionStorage("index.html") && user)
-			$("[role=username]").html(stripHtml(user.name) || "")
-
-		loadUrlMsgNotification()
-
-		//Set the table as a datatable and include exercices
-		var dataTable = $('#exercices').DataTable(dataTableSettings)
-		setExercices(dataTable)
+	<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="assets/js/datatables.min.js"></script>
+	<script type="text/javascript" src="assets/js/script.js"></script>
+	<script>
+		$(document).ready(function() {
+			//Set username if data has already been fetched
+			const user = getSessionStorageObj("login")
+			if (!fetchToSessionStorage() && user)
+				$("[role=username]").html(stripHtml(user.name) || "")
 
 
-		$("[role=logout]").click(event => {
-			event.preventDefault()
-			logout()
+			loadNotification()
+			$("[role=logout]").click(event => {
+				event.preventDefault()
+				logout()
+			})
+
+			//The function fetchToSessionStorage() already do these, but it's in case of a page refresh !
+			//Set the username
+			setUsername()
+			//Set the exercices to the table
+			setExercices()
 		})
-	})
-</script>
+	</script>
 </body>
 </html>
