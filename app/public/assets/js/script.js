@@ -226,25 +226,25 @@ const fetchToSessionStorage = redirUrl => {
 const checkLoggedIn = () => {
     /*
     getPromiseAPI("login")
-        .catch(e => e)
-        .then(res => {
-            switch (res.code) {
-                case "0":
-                    //User is logged in
-                    break;
-                case "10":
-                    const currentLocation = location.pathname.slice(1)
-                    if (currentLocation === "login.html" || currentLocation === "register.html")
-                        redirectWithMsg("index.html", "Vous êtes déjà connecté.", "danger")
-                    else
-                    redirectWithMsg("login.html", "Vous n'êtes pas connecté.", "danger")
-                    break;
-                default:
-                    redirectWithMsg("login.html", "Erreur serveur inconnue.", "danger")
-                    break;
-            }
-        })
-*/
+    .catch(e => e)
+    .then(res => {
+        switch (res.code) {
+            case "0":
+            //User is logged in
+            break;
+            case "10":
+            const currentLocation = location.pathname.slice(1)
+            if (currentLocation === "login.html" || currentLocation === "register.html")
+                redirectWithMsg("index.html", "Vous êtes déjà connecté.", "danger")
+            else
+                redirectWithMsg("login.html", "Vous n'êtes pas connecté.", "danger")
+            break;
+            default:
+            redirectWithMsg("login.html", "Erreur serveur inconnue.", "danger")
+            break;
+        }
+    })
+    */
 }
 
 //Append the hash to the url
@@ -264,35 +264,34 @@ const setExercices = dataTable => {
     let skills = getSessionStorageObj("skills")
     let languages = getSessionStorageObj("languages")
 
-    if (!exercices || !skills || !languages) return
+    if (!exercices || !skills || !languages)
+        return
 
     dataTable.clear().draw()
 
     //Affect the id to be the object key
     languages = toObj(languages)
     skills = toObj(skills)
+    const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1" data-container="body"
+    data-toggle="popover" data-placement="top" data-trigger="hover" data-content="{{skill}}">
+    <i class="fas fa-trophy fa-xs"></i>
+    </button>`
 
-    let str_skills_unlocked = ""
+    let str_skills_unlocked
     for (let anExercice of exercices) {
-
-        /*
         //Set the language
         if (languages[anExercice.language])
             anExercice.language = languages[anExercice.language].name || ""
 
-        
-        //Set the skills
-        for (let aSkillId of anExercice.skills_unlocked)
-            str_skills_unlocked += (skills[aSkillId]) ? skills[aSkillId] + ", " : ""
 
-        if (str_skills_unlocked !== "") //Delete the last comma
-            str_skills_unlocked = str_skills_unlocked.slice(0, -2)
-        anExercice.skills_unlocked = str_skills_unlocked
+        //Set the skills
         str_skills_unlocked = ""
-        */
+        for (let aSkillId of anExercice.skills_unlocked)
+            str_skills_unlocked += (skills[aSkillId]) ? skill_template.replace("{{skill}}", skills[aSkillId].name) : ""
+
+        anExercice.skills_unlocked = str_skills_unlocked
     }
     let count = 0
-    /*
     dataTable.rows.add(
         exercices.map(x => [
             ++count,
@@ -306,21 +305,8 @@ const setExercices = dataTable => {
             </a>`
         ])
     ).draw(false)
-    */
-    dataTable.rows.add(
-        exercices.map(x => [
-            ++count,
-            x.name,
-            x.description,
-            x.score,
-            "",
-            "",
-            `<a href="doExercice.html#${x.id}" alt="Commencer">
-            <button type="button" class="btn btn-secondary btn-sm">Commencer</button>
-            </a>`
-        ])
-    ).draw(false)
     dataTable.columns.adjust().draw()
+    $('[data-toggle="popover"]').popover();
 }
 
 //Send login request
