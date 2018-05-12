@@ -8,7 +8,7 @@ module.exports = {
 	origin: process.env.ORIGIN || 'localhost',
 
 	port: process.env.PORT || (production ? 80 : 3000),
-	api_url_base: process.env.API_URL_BASE || '/api',
+	root: process.env.ROOT || '/',
 
 	bcrypt_rounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 10, // Don't change this if users are already registered !
 
