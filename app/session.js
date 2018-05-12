@@ -18,10 +18,9 @@ router.use(session({
 	saveUninitialized: false,
 	resave: false,
 	cookie: {
-		httpOnly: false,
 		secure: config.session_cookie_secure
 	}
 }));
 
 module.exports = router;
-module.exports.isValid = (req) => !!req.session && !!req.session.account_id;
+module.exports.isValid = (req) => (!!req.session && !!req.session.account_id);
