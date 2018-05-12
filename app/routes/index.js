@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const cors = require('cors');
 
 const api = require('../api.js');
 const session = require('../session.js');
@@ -11,6 +12,8 @@ const skill = require('./Skill.js');
 const user = require('./User.js');
 
 const API = express.Router(), USER = express.Router(), ADMIN = express.Router();
+
+API.use(cors());
 
 USER.use(session);
 USER.use('/languages', language.user);
