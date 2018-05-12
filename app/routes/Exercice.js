@@ -15,8 +15,8 @@ USER.get('/', api.check, (req, res) =>
 				name: x.exe_name,
 				description: x.exe_description,
 				score: Number((x.exe_test_passed / x.exe_nb_tests).toFixed(2)),
-				nb_tests: x.exe_test_passed,
-				nb_tests_passed: x.exe_test_passed,
+				nb_tests: parseInt(x.exe_test_passed, 10),
+				nb_tests_passed: parseInt(x.exe_test_passed, 10),
 				skills_unlocked: x.exe_skills,
 				language: x.exe_language
 			})))
@@ -33,11 +33,11 @@ USER.get('/:id', api.check, api.validate('params', 'id'), (req, res) =>
 					name: e.exe_name,
 					description: e.exe_description,
 					score: Number((e.exe_test_passed / e.exe_nb_tests).toFixed(2)),
-					nb_tests: e.exe_test_passed,
-					nb_tests_passed: e.exe_test_passed,
+					nb_tests: parseInt(e.exe_test_passed, 10),
+					nb_tests_passed: parseInt(e.exe_test_passed, 10),
 					skills_unlocked: e.exe_skills,
 					language: e.exe_language,
-					best_code: e.sco_code,
+					best_code: e.sco_code || e.exe_default_code,
 					exemples: exemples
 				}))))
 		.then(exercice => exercice ? api.reply(res, 0, exercice) : api.reply(res, 20, { id: req.params.id }))
