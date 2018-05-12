@@ -56,6 +56,7 @@ API.use((req, res, next) => api.reply(res, 2));
 ASSETS.use(express.static(path.join(__dirname, '../public', 'assets'), { fallthrough: false }));
 
 PAGES.use(session);
+PAGES.get('*/login(.html)?', (req, res, next) => (session.isValid(req) ? res.status(301).redirect('/') : next()));
 PAGES.use((req, res, next) => (session.isValid(req) || unredirected.indexOf(req.originalUrl) !== -1 ? next() : res.status(403).redirect('/login')));
 PAGES.use(express.static(path.join(__dirname, '../public'), { extensions: [ 'html' ] }));
 PAGES.use((req, res, next) => res.status(404).redirect('/'));
