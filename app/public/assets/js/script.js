@@ -54,30 +54,6 @@ const toObj = (array) => {
     return obj
 }
 
-//Get cookie string by name
-const getCookie = sKey => {
-    if (!sKey) {
-        return null
-    }
-    let reg = new RegExp("(?:(?:^|.*;)\\s*" +
-        encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") +
-        "\\s*\\=\\s*([^;]*).*$)|^.*$")
-    return decodeURIComponent(document.cookie.replace(reg, "$1")) || null
-}
-
-//Get cookie object if cookie is json
-const getCookieObj = cname => {
-    let json
-    try {
-        json = JSON.parse(getCookie(cname))
-    } catch (e) {
-        return null
-    }
-    return json
-}
-
-//Delete a cookie by name
-const deleteCookie = name => document.cookie = name + '=; Max-Age=-99999999;'
 
 //Convert html to unicode (ex : < = &#60;)
 const stripHtml = str => str.replace(/[\u00A0-\u9999<>\&]/gim, i => '&#' + i.charCodeAt(0) + ';')
@@ -473,4 +449,21 @@ const logout = () => {
         clearSessionStorage()
         redirectNotification("/login", "Vous avez été déconnecté.", "success")
     })
+}
+
+//Change the page to the "el" section
+const switchPage = el => {
+    $("section").css("display", "none")
+    el.css("display", "block")
+}
+
+//Clean sessionStorage dans reload the page
+const refreshData = () => {
+    delSessionStorageObj("exercices")
+    delSessionStorageObj("exercices_parsed")
+    delSessionStorageObj("login")
+    delSessionStorageObj("skills")
+    delSessionStorageObj("languages")
+    delSessionStorageObj("lastFetch")
+    redirectNotification("/", "La liste des exercices a été rechargée.", "success")
 }
