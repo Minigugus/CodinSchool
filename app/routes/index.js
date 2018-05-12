@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 
 const api = require('../api.js');
+const config = require('../config.js');
 const session = require('../session.js');
 
 const exercice = require('./Exercice.js');
@@ -13,7 +14,7 @@ const user = require('./User.js');
 
 const API = express.Router(), USER = express.Router(), ADMIN = express.Router();
 
-API.use(cors());
+API.use(cors({ origin: config.origin }));
 
 USER.use(session);
 USER.use('/languages', language.user);
