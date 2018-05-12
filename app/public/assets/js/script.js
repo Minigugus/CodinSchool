@@ -3,6 +3,12 @@
 //Api url
 let apiBaseUrl = "/api/"
 
+//Section pages
+const pages = {
+    listExercices: $("#listExercices"),
+    doExercice: $("#doExercice")
+}
+
 //DataTables settings
 let dataTableSettings = {
     language: {
@@ -42,10 +48,38 @@ let dataTableSettings = {
     responsive: true
 }
 
-let log = (...el) => {
-    for (let arg of el)
-        console.log(arg)
-}
+
+//Animate.css extension
+$.fn.extend({
+    animateCss: function(animationName, callback) {
+        var animationEnd = (function(el) {
+            var animations = {
+                animation: 'animationend',
+                OAnimation: 'oAnimationEnd',
+                MozAnimation: 'mozAnimationEnd',
+                WebkitAnimation: 'webkitAnimationEnd',
+            };
+
+            for (var t in animations) {
+                if (el.style[t] !== undefined) {
+                    return animations[t];
+                }
+            }
+        })(document.createElement('div'));
+
+        this.addClass('animated ' + animationName).one(animationEnd, function() {
+            $(this).removeClass('animated ' + animationName);
+
+            if (typeof callback === 'function') callback();
+        });
+
+        return this;
+    },
+});
+
+
+let log = (...el) => el.forEach(x => console.log(x))
+
 
 //Assign the id properties as array key
 const toObj = (array) => {
@@ -282,9 +316,7 @@ const setExercices = () => {
             ex.score,
             ex.skills_unlocked,
             ex.language,
-            `<a href="#${ex.id}------doSomething" alt="Commencer">
-            <button type="button" class="btn btn-secondary btn-sm">Commencer</button>
-            </a>`
+            `<button type="button" rel="${stripHtml(ex.id)}" class="btn btn-secondary btn-sm" data-toggle="startExercice" alt="Commencer">Commencer</button>`
         ]
         let row = dataTable.row.add(newRow).draw(false)
         //If the exercice is done, highlight it
@@ -294,6 +326,9 @@ const setExercices = () => {
 
     dataTable.columns.adjust().draw()
     $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="startExercice"]').click(function() {
+        startExercice($(this).attr('rel'))
+    })
 }
 
 //Send login request
@@ -451,13 +486,7 @@ const logout = () => {
     })
 }
 
-//Change the page to the "el" section
-const switchPage = el => {
-    $("section").css("display", "none")
-    el.css("display", "block")
-}
-
-//Clean sessionStorage dans reload the page
+//Clean sessionStorage and reload the page
 const refreshData = () => {
     delSessionStorageObj("exercices")
     delSessionStorageObj("exercices_parsed")
@@ -466,4 +495,35 @@ const refreshData = () => {
     delSessionStorageObj("languages")
     delSessionStorageObj("lastFetch")
     redirectNotification("/", "La liste des exercices a été rechargée.", "success")
+}
+
+
+//Change the page to the "eleSection" section with an animation
+const switchPage = (eleSection) => {
+    const animation = {
+        enter: "fadeInUp",
+        exit: "fadeOutLeft"
+    }
+    const pages = $('section')
+    pages.animateCss(animation.exit, () => {
+        pages.css("display", "none")
+        pages.removeClass(animation.exit)
+
+        eleSection.css("display", "block")
+        eleSection.animateCss(animation.enter)
+    })
+}
+
+//Triggered to start an exercice
+const startExercice = exercice_id => {
+    let exercices = toObj(getSessionStorageObj("exercices_parsed"))
+    if (!exercices || !exercices[exercice_id])
+        return//
+    log(exercices[exercice_id])
+
+    //Set the exercice name
+    $("#exerciceName").html(exercice_id)
+
+    //Change the visible section to the start exercice page
+    switchPage(pages.doExercice)
 }
