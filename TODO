@@ -4,11 +4,6 @@ All :
 
 ==================
 rigwild : 
-Comment check le login ?
-- Faire une requête GET à /login à chaque fois ?
-- Vérifier un cookie (comment faire ??) <-----------
-Actuellement : check à chaque fois avec /login (et ça a l'air de marcher niquel).
-
 
 TODO :
 - ajout bouton refresh de sessionStorage
