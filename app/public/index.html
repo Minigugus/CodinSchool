@@ -16,9 +16,12 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CodinSchool</a>
+	<nav class="navbar navbar-dark bg-dark flex-md-nowrap p-0 shadow">
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">CodinSchool</a>
 		<ul class="navbar-nav px-3 top-right">
+			<li class="nav-item text-nowrap">
+				<a class="nav-link" href="/refresh" role="refresh-data"><i class='fas fa-sync-alt'></i> Rafraîchir la liste</a>
+			</li>
 			<li class="nav-item text-nowrap">
 				<a class="nav-link" href="#profil-???" role="username">{{username}}</a>
 			</li>
@@ -46,7 +49,7 @@
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="/admin/register/">
+							<a class="nav-link" href="/admin/register">
 								<span data-feather="file"></span>
 								Register page (test)
 							</a>
@@ -71,11 +74,11 @@
 
 			<div class="col-md-10" id="content">
 
+				<div id="notification" class="col-md-12 pt-4"></div>
+
 				<!-- Show the exercices list -->
 				<section id="listExercices">
 					<main class="col-md-12">
-						<div id="notification" class="col-md-12 pt-4">
-						</div>
 						<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 							<h1 class="h2">Exercices</h1>
 						</div>
@@ -118,6 +121,16 @@
 				</section>
 				<!-- /listExercices -->
 
+				<!-- Start an exercice -->
+				<section id="doExercice">
+					<main class="col-md-12">
+						<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+							<h1 class="h2">{{exerciceName}}</h1>
+						</div>
+					</main>
+				</section>
+				<!-- /doExercice -->
+
 			</div>
 			<!-- /content -->
 
@@ -135,18 +148,30 @@
 			if (!fetchToSessionStorage() && user)
 				$("[role=username]").html(stripHtml(user.name) || "")
 
-
-			loadNotification()
 			$("[role=logout]").click(event => {
 				event.preventDefault()
 				logout()
 			})
+			$("[role=refresh-data]").click(event => {
+				event.preventDefault()
+				refreshData()
+			})
+			
+			loadNotification()
 
 			//The function fetchToSessionStorage() already do these, but it's in case of a page refresh !
 			//Set the username
 			setUsername()
 			//Set the exercices to the table
 			setExercices()
+
+
+			const pages = {
+				listExercices: $("#listExercices"),
+				doExercice: $("#doExercice"),
+			}
+			//switchPage(pages.doExercice)
+
 		})
 	</script>
 </body>

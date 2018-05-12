@@ -16,7 +16,7 @@
 
 <body>
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CodinSchool</a>
+		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/login">CodinSchool</a>
 		<ul class="navbar-nav px-3 top-right">
 		</ul>
 	</nav>
@@ -43,7 +43,7 @@
 						<div class="form-group error width100 text-center hidden" id="formError"></div>
 					</div>
 					<div class="text-center pb-2">
-						<a href="register.html">Vous n'avez pas de compte ? S'inscrire</a>
+						<a href="#" data-toggle="tooltip" data-placement="bottom" data-html="true" data-title="Contactez M. Warin.">Vous n'avez pas de compte ?</a>
 					</div>
 				</form>
 				<div id="notification"></div>
@@ -56,7 +56,7 @@
 	<script type="text/javascript" src="assets/js/script.js"></script>
 	<script>
 		$(document).ready(function() {
-			//checkLoggedIn()
+			$('[data-toggle="tooltip"]').tooltip()
 			$("form").submit(e => checkLoginForm(e))
 			loadNotification()
 		})
