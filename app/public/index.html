@@ -11,18 +11,19 @@
 
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet" />
 	<link href="assets/css/fontawesome-all.min.css" rel="stylesheet" />
+	<link href="assets/css/datatables.min.css" rel="stylesheet" />
 	<link href="assets/css/style.css" rel="stylesheet" />
 </head>
 
-<body style="overflow:hidden">
+<body>
 	<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
 		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">CodinSchool</a>
 		<ul class="navbar-nav px-3 top-right">
 			<li class="nav-item text-nowrap">
-				<a class="nav-link" href="#" id="username">{{username}}</a>
+				<a class="nav-link" href="#" role="username">{{username}}</a>
 			</li>
 			<li class="nav-item text-nowrap">
-				<a class="nav-link" href="#" id="logout">Se déconnecter</a>
+				<a class="nav-link" href="#" role="logout">Se déconnecter</a>
 			</li>
 		</ul>
 	</nav>
@@ -33,7 +34,7 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link active" href="work.html">
+							<a class="nav-link active" href="index.html">
 								<span data-feather="home"></span>
 								Exercices <span class="sr-only">(current)</span>
 							</a>
@@ -45,9 +46,8 @@
 							</a>
 						</li>
 					</ul>
-
 					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-						<span>Saved reports</span>
+						<span>Profil</span>
 						<a class="d-flex align-items-center text-muted" href="#">
 							<span data-feather="plus-circle"></span>
 						</a>
@@ -56,47 +56,100 @@
 						<li class="nav-item">
 							<a class="nav-link" href="#">
 								<span data-feather="file-text"></span>
-								Current month
+								Se déconnecter
+							</a>
+						</li>
+					</ul>
+					<ul class="nav flex-column mb-2">
+						<li class="nav-item">
+							<a class="nav-link" href="#" role="logout">
+								<span data-feather="file-text"></span>
+								Se déconnecter
 							</a>
 						</li>
 					</ul>
 				</div>
 			</nav>
-			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" style="margin-right:0!important;padding-right: 0 !important;">
-				<div id="notification" style="margin-top: 2em;" class="col-md-12"></div>
 
-				<iframe id="mainIframe" frameborder="0"></iframe>
+			<div class="col-md-10" id="content">
 
-			</main>
+				<!-- Show the exercices list -->
+				<section id="listExercices">
+					<main class="col-md-12">
+						<div id="notification" class="col-md-12"></div>
+						<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+							<h1 class="h2">Exercices</h1>
+						</div>
+						<table id="exercices" class="table table-striped table-hover display" style="width:100%" >
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Nom</th>
+									<th>Description</th>
+									<th>Score</th>
+									<th>Compétences débloquées</th>
+									<th>Language</th>
+									<th>Commencer</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="text-center">Chargement des exercices...</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>#</th>
+									<th>Nom</th>
+									<th>Description</th>
+									<th>Score</th>
+									<th>Compétences débloquées</th>
+									<th>Language</th>
+									<th>Commencer</th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</main>
+			</section>
+			<!-- /listExercices -->
+
 		</div>
+		<!-- /content -->
+
 	</div>
+</div>
 
-	<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
-	<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="assets/js/script.js"></script>
-	<script>
-		checkLoggedIn()
-		$(document).ready(function() {
-			//Set username if data has already been fetched
-			const user = getSessionStorageObj("login")
-			if (!fetchToSessionStorage("index.html") && user)
-				$("#username").html(stripHtml(user.name) || "")
+<script type="text/javascript" src="assets/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/datatables.min.js"></script>
+<script type="text/javascript" src="assets/js/script.js"></script>
+<script>
+	checkLoggedIn()
+	$(document).ready(function() {
+		//Set username if data has already been fetched
+		const user = getSessionStorageObj("login")
+		if (!fetchToSessionStorage("index.html") && user)
+			$("[role=username]").html(stripHtml(user.name) || "")
 
-			loadUrlMsgNotification()
+		loadUrlMsgNotification()
 
-			//Load iframe
-			const iframe = $("#mainIframe")
-			if (!loadHashExercice(iframe))
-				iframe.attr("src", "listExercices.html")
+		//Set the table as a datatable and include exercices
+		var dataTable = $('#exercices').DataTable(dataTableSettings)
+		setExercices(dataTable)
 
-			//When a page is loaded in the iframe, get its hash and set it to the main window
-			iframe.on("load", event => setHash(event.target.contentWindow.location.hash))
 
-			$("#logout").click(event => {
-				event.preventDefault()
-				logout()
-			})
+		$("[role=logout]").click(event => {
+			event.preventDefault()
+			logout()
 		})
-	</script>
+	})
+</script>
 </body>
 </html>

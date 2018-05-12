@@ -278,33 +278,46 @@ const setExercices = dataTable => {
     </button>`
 
     let str_skills_unlocked
+    let template_modif
     for (let anExercice of exercices) {
         //Set the language
         if (languages[anExercice.language])
             anExercice.language = languages[anExercice.language].name || ""
 
-
         //Set the skills
         str_skills_unlocked = ""
-        for (let aSkillId of anExercice.skills_unlocked)
-            str_skills_unlocked += (skills[aSkillId]) ? skill_template.replace("{{skill}}", skills[aSkillId].name) : ""
+        for (let aSkillId of anExercice.skills_unlocked) {
+            template_modif = skill_template
+            if (skills[aSkillId]) {
+                template_modif = template_modif.replace("{{skill}}", skills[aSkillId].name)
+                if (skills[aSkillId].level == 1)
+                    template_modif = template_modif.replace("secondary", "success")
+                str_skills_unlocked += template_modif
+            } else
+                str_skills_unlocked += ""
+        }
 
         anExercice.skills_unlocked = str_skills_unlocked
     }
     let count = 0
-    dataTable.rows.add(
-        exercices.map(x => [
+    for (let ex of exercices) {
+        let newRow = [
             ++count,
-            x.name,
-            x.description,
-            x.score,
-            x.skills_unlocked,
-            x.language,
-            `<a href="doExercice.html#${x.id}" alt="Commencer">
+            ex.name,
+            ex.description,
+            ex.score,
+            ex.skills_unlocked,
+            ex.language,
+            `<a href="doExercice.html#${ex.id}" alt="Commencer">
             <button type="button" class="btn btn-secondary btn-sm">Commencer</button>
             </a>`
-        ])
-    ).draw(false)
+        ]
+        let row = dataTable.row.add(newRow).draw(false)
+        //If the exercice is done, hilight
+        if (ex.score === 1)
+            row.nodes().to$().addClass('table-success');
+    }
+
     dataTable.columns.adjust().draw()
     $('[data-toggle="popover"]').popover();
 }
