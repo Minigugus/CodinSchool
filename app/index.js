@@ -5,6 +5,7 @@ const express = require("express");
 const compression = require("compression");
 
 const config = require('./config.js');
+const session = require('./session.js');
 const routes = require('./routes');
 
 const app = express();
@@ -13,21 +14,12 @@ app.set('trust proxy', 1);
 
 app.use((req, res, next) => {
 	console.info(`NETWORK ${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl}`);
-	// if (req.originalUrl === '/login.html' || req.originalUrl.startsWith('/api/') || session.isValid(req))
-		next();
-	// else
-		// res.redirect(403, '/login.html');
+	next();
 });
 
 app.use(compression());
 
-app.use(express.static('app/public'));
-
-app.use(config.api_url_base, routes);
-
-app.use((req, res, next) => {
-	res.redirect(404, '/');
-});
+app.use(routes);
 
 app.listen(config.port, (err) => {
 	if (err)

@@ -1,10 +1,10 @@
 BEGIN;
 
--- Mot de passe : dev
+-- USER:PASS -> test@gmail.com:dev
 INSERT INTO admin VALUES
 (42, 'test@gmail.com', '$2b$10$1.U0zUsJx9JitM7AHSJTUuM7KhtxkKDA.IqbX5/bf0cD5vnIPAqPi', 'DUPONT Robert');
 
--- Mot de passe : dev
+-- USER:PASS -> test@gmail.com:dev
 INSERT INTO account VALUES
 (42, 'test@gmail.com', '$2b$10$1.U0zUsJx9JitM7AHSJTUuM7KhtxkKDA.IqbX5/bf0cD5vnIPAqPi', 'DUPONT Robert');
 
