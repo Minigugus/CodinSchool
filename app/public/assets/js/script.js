@@ -85,6 +85,7 @@ const stripHtml = str => str.replace(/[\u00A0-\u9999<>\&]/gim, i => '&#' + i.cha
 //SessionStorage2obj
 const getSessionStorageObj = key => JSON.parse(sessionStorage.getItem(key))
 const setSessionStorageObj = (key, obj) => sessionStorage.setItem(key, JSON.stringify(obj))
+const delSessionStorageObj = key => sessionStorage.removeItem(key)
 const clearSessionStorage = () => sessionStorage.clear()
 
 
@@ -115,12 +116,18 @@ const setFormError = msg => {
 const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='fa fa-spinner fa-spin'></i> " + msg) : ele.html(msg)
 
 //Redirect the user to a page with notification in url
-const redirectWithMsg = (url, msg, type) => window.location.href = url + "?msg=" + encodeURI(msg) + "&msgType=" + encodeURI(type)
+const redirectNotification = (url, msg, type) => {
+    setSessionStorageObj("notification", {
+        message: msg,
+        messageType: type
+    })
+    location.href = url
+}
 
 //Show a notification from url (bootstrap alert), non xss vulnerable
-const loadUrlMsgNotification = () => {
-    const params = getUrlParameters()
-    if (!params || !params.msg || !params.msgType)
+const loadNotification = () => {
+    let notification = getSessionStorageObj("notification")
+    if (!notification)
         return
 
     let setNotification = false
@@ -136,19 +143,19 @@ const loadUrlMsgNotification = () => {
         "dark": ""
     }
     for (let type in colors) {
-        if (type === params.msgType) {
+        if (type === notification.messageType) {
             setNotification = true
             break;
         }
     }
     if (setNotification) {
-        notification = `<div class="alert alert-${stripHtml(params.msgType)} alert-dismissible fade show" role="alert">
-        <strong>${stripHtml(colors[params.msgType])}</strong> ${stripHtml(params.msg)}
+        notification = `<div class="alert alert-${stripHtml(notification.messageType)} alert-dismissible fade show" role="alert">
+        <strong>${stripHtml(colors[notification.messageType])}</strong> ${stripHtml(notification.message)}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button></div>`
         $("#notification").html(notification)
-        $("#notification").fadeIn()
+        $("#notification").fadeIn("done", () => delSessionStorageObj('notification'))
     }
 }
 
@@ -186,8 +193,8 @@ const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
 
 //If isn't set yet, set all needed data to sessionStorage
 //if we never fetched or yes but more than 10 minutes ago, fetch all
-//redirUrl : set = url to redirect to, undefined don't redirect
-const fetchToSessionStorage = redirUrl => {
+//redirUrl : set = url to redirect to, undefined = don't redirect
+const fetchToSessionStorage = () => {
     const currentTime = Math.trunc(Date.now() / 1000)
     if (!getSessionStorageObj("exercices") ||
         !getSessionStorageObj("login") ||
@@ -196,7 +203,13 @@ const fetchToSessionStorage = redirUrl => {
         !getSessionStorageObj("lastFetch") ||
         (getSessionStorageObj("lastFetch") && getSessionStorageObj("lastFetch").time < currentTime - 600)
     ) {
-        clearSessionStorage()
+        //Clear everything (not notification)
+        delSessionStorageObj("exercices")
+        delSessionStorageObj("exercices_parsed")
+        delSessionStorageObj("login")
+        delSessionStorageObj("skills")
+        delSessionStorageObj("languages")
+        delSessionStorageObj("lastFetch")
         Promise.all([
                 getPromiseAPI("exercices"),
                 getPromiseAPI("login"),
@@ -204,7 +217,7 @@ const fetchToSessionStorage = redirUrl => {
                 getPromiseAPI("languages")
             ])
             .catch(e => e)
-            .then(res => {
+            .then(async res => {
                 setSessionStorageObj("exercices", res[0].data)
                 setSessionStorageObj("login", res[1].data)
                 setSessionStorageObj("skills", res[2].data)
@@ -212,93 +225,72 @@ const fetchToSessionStorage = redirUrl => {
                 setSessionStorageObj("lastFetch", {
                     time: currentTime
                 })
-
-                //Reload page (after 100ms to be sure sessionStorage is set)
-                if (redirUrl)
-                    setTimeout(() => location.href = redirUrl, 200)
+                setUsername()
+                await parseExercices(res[0].data, res[2].data, res[3].data)
+                    .then(() => setExercices())
             })
     } else {
         return false
     }
 }
 
-//how to check if session valid ?
-const checkLoggedIn = () => {
-    /*
-    getPromiseAPI("login")
-    .catch(e => e)
-    .then(res => {
-        switch (res.code) {
-            case "0":
-            //User is logged in
-            break;
-            case "10":
-            const currentLocation = location.pathname.slice(1)
-            if (currentLocation === "login.html" || currentLocation === "register.html")
-                redirectWithMsg("index.html", "Vous êtes déjà connecté.", "danger")
-            else
-                redirectWithMsg("login.html", "Vous n'êtes pas connecté.", "danger")
-            break;
-            default:
-            redirectWithMsg("login.html", "Erreur serveur inconnue.", "danger")
-            break;
-        }
-    })
-    */
-}
 
 //Append the hash to the url
 const setHash = urlHash => location.hash = urlHash
 
-const loadHashExercice = iframeEle => {
-    const hash = location.hash
-    if (hash === "")
-        return
-    iframeEle.attr("src", "doExercice.html" + hash)
+const setUsername = () => {
+    const user = getSessionStorageObj("login")
+    if (user)
+        $("[role=username]").html(stripHtml(user.name) || "")
 }
 
-
-//Set exercices to the table
-const setExercices = dataTable => {
-    let exercices = getSessionStorageObj("exercices")
-    let skills = getSessionStorageObj("skills")
-    let languages = getSessionStorageObj("languages")
-
+//Parse the exercices and cache them in sessionStorage
+const parseExercices = (exercices, skills, languages) => {
     if (!exercices || !skills || !languages)
         return
+    return new Promise((resolve, reject) => {
+        //Affect the id to be the object key
+        languages = toObj(languages)
+        skills = toObj(skills)
+        const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1" data-container="body"
+        data-toggle="popover" data-placement="top" data-trigger="hover" data-content="{{skill}}">
+        <i class="fas fa-trophy fa-xs"></i>
+        </button>`
 
-    dataTable.clear().draw()
+        let str_skills_unlocked
+        let template_modif
+        for (let anExercice of exercices) {
+            //Set the language
+            if (languages[anExercice.language])
+                anExercice.language = languages[anExercice.language].name || ""
 
-    //Affect the id to be the object key
-    languages = toObj(languages)
-    skills = toObj(skills)
-    const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1" data-container="body"
-    data-toggle="popover" data-placement="top" data-trigger="hover" data-content="{{skill}}">
-    <i class="fas fa-trophy fa-xs"></i>
-    </button>`
-
-    let str_skills_unlocked
-    let template_modif
-    for (let anExercice of exercices) {
-        //Set the language
-        if (languages[anExercice.language])
-            anExercice.language = languages[anExercice.language].name || ""
-
-        //Set the skills
-        str_skills_unlocked = ""
-        for (let aSkillId of anExercice.skills_unlocked) {
-            template_modif = skill_template
-            if (skills[aSkillId]) {
-                template_modif = template_modif.replace("{{skill}}", skills[aSkillId].name)
-                if (skills[aSkillId].level == 1)
-                    template_modif = template_modif.replace("secondary", "success")
-                str_skills_unlocked += template_modif
-            } else
-                str_skills_unlocked += ""
+            //Set the skills
+            str_skills_unlocked = ""
+            for (let aSkillId of anExercice.skills_unlocked) {
+                template_modif = skill_template
+                if (skills[aSkillId]) {
+                    template_modif = template_modif.replace("{{skill}}", skills[aSkillId].name)
+                    if (skills[aSkillId].level == 1)
+                        template_modif = template_modif.replace("secondary", "success")
+                    str_skills_unlocked += template_modif
+                } else
+                    str_skills_unlocked += ""
+            }
+            anExercice.skills_unlocked = str_skills_unlocked
         }
+        //Save parsed data
+        setSessionStorageObj("exercices_parsed", exercices)
+        resolve()
+    })
+}
 
-        anExercice.skills_unlocked = str_skills_unlocked
-    }
+//Set exercices to the table
+const setExercices = () => {
+    const exercices = getSessionStorageObj("exercices_parsed")
+    if (!exercices)
+        return
+    const dataTable = $('#exercices').DataTable(dataTableSettings)
+    dataTable.clear().draw()
     let count = 0
     for (let ex of exercices) {
         let newRow = [
@@ -308,18 +300,18 @@ const setExercices = dataTable => {
             ex.score,
             ex.skills_unlocked,
             ex.language,
-            `<a href="doExercice.html#${ex.id}" alt="Commencer">
+            `<a href="#${ex.id}------doSomething" alt="Commencer">
             <button type="button" class="btn btn-secondary btn-sm">Commencer</button>
             </a>`
         ]
         let row = dataTable.row.add(newRow).draw(false)
-        //If the exercice is done, hilight
+        //If the exercice is done, highlight it
         if (ex.score === 1)
-            row.nodes().to$().addClass('table-success');
+            row.nodes().to$().addClass('table-success')
     }
 
     dataTable.columns.adjust().draw()
-    $('[data-toggle="popover"]').popover();
+    $('[data-toggle="popover"]').popover()
 }
 
 //Send login request
@@ -371,7 +363,7 @@ const checkLoginForm = event => {
                 switch (result.code) {
                     case "0":
                         log("Ok logging in")
-                        window.location.href = "landing.html"
+                        redirectNotification("/", "Connexion réussie. Bienvenue sur CodinSchool !", "success")
                         break;
                     case "11":
                         log("Fail logging in", result)
@@ -442,7 +434,7 @@ const checkRegisterForm = (event) => {
                 switch (result.code) {
                     case "0":
                         log("Ok registering")
-                        redirectWithMsg("login.html", "Votre compte a été créé.", "success")
+                        redirectNotification("/admin/register", "Votre compte a été créé.", "success")
                         break;
                     case "14":
                         log("Fail registering", result)
@@ -473,6 +465,6 @@ const logout = () => {
     })
     request.always(() => {
         clearSessionStorage()
-        redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
+        redirectNotification("/login", "Vous avez été déconnecté.", "success")
     })
 }

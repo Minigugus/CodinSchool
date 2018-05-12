@@ -31,11 +31,11 @@
 					<div class="form-row">
 						<div class="form-group col-md-6 offset-md-3 text-center">
 							<label for="inputUsername">Nom d'utilisateur</label>
-							<input type="text" class="form-control text-center" id="inputUsername" placeholder="Nom d'utilisateur" value="user">
+							<input type="text" class="form-control text-center" id="inputUsername" placeholder="Nom d'utilisateur" value="test@gmail.com">
 						</div>
 						<div class="form-group col-md-6 offset-md-3 text-center">
 							<label for="inputPassword">Mot de passe</label>
-							<input type="password" class="form-control text-center" id="inputPassword" placeholder="Mot de passe" value="password">
+							<input type="password" class="form-control text-center" id="inputPassword" placeholder="Mot de passe" value="dev">
 						</div>
 						<div class="form-group col-md-6 offset-md-3 text-center">
 							<button type="submit" class="btn btn-primary" id="submitButton">Connexion</button>
@@ -58,7 +58,7 @@
 		$(document).ready(function() {
 			//checkLoggedIn()
 			$("form").submit(e => checkLoginForm(e))
-			loadUrlMsgNotification()
+			loadNotification()
 		})
 	</script>
 </body>
