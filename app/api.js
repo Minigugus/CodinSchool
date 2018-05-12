@@ -18,6 +18,8 @@ const api_errors = {
 	 13: [ 403, 'Access denied' ],
 	 14: [ 403, 'Username already registered' ],
 
+	 20: [ 404, 'Exercice not found' ],
+
 	255: [ 505, 'Internal server error' ]
 }, api_codes = Object.keys(api_errors);
 
@@ -42,8 +44,8 @@ const check = (req, res, next) => {
 	else
 		next();
 };
-const validate = (...fields) => (req, res, next) => {
-	if (!req.body || !fields.every(x => !!req.body[x]))
+const validate = (parent, ...fields) => (req, res, next) => {
+	if (!req[parent] || !fields.every(x => !!req[parent][x]))
 		reply(res, 1);
 	else
 		next();

@@ -16,7 +16,7 @@ USER.get('/login', api.check, (req, res) =>
 		.catch(err => api.error(res, 'Get logged user failed', err))
 );
 
-USER.post('/login', api.parsers.url, api.validate('username', 'password'), (req, res) =>
+USER.post('/login', api.parsers.url, api.validate('body', 'username', 'password'), (req, res) =>
 	db.queryFirst('SELECT acc_id, acc_password_hash, acc_name FROM account WHERE acc_username = $1;', [ req.body.username ])
 		.then(user => (user ? bcrypt.compare(req.body.password, user.acc_password_hash) : Promise.resolve(false))
 			.then(success => {
@@ -30,7 +30,7 @@ USER.post('/login', api.parsers.url, api.validate('username', 'password'), (req,
 			}))
 		.catch(err => api.error(res, 'Login failed', err))
 );
-USER.post('/password', api.check, api.parsers.url, api.validate('old_password', 'password'), (req, res) =>
+USER.post('/password', api.check, api.parsers.url, api.validate('body', 'old_password', 'password'), (req, res) =>
 	db.queryFirst('SELECT acc_password_hash FROM account WHERE acc_id = $1;', [ req.session.account_id ])
 		.then(user => (user && bcrypt.compare(req.body.old_password, user.password_hash)))
 		.then(success => (!success ? api.reply(res, 12) : bcrypt.hash(req.body.password, config.bcrypt_rounds)
@@ -48,7 +48,7 @@ USER.get('/logout', api.check, (req, res) =>
 );
 
 // DEV
-USER.post('/register', api.parsers.url, api.validate('username', 'password', 'name'), (req, res) =>
+USER.post('/register', api.parsers.url, api.validate('body', 'username', 'password', 'name'), (req, res) =>
 	bcrypt.hash(req.body.password, config.bcrypt_rounds)
 		.then(password_hash => db.queryFirst('INSERT INTO account (acc_username, acc_password_hash, acc_name) VALUES ($1, $2, $3) RETURNING *;', [ req.body.username, password_hash, req.body.name ]))
 		.then(user => api.reply(res, 0, { id: user.acc_id, name: user.acc_name }))
