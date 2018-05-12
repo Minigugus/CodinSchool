@@ -127,5 +127,15 @@ body {
 }
 
 table.dataTable {
-    border-collapse: collapse !important;
+  border-collapse: collapse !important;
+}
+ul.pagination {
+  justify-content: center !important;
+}
+
+table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, table.dataTable thead>tr>th.sorting_desc {
+  padding-right: 15px;
+}
+.table td, .table th {
+  vertical-align: middle;
 }
