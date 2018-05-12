@@ -252,26 +252,32 @@ const parseExercices = (exercices, skills, languages) => {
         //Affect the id to be the object key
         languages = toObj(languages)
         skills = toObj(skills)
-        const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1" data-container="body"
-        data-toggle="popover" data-placement="top" data-trigger="hover" data-content="{{skill}}">
+        const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1"
+        data-toggle="tooltip" data-placement="top" data-html="true" data-title="{{skill}}">
         <i class="fas fa-trophy fa-xs"></i>
         </button>`
 
         let str_skills_unlocked
         let template_modif
         for (let anExercice of exercices) {
+            //Strip bad chars
+            anExercice.name = stripHtml(anExercice.name)
+            anExercice.description = stripHtml(anExercice.description)
             //Set the language
             if (languages[anExercice.language])
-                anExercice.language = languages[anExercice.language].name || ""
+                anExercice.language = stripHtml(languages[anExercice.language].name || "")
 
             //Set the skills
             str_skills_unlocked = ""
             for (let aSkillId of anExercice.skills_unlocked) {
                 template_modif = skill_template
                 if (skills[aSkillId]) {
-                    template_modif = template_modif.replace("{{skill}}", skills[aSkillId].name)
-                    if (skills[aSkillId].level == 1)
+                    if (skills[aSkillId].level == 1) { //Skill unlocked
+                        template_modif = template_modif.replace("{{skill}}", `<i class='fas fa-trophy fa-xs'></i> ${stripHtml(skills[aSkillId].name)} <i class='fas fa-check'></i>`)
                         template_modif = template_modif.replace("secondary", "success")
+                    } else { //Skill not unlocked
+                        template_modif = template_modif.replace("{{skill}}", stripHtml(skills[aSkillId].name))
+                    }
                     str_skills_unlocked += template_modif
                 } else
                     str_skills_unlocked += ""
@@ -311,7 +317,7 @@ const setExercices = () => {
     }
 
     dataTable.columns.adjust().draw()
-    $('[data-toggle="popover"]').popover()
+    $('[data-toggle="tooltip"]').tooltip()
 }
 
 //Send login request
