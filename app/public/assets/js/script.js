@@ -3,7 +3,7 @@
 //Api url
 let apiBaseUrl = "/api/"
 
-//DataTables french translation and columns size
+//DataTables settings
 let dataTableSettings = {
     language: {
         sProcessing: "Traitement en cours...",
@@ -29,9 +29,16 @@ let dataTableSettings = {
     },
     columnDefs: [{
         className: "text-center",
-        targets: [0, 3, 4, 5]
+        targets: [0, 3, 4, 5, 6]
     }],
-
+    dom: "<'row'<'col-md-6'l><'col-md-6'f>>" +
+        "<'row'<'col-md-12'tr>>" +
+        "<'row'<'col-md-12 text-center pb-2'i><'col-md-12'p>>",
+    aLengthMenu: [
+        [10, 25, 50, 75, -1],
+        [10, 25, 50, 75, "Tous"]
+    ],
+    iDisplayLength: 25,
     responsive: true
 }
 
@@ -68,6 +75,9 @@ const getCookieObj = cname => {
     }
     return json
 }
+
+//Delete a cookie by name
+const deleteCookie = name => document.cookie = name + '=; Max-Age=-99999999;'
 
 //Convert html to unicode (ex : < = &#60;)
 const stripHtml = str => str.replace(/[\u00A0-\u9999<>\&]/gim, i => '&#' + i.charCodeAt(0) + ';')
@@ -205,7 +215,7 @@ const fetchToSessionStorage = redirUrl => {
 
                 //Reload page (after 100ms to be sure sessionStorage is set)
                 if (redirUrl)
-                    setTimeout(() => location.href = redirUrl, 100)
+                    setTimeout(() => location.href = redirUrl, 200)
             })
     } else {
         return false
@@ -214,6 +224,7 @@ const fetchToSessionStorage = redirUrl => {
 
 //how to check if session valid ?
 const checkLoggedIn = () => {
+    /*
     getPromiseAPI("login")
         .catch(e => e)
         .then(res => {
@@ -222,6 +233,10 @@ const checkLoggedIn = () => {
                     //User is logged in
                     break;
                 case "10":
+                    const currentLocation = location.pathname.slice(1)
+                    if (currentLocation === "login.html" || currentLocation === "register.html")
+                        redirectWithMsg("index.html", "Vous êtes déjà connecté.", "danger")
+                    else
                     redirectWithMsg("login.html", "Vous n'êtes pas connecté.", "danger")
                     break;
                 default:
@@ -229,6 +244,17 @@ const checkLoggedIn = () => {
                     break;
             }
         })
+*/
+}
+
+//Append the hash to the url
+const setHash = urlHash => location.hash = urlHash
+
+const loadHashExercice = iframeEle => {
+    const hash = location.hash
+    if (hash === "")
+        return
+    iframeEle.attr("src", "doExercice.html" + hash)
 }
 
 
@@ -238,8 +264,7 @@ const setExercices = dataTable => {
     let skills = getSessionStorageObj("skills")
     let languages = getSessionStorageObj("languages")
 
-    if (!exercices || !skills || !languages)
-        return //redirect?? doSomething
+    if (!exercices || !skills || !languages) return
 
     dataTable.clear().draw()
 
@@ -247,12 +272,15 @@ const setExercices = dataTable => {
     languages = toObj(languages)
     skills = toObj(skills)
 
-
     let str_skills_unlocked = ""
     for (let anExercice of exercices) {
-        //Set the language
-        anExercice.language = languages[anExercice.language].name || ""
 
+        /*
+        //Set the language
+        if (languages[anExercice.language])
+            anExercice.language = languages[anExercice.language].name || ""
+
+        
         //Set the skills
         for (let aSkillId of anExercice.skills_unlocked)
             str_skills_unlocked += (skills[aSkillId]) ? skills[aSkillId] + ", " : ""
@@ -261,9 +289,10 @@ const setExercices = dataTable => {
             str_skills_unlocked = str_skills_unlocked.slice(0, -2)
         anExercice.skills_unlocked = str_skills_unlocked
         str_skills_unlocked = ""
+        */
     }
-
     let count = 0
+    /*
     dataTable.rows.add(
         exercices.map(x => [
             ++count,
@@ -271,7 +300,24 @@ const setExercices = dataTable => {
             x.description,
             x.score,
             x.skills_unlocked,
-            x.language
+            x.language,
+            `<a href="doExercice.html#${x.id}" alt="Commencer">
+            <button type="button" class="btn btn-secondary btn-sm">Commencer</button>
+            </a>`
+        ])
+    ).draw(false)
+    */
+    dataTable.rows.add(
+        exercices.map(x => [
+            ++count,
+            x.name,
+            x.description,
+            x.score,
+            "",
+            "",
+            `<a href="doExercice.html#${x.id}" alt="Commencer">
+            <button type="button" class="btn btn-secondary btn-sm">Commencer</button>
+            </a>`
         ])
     ).draw(false)
     dataTable.columns.adjust().draw()
@@ -421,11 +467,13 @@ const logout = () => {
     })
     request.done(response => {
         clearSessionStorage()
-        redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
     })
     request.fail((jqXHR, textStatus) => {
         log("Failed to disconnect : ", jqXHR.status)
         jqXHR.responseJSON
-        //doSomething
+    })
+    request.always(() => {
+        clearSessionStorage()
+        redirectWithMsg("login.html", "Vous avez été déconnecté.", "success")
     })
 }

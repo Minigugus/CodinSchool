@@ -63,9 +63,9 @@
 				</div>
 			</nav>
 			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" style="margin-right:0!important;padding-right: 0 !important;">
-				<div id="notification" class="col-md-12"></div>
+				<div id="notification" style="margin-top: 2em;" class="col-md-12"></div>
 
-				<iframe id="mainIframe" frameborder="0" scrolling="yes" seamless="seamless"></iframe>
+				<iframe id="mainIframe" frameborder="0"></iframe>
 
 			</main>
 		</div>
@@ -79,13 +79,18 @@
 		$(document).ready(function() {
 			//Set username if data has already been fetched
 			const user = getSessionStorageObj("login")
-			if (!fetchToSessionStorage("work.html") && user)
+			if (!fetchToSessionStorage("index.html") && user)
 				$("#username").html(stripHtml(user.name) || "")
 
 			loadUrlMsgNotification()
 
 			//Load iframe
-			$("#mainIframe").attr("src", "listExercices.html");
+			const iframe = $("#mainIframe")
+			if (!loadHashExercice(iframe))
+				iframe.attr("src", "listExercices.html")
+
+			//When a page is loaded in the iframe, get its hash and set it to the main window
+			iframe.on("load", event => setHash(event.target.contentWindow.location.hash))
 
 			$("#logout").click(event => {
 				event.preventDefault()
