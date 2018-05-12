@@ -5,6 +5,8 @@ const production = (process.env.NODE_ENV === 'production');
 module.exports = {
 	production: production,
 
+	origin: process.env.ORIGIN || 'localhost',
+
 	port: process.env.PORT || (production ? 80 : 3000),
 	api_url_base: process.env.API_URL_BASE || '/api',
 
