@@ -48,8 +48,10 @@ let dataTableSettings = {
     responsive: true
 }
 
+//The main exercice table
+const dataTable = $('#exercices').DataTable(dataTableSettings)
 
-//Animate.css extension
+//Animate.css JQuery extension
 $.fn.extend({
     animateCss: function(animationName, callback) {
         var animationEnd = (function(el) {
@@ -125,16 +127,20 @@ const setFormError = msg => {
 //Loading message on a button (true = load/false = normal)
 const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='fa fa-spinner fa-spin'></i> " + msg) : ele.html(msg)
 
-//Redirect the user to a page with notification in url
-const redirectNotification = (url, msg, type) => {
+
+//Show a notification. Don't need to redirect. set url to redirect
+const showNotification = (msg, type, url) => {
     setSessionStorageObj("notification", {
         message: msg,
         messageType: type
     })
-    location.href = url
+    if (url)
+        location.href = url
+    else
+        loadNotification()
 }
 
-//Show a notification from url (bootstrap alert), non xss vulnerable
+//Show a notification from sessionStorage
 const loadNotification = () => {
     let notification = getSessionStorageObj("notification")
     if (!notification)
@@ -159,13 +165,24 @@ const loadNotification = () => {
         }
     }
     if (setNotification) {
-        notification = `<div class="alert alert-${stripHtml(notification.messageType)} alert-dismissible fade show" role="alert">
+        notification = `<div class="alert alert-${stripHtml(notification.messageType)} show animated" role="alert">
         <strong>${stripHtml(colors[notification.messageType])}</strong> ${stripHtml(notification.message)}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button type="button" class="close" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button></div>`
-        $("#notification").html(notification)
-        $("#notification").fadeIn("done", () => delSessionStorageObj('notification'))
+
+        //Show the notification animation and set its close animation
+        const notifEle = $("#notificationLocation")
+        notifEle.html(notification)
+
+        //Show animation
+        notifEle.css("display", "block")
+        notifEle.animateCss("lightSpeedIn", () => delSessionStorageObj('notification'))
+
+        //Close animation
+        notifEle.children("div").children("button").click(event => {
+            notifEle.animateCss("fadeOutUp", () => notifEle.css("display", "none"))
+        })
     }
 }
 
@@ -182,9 +199,6 @@ const getUrlParameters = () => {
         return
     return data
 }
-
-//Return if the current window is in an iframe
-const isInIframe = () => (!window.frameElement) ? false : true
 
 /********** Main functions **********/
 //Fetch anything async (Promise)
@@ -203,7 +217,6 @@ const getPromiseAPI = (apiUrl, httpMethod, formParam) => {
 
 //If isn't set yet, set all needed data to sessionStorage
 //if we never fetched or yes but more than 10 minutes ago, fetch all
-//redirUrl : set = url to redirect to, undefined = don't redirect
 const fetchToSessionStorage = () => {
     const currentTime = Math.trunc(Date.now() / 1000)
     if (!getSessionStorageObj("exercices") ||
@@ -227,7 +240,7 @@ const fetchToSessionStorage = () => {
                 getPromiseAPI("languages")
             ])
             .catch(e => e)
-            .then(async res => {
+            .then(res => {
                 setSessionStorageObj("exercices", res[0].data)
                 setSessionStorageObj("login", res[1].data)
                 setSessionStorageObj("skills", res[2].data)
@@ -236,7 +249,7 @@ const fetchToSessionStorage = () => {
                     time: currentTime
                 })
                 setUsername()
-                await parseExercices(res[0].data, res[2].data, res[3].data)
+                parseExercices(res[0].data, res[2].data, res[3].data)
                     .then(() => setExercices())
             })
     } else {
@@ -305,7 +318,6 @@ const setExercices = () => {
     const exercices = getSessionStorageObj("exercices_parsed")
     if (!exercices)
         return
-    const dataTable = $('#exercices').DataTable(dataTableSettings)
     dataTable.clear().draw()
     let count = 0
     for (let ex of exercices) {
@@ -380,7 +392,7 @@ const checkLoginForm = event => {
                 switch (result.code) {
                     case "0":
                         log("Ok logging in")
-                        redirectNotification("/", "Connexion réussie. Bienvenue sur CodinSchool !", "success")
+                        showNotification("Connexion réussie. Bienvenue sur CodinSchool !", "success", "/")
                         break;
                     case "11":
                         log("Fail logging in", result)
@@ -451,7 +463,7 @@ const checkRegisterForm = (event) => {
                 switch (result.code) {
                     case "0":
                         log("Ok registering")
-                        redirectNotification("/admin/register", "Votre compte a été créé.", "success")
+                        showNotification("Votre compte a été créé.", "success", "/admin/register")
                         break;
                     case "14":
                         log("Fail registering", result)
@@ -482,19 +494,24 @@ const logout = () => {
     })
     request.always(() => {
         clearSessionStorage()
-        redirectNotification("/login", "Vous avez été déconnecté.", "success")
+        showNotification("Vous avez été déconnecté.", "success", "/login")
     })
 }
 
-//Clean sessionStorage and reload the page
-const refreshData = () => {
+//Clean sessionStorage and reload data without reloading the page
+const refreshData = (msg, msgType) => {
+    dataTable.clear().draw()
     delSessionStorageObj("exercices")
     delSessionStorageObj("exercices_parsed")
     delSessionStorageObj("login")
     delSessionStorageObj("skills")
     delSessionStorageObj("languages")
     delSessionStorageObj("lastFetch")
-    redirectNotification("/", "La liste des exercices a été rechargée.", "success")
+    fetchToSessionStorage()
+    if (msg && msgType)
+        showNotification(msg, msgType)
+    else
+        showNotification("La liste des exercices a été rechargée.", "success")
 }
 
 
@@ -516,10 +533,19 @@ const switchPage = (eleSection) => {
 
 //Triggered to start an exercice
 const startExercice = exercice_id => {
-    let exercices = toObj(getSessionStorageObj("exercices_parsed"))
-    if (!exercices || !exercices[exercice_id])
+    if (exercice_id === "")
         return
+    let exercices = toObj(getSessionStorageObj("exercices_parsed"))
+    if (!exercices) {
+        refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
+        return
+    }
+    if (!exercices[exercice_id]) {
+        showNotification("L'exercice demandé n'existe pas.", "info")
+        return
+    }
 
+    setHash(exercice_id)
     const startedExercice = exercices[exercice_id]
 
     //Change the visible section to the start exercice page
@@ -534,3 +560,6 @@ const startExercice = exercice_id => {
     //Activate skills tooltip
     $('[data-toggle="tooltip"]').tooltip()
 }
+
+//Load an exercice from the url
+const loadExercice = () => startExercice(location.hash.slice(1))
