@@ -70,7 +70,7 @@ API.use('/', USER);
 API.use('/admin', ADMIN);
 
 API.use((req, res, next) => api.reply(res, 2));
-API.use((req, res, err, next) => api.error(res, 'Unhandler route exception', err));
+API.use((err, req, res, next) => api.error(res, 'Unhandler route exception', err));
 
 // # STATIC
 
@@ -89,7 +89,7 @@ PAGES.use((req, res, next) => res.status(404).redirect('/'));
 STATIC.use('/assets', ASSETS);
 STATIC.use('/', PAGES);
 
-STATIC.use((req, res, err, next) => {
+STATIC.use((err, req, res, next) => {
 	log_error_static(`Unhandler route exception : ${err}`);
 	res.status(505).redirect('/');
 });
