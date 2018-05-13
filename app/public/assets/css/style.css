@@ -133,9 +133,25 @@ table.dataTable thead>tr>th.sorting, table.dataTable thead>tr>th.sorting_asc, ta
 }
 #notification {}
 .tooltip-inner {
-    max-width: 350px;
+  max-width: 350px;
 }
 
 #content section {
   display: none;
+}
+#logo {
+  transition-duration: 0.5s;
+}
+#logo:hover {
+  text-shadow: 0px 0px 28px rgba(255, 255, 255, 1);
+}
+#logo img {
+  width: 1em;
+  vertical-align: middle;
+}
+.navbar .nav-link, .sidebar-sticky .nav-link {
+  transition-duration: 0.2s;
+}
+.sidebar-sticky .nav-link:hover {
+  margin-left: 5px;
 }
