@@ -550,57 +550,62 @@ const reqExercice = exercice_id => getPromiseAPI("exercices/" + exercice_id)
 
 //Triggered to start an exercice
 const startExercice = exercice_id => {
-    //Check if the exercice exists
-    if (!exercice_id || exercice_id === "")
-        return
-    const cachedExercices = toObj(getSessionStorageObj("exercices_parsed"))
-    const cachedSkills = toObj(getSessionStorageObj("skills"))
-    const cachedLanguages = toObj(getSessionStorageObj("languages"))
-    if (!cachedExercices || !cachedSkills || !cachedLanguages) {
-        refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
-        switchPage(pages.listExercices)
-        return
-    }
-    if (!cachedExercices[exercice_id]) {
-        showNotification("L'exercice demandé n'existe pas.", "info")
-        switchPage(pages.listExercices)
-        return
-    }
+    //Wait a little before loading the exercice
+    //(The browser take some time to load sessionStorage from the cache, if no timeout, error (undefined))
+    setTimeout(() => {
+        //Check if the exercice exists
+        if (!exercice_id || exercice_id === "")
+            return
+        const cachedExercices = toObj(getSessionStorageObj("exercices_parsed"))
+        const cachedSkills = toObj(getSessionStorageObj("skills"))
+        const cachedLanguages = toObj(getSessionStorageObj("languages"))
+        if (!cachedExercices || !cachedSkills || !cachedLanguages) {
+            refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
+            switchPage(pages.listExercices)
+            return
+        }
+        if (!cachedExercices[exercice_id]) {
+            showNotification("L'exercice demandé n'existe pas.", "info")
+            switchPage(pages.listExercices)
+            return
+        }
 
-    if (getHash() !== "exercices/" + exercice_id)
-        setHash("exercices/" + exercice_id)
+        if (getHash() !== "exercices/" + exercice_id)
+            setHash("exercices/" + exercice_id)
 
-    //Fetch exercice
-    reqExercice(exercice_id)
-        .catch(e => e)
-        .then(result => {
-            switch (result.code) {
-                case "0":
-                    deleteNotification()
+        //Fetch exercice
+        reqExercice(exercice_id)
+            .catch(e => e)
+            .then(result => {
+                switch (result.code) {
+                    case "0":
+                        deleteNotification()
 
-                    const startedExercice = result.data
-                    const skills = parseSkills(startedExercice.skills_unlocked, cachedSkills)
-                    const languages = parseLanguages(startedExercice.language, cachedLanguages)
+                        const startedExercice = result.data
+                        const startedSkills = parseSkills(startedExercice.skills_unlocked, cachedSkills)
+                        const startedLanguages = parseLanguages(startedExercice.language, cachedLanguages)
 
-                    //Change the visible section to the start exercice page
-                    switchPage(pages.doExercice)
+                        //Change the visible section to the start exercice page
+                        switchPage(pages.doExercice)
 
-                    //Set the exercice data
-                    $("#exerciceName").html(startedExercice.name)
-                    $("#exerciceLanguage").html(languages)
-                    $("#exerciceDescription").html(startedExercice.description)
-                    $("#exerciceSkill").html(skills)
+                        //Set the exercice data
+                        $("#exerciceName").html(startedExercice.name)
+                        $("#exerciceLanguage").html(startedLanguages)
+                        $("#exerciceDescription").html(startedExercice.description)
+                        $("#exerciceSkill").html(startedSkills)
+                        log(startedExercice)
 
-                    //Activate skills tooltip
-                    $('[data-toggle="tooltip"]').tooltip()
-                    break;
-                default:
-                case "20":
-                    log("Bad exercice", result)
-                    showNotification("L'exercice demandé n'existe pas.", "info")
-                    break;
-            }
-        })
+                        //Activate skills tooltip
+                        $('[data-toggle="tooltip"]').tooltip()
+                        break;
+                    default:
+                    case "20":
+                        log("Bad exercice", result)
+                        showNotification("L'exercice demandé n'existe pas.", "info")
+                        break;
+                }
+            })
+    }, 200)
 }
 
 //Get the page hash
