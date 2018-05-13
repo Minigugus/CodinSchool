@@ -22,5 +22,8 @@ module.exports = {
 	db_user: process.env.DB_USER,
 	db_password: process.env.DB_PASS,
 
-	eval_tmp_dir: process.env.EVAL_TMP_DIR || process.env.TMP
+	evaluation: {
+		queue_refresh_time: process.env.EVAL_QUEUE_REFRESH_TIME || 2000,
+		tmp_dir: process.env.EVAL_TMP_DIR || process.env.TMP
+	}
 };

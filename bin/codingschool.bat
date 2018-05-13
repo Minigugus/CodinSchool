@@ -2,7 +2,7 @@
 
 cd %~dp0../
 
-setlocal
+rem setlocal
 
 set DEBUG="*"
 
@@ -13,4 +13,4 @@ set DB_NAME=codinschool
 
 node app/index.js
 
-endlocal
+rem endlocal
