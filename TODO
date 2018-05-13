@@ -1,14 +1,27 @@
-TODO LIST/QUESTION LIST/NOTEPAD
-==================
-All : 
+TODO / Features ideas :
 
-==================
-rigwild : 
-
-TODO :
-- ajout bouton refresh de sessionStorage
 - ajout des sprites en fonction des langages (+reduire la taille des sprites pour chargement + rapide)
-- Ajout des sprites à la landing page pour les mettre en cache ?
+- mettre l'id de l'exercice en hash de la page lorsqu'il commence
+- demander à l'api le contenu de l'exercice (Rediriger page principale si invalide)
+- css page départ exercice
+- bouton retour page principal
+- copyright codinschool + nos noms ?
 
-==================
-RoBot :
+- recharger le sessionStorage quand un exercice est terminé
+
+- page profil :
+	- tous les succès débloqués
+	- photo de profil (+ l'afficher dans le coin de la page ?)
+	- modifier le mot de passe
+	- mot de passe oublié ? -> générer new mdp et envoyer par mail ? (api mailgun)
+
+- classement des personnes avec le plus de skills débloqués ?
+- temps limite pour exercice
+
+- panel admin :
+	- ajouter un exercice
+	- créer des skills
+	- lier des skills à un exercice (=modifier un exercice ?)
+	- statistiques des exercices ? voir les users qui ont réussi + use lib graph js
+
+- penser à dormir avant 4h dimanche soir (j'arrive pas)

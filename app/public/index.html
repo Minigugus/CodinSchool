@@ -126,8 +126,12 @@
 				<section id="doExercice" class="animated">
 					<main class="col-md-12">
 						<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-							<h1 class="h2" id="exerciceName">{{exerciceName}} - {{exerciceLanguage}}</h1>
+							<h1 class="h2">
+								<span id="exerciceName">{{exerciceName}}</span> - <span id="exerciceLanguage">{{exerciceLanguage}}</span>
+								 - Compétences débloquées : <span id="exerciceSkill">{{exerciceSkill}}</span>
+							</h1>
 						</div>
+						<p>Description : <span id="exerciceDescription">{{exerciceDescription}}</span></p>
 					</main>
 				</section>
 				<!-- /doExercice -->
