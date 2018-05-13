@@ -518,12 +518,19 @@ const switchPage = (eleSection) => {
 const startExercice = exercice_id => {
     let exercices = toObj(getSessionStorageObj("exercices_parsed"))
     if (!exercices || !exercices[exercice_id])
-        return//
-    log(exercices[exercice_id])
+        return
 
-    //Set the exercice name
-    $("#exerciceName").html(exercice_id)
+    const startedExercice = exercices[exercice_id]
 
     //Change the visible section to the start exercice page
     switchPage(pages.doExercice)
+
+    //Set the exercice data
+    $("#exerciceName").html(startedExercice.name)
+    $("#exerciceLanguage").html(startedExercice.language)
+    $("#exerciceDescription").html(startedExercice.description)
+    $("#exerciceSkill").html(startedExercice.skills_unlocked)
+
+    //Activate skills tooltip
+    $('[data-toggle="tooltip"]').tooltip()
 }
