@@ -127,6 +127,8 @@ const setFormError = msg => {
 //Loading message on a button (true = load/false = normal)
 const buttonLoading = (ele, msg, loadBool) => (loadBool) ? ele.html("<i class='fa fa-spinner fa-spin'></i> " + msg) : ele.html(msg)
 
+//Notification div in the page
+const notifEle = $("#notificationLocation")
 
 //Show a notification. Don't need to redirect. set url to redirect
 const showNotification = (msg, type, url) => {
@@ -138,6 +140,11 @@ const showNotification = (msg, type, url) => {
         location.href = url
     else
         loadNotification()
+}
+
+const deleteNotification = () => {
+    notifEle.animateCss("fadeOutUp", () => notifEle.css("display", "none"))
+    delSessionStorageObj('notification')
 }
 
 //Show a notification from sessionStorage
@@ -172,17 +179,14 @@ const loadNotification = () => {
         </button></div>`
 
         //Show the notification animation and set its close animation
-        const notifEle = $("#notificationLocation")
         notifEle.html(notification)
 
         //Show animation
         notifEle.css("display", "block")
-        notifEle.animateCss("lightSpeedIn", () => delSessionStorageObj('notification'))
+        notifEle.animateCss("lightSpeedIn")
 
         //Close animation
-        notifEle.children("div").children("button").click(event => {
-            notifEle.animateCss("fadeOutUp", () => notifEle.css("display", "none"))
-        })
+        notifEle.children("div").children("button").click(event => deleteNotification(notifEle))
     }
 }
 
@@ -541,13 +545,16 @@ const startExercice = exercice_id => {
 
         if (!exercices) {
             refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
+            switchPage(pages.listExercices)
             return
         }
         if (!exercices[exercice_id]) {
             showNotification("L'exercice demandé n'existe pas.", "info")
+            switchPage(pages.listExercices)
             return
         }
 
+        deleteNotification()
         setHash(exercice_id)
         const startedExercice = exercices[exercice_id]
 
