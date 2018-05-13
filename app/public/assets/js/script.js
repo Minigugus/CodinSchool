@@ -9,6 +9,24 @@ const pages = {
     doExercice: $("#doExercice")
 }
 
+//Section pages enter/exit animations
+const animation = {
+    enter: "fadeInUp",
+    exit: "fadeOutLeft"
+}
+
+//Change the page to the corresponding section with an animation
+const switchPage = (eleSection) => {
+    const pagesDiv = $('section')
+    pagesDiv.animateCss(animation.exit, () => {
+        pagesDiv.css("display", "none")
+        pagesDiv.removeClass(animation.exit)
+
+        eleSection.css("display", "block")
+        eleSection.animateCss(animation.enter)
+    })
+}
+
 //DataTables settings
 let dataTableSettings = {
     language: {
@@ -271,6 +289,34 @@ const setUsername = () => {
         $("[role=username]").html(stripHtml(user.name) || "")
 }
 
+//Parse skills (Return buttons with icon and tooltip)
+const parseSkills = (skills_unlocked, skills) => {
+    const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1"
+        data-toggle="tooltip" data-placement="top" data-html="true" data-title="{{skill}}">
+        <i class="fas fa-trophy fa-xs"></i>
+        </button>`
+    let str_skills_unlocked
+    let template_modif
+    str_skills_unlocked = ""
+    for (let aSkillId of skills_unlocked) {
+        template_modif = skill_template
+        if (skills[aSkillId]) {
+            if (skills[aSkillId].level == 1) { //Skill unlocked
+                template_modif = template_modif.replace("{{skill}}", `<i class='fas fa-trophy fa-xs'></i> ${stripHtml(skills[aSkillId].name)} <i class='fas fa-check'></i>`)
+                template_modif = template_modif.replace("secondary", "success")
+            } else { //Skill not unlocked
+                template_modif = template_modif.replace("{{skill}}", stripHtml(skills[aSkillId].name))
+            }
+            str_skills_unlocked += template_modif
+        } else
+            str_skills_unlocked += ""
+    }
+    return str_skills_unlocked
+}
+
+//Parse languages (Return the language corresponding to the language id provided)
+const parseLanguages = (exLanguages, languages) => (languages[exLanguages]) ? stripHtml(languages[exLanguages].name || "") : ""
+
 //Parse the exercices and cache them in sessionStorage
 const parseExercices = (exercices, skills, languages) => {
     if (!exercices || !skills || !languages)
@@ -279,43 +325,24 @@ const parseExercices = (exercices, skills, languages) => {
         //Affect the id to be the object key
         languages = toObj(languages)
         skills = toObj(skills)
-        const skill_template = `<button type="button" class="btn btn-secondary btn-sm mr-1"
-        data-toggle="tooltip" data-placement="top" data-html="true" data-title="{{skill}}">
-        <i class="fas fa-trophy fa-xs"></i>
-        </button>`
 
-        let str_skills_unlocked
-        let template_modif
         for (let anExercice of exercices) {
             //Strip bad chars
             anExercice.name = stripHtml(anExercice.name)
             anExercice.description = stripHtml(anExercice.description)
+
             //Set the language
-            if (languages[anExercice.language])
-                anExercice.language = stripHtml(languages[anExercice.language].name || "")
+            anExercice.language = parseLanguages(anExercice.languages, languages)
 
             //Set the skills
-            str_skills_unlocked = ""
-            for (let aSkillId of anExercice.skills_unlocked) {
-                template_modif = skill_template
-                if (skills[aSkillId]) {
-                    if (skills[aSkillId].level == 1) { //Skill unlocked
-                        template_modif = template_modif.replace("{{skill}}", `<i class='fas fa-trophy fa-xs'></i> ${stripHtml(skills[aSkillId].name)} <i class='fas fa-check'></i>`)
-                        template_modif = template_modif.replace("secondary", "success")
-                    } else { //Skill not unlocked
-                        template_modif = template_modif.replace("{{skill}}", stripHtml(skills[aSkillId].name))
-                    }
-                    str_skills_unlocked += template_modif
-                } else
-                    str_skills_unlocked += ""
-            }
-            anExercice.skills_unlocked = str_skills_unlocked
+            anExercice.skills_unlocked = parseSkills(anExercice.skills_unlocked, skills)
         }
         //Save parsed data
         setSessionStorageObj("exercices_parsed", exercices)
         resolve()
     })
 }
+
 
 //Set exercices to the table
 const setExercices = () => {
@@ -332,7 +359,7 @@ const setExercices = () => {
             ex.score,
             ex.skills_unlocked,
             ex.language,
-            `<button type="button" rel="${stripHtml(ex.id)}" class="btn btn-secondary btn-sm" data-toggle="startExercice" alt="Commencer">Commencer</button>`
+            `<button type="button" rel="exercices/${stripHtml(ex.id)}" class="btn btn-secondary btn-sm" data-toggle="startExercice" alt="Commencer">Commencer</button>`
         ]
         let row = dataTable.row.add(newRow).draw(false)
         //If the exercice is done, highlight it
@@ -343,7 +370,7 @@ const setExercices = () => {
     dataTable.columns.adjust().draw()
     $('[data-toggle="tooltip"]').tooltip()
     $('[data-toggle="startExercice"]').click(function() {
-        startExercice($(this).attr('rel'))
+        setHash($(this).attr('rel'))
     })
 }
 
@@ -395,7 +422,6 @@ const checkLoginForm = event => {
                 buttonLoading(submitButton, "Connexion")
                 switch (result.code) {
                     case "0":
-                        log("Ok logging in")
                         showNotification("Connexion réussie. Bienvenue sur CodinSchool !", "success", "/" + location.hash)
                         break;
                     case "11":
@@ -405,6 +431,7 @@ const checkLoginForm = event => {
                         setFormError("Nom d'utilisateur ou mot de passe incorrect.")
                         break;
                     default:
+                        log(result)
                         setFormError("Erreur serveur inconnue.")
                         break;
                 }
@@ -518,59 +545,63 @@ const refreshData = (msg, msgType) => {
         showNotification("La liste des exercices a été rechargée.", "success")
 }
 
-
-//Change the page to the "eleSection" section with an animation
-const switchPage = (eleSection) => {
-    const animation = {
-        enter: "fadeInUp",
-        exit: "fadeOutLeft"
-    }
-    const pages = $('section')
-    pages.animateCss(animation.exit, () => {
-        pages.css("display", "none")
-        pages.removeClass(animation.exit)
-
-        eleSection.css("display", "block")
-        eleSection.animateCss(animation.enter)
-    })
-}
+//Request exercice to API
+const reqExercice = exercice_id => getPromiseAPI("exercices/" + exercice_id)
 
 //Triggered to start an exercice
 const startExercice = exercice_id => {
+    //Check if the exercice exists
     if (!exercice_id || exercice_id === "")
         return
+    const cachedExercices = toObj(getSessionStorageObj("exercices_parsed"))
+    const cachedSkills = toObj(getSessionStorageObj("skills"))
+    const cachedLanguages = toObj(getSessionStorageObj("languages"))
+    if (!cachedExercices || !cachedSkills || !cachedLanguages) {
+        refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
+        switchPage(pages.listExercices)
+        return
+    }
+    if (!cachedExercices[exercice_id]) {
+        showNotification("L'exercice demandé n'existe pas.", "info")
+        switchPage(pages.listExercices)
+        return
+    }
 
-    setTimeout(() => {
-        let exercices = toObj(getSessionStorageObj("exercices_parsed"))
+    if (getHash() !== "exercices/" + exercice_id)
+        setHash("exercices/" + exercice_id)
 
-        if (!exercices) {
-            refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
-            switchPage(pages.listExercices)
-            return
-        }
-        if (!exercices[exercice_id]) {
-            showNotification("L'exercice demandé n'existe pas.", "info")
-            switchPage(pages.listExercices)
-            return
-        }
+    //Fetch exercice
+    reqExercice(exercice_id)
+        .catch(e => e)
+        .then(result => {
+            switch (result.code) {
+                case "0":
+                    deleteNotification()
 
-        deleteNotification()
-        setHash(exercice_id)
-        const startedExercice = exercices[exercice_id]
+                    const startedExercice = result.data
+                    const skills = parseSkills(startedExercice.skills_unlocked, cachedSkills)
+                    const languages = parseLanguages(startedExercice.language, cachedLanguages)
 
-        //Change the visible section to the start exercice page
-        switchPage(pages.doExercice)
+                    //Change the visible section to the start exercice page
+                    switchPage(pages.doExercice)
 
-        //Set the exercice data
-        $("#exerciceName").html(startedExercice.name)
-        $("#exerciceLanguage").html(startedExercice.language)
-        $("#exerciceDescription").html(startedExercice.description)
-        $("#exerciceSkill").html(startedExercice.skills_unlocked)
+                    //Set the exercice data
+                    $("#exerciceName").html(startedExercice.name)
+                    $("#exerciceLanguage").html(languages)
+                    $("#exerciceDescription").html(startedExercice.description)
+                    $("#exerciceSkill").html(skills)
 
-        //Activate skills tooltip
-        $('[data-toggle="tooltip"]').tooltip()
-    }, 200)
+                    //Activate skills tooltip
+                    $('[data-toggle="tooltip"]').tooltip()
+                    break;
+                default:
+                case "20":
+                    log("Bad exercice", result)
+                    showNotification("L'exercice demandé n'existe pas.", "info")
+                    break;
+            }
+        })
 }
 
-//Load an exercice from the url
-const loadExercice = () => startExercice(location.hash.slice(1))
+//Get the page hash
+const getHash = () => location.hash.slice(1)

@@ -1,13 +1,8 @@
 TODO / Features ideas :
 
 - ajout des sprites en fonction des langages (+reduire la taille des sprites pour chargement + rapide)
-- mettre l'id de l'exercice en hash de la page lorsqu'il commence
-- demander à l'api le contenu de l'exercice (Rediriger page principale si invalide)
 - css page départ exercice
-- bouton retour page principal
 - copyright codinschool + nos noms ?
-
-- recharger le sessionStorage quand un exercice est terminé
 
 - page profil :
 	- tous les succès débloqués
