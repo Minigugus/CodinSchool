@@ -392,7 +392,7 @@ const checkLoginForm = event => {
                 switch (result.code) {
                     case "0":
                         log("Ok logging in")
-                        showNotification("Connexion réussie. Bienvenue sur CodinSchool !", "success", "/")
+                        showNotification("Connexion réussie. Bienvenue sur CodinSchool !", "success", "/" + location.hash)
                         break;
                     case "11":
                         log("Fail logging in", result)
@@ -540,12 +540,10 @@ const startExercice = exercice_id => {
         let exercices = toObj(getSessionStorageObj("exercices_parsed"))
 
         if (!exercices) {
-            log("2")
             refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
             return
         }
         if (!exercices[exercice_id]) {
-            log("3")
             showNotification("L'exercice demandé n'existe pas.", "info")
             return
         }
