@@ -3,9 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="">
-	<meta name="author" content="">
-	<link rel="icon" href="img/favicon.ico">
+	<meta name="description" content="Site Web de résolution de problèmes d'algorithmique en ligne">
+	<meta name="author" content="MAGNIEZ Florentin and SAUVAGE Antoine">
+	<link rel="icon" href="assets/img/favicon.png">
 
 	<title>CodinSchool</title>
 
@@ -14,20 +14,32 @@
 	<link href="assets/css/datatables.min.css" rel="stylesheet" />
 	<link href="assets/css/animate.min.css" rel="stylesheet" />
 	<link href="assets/css/style.css" rel="stylesheet" />
+
+	<!--
+		_██████╗ ██████╗ ██████╗ ██╗███╗   ██╗███████╗ ██████╗██╗  ██╗ ██████╗  ██████╗ ██╗     
+		██╔════╝██╔═══██╗██╔══██╗██║████╗  ██║██╔════╝██╔════╝██║  ██║██╔═══██╗██╔═══██╗██║     
+		██║     ██║   ██║██║  ██║██║██╔██╗ ██║███████╗██║     ███████║██║   ██║██║   ██║██║     
+		██║     ██║   ██║██║  ██║██║██║╚██╗██║╚════██║██║     ██╔══██║██║   ██║██║   ██║██║     v1.0
+		╚██████╗╚██████╔╝██████╔╝██║██║ ╚████║███████║╚██████╗██║  ██║╚██████╔╝╚██████╔╝███████╗ 
+		╚═════╝ ╚═════╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝╚══════╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝
+		An open source project licensed under the ICS license : https://www.isc.org/downloads/software-support-policy/isc-license/
+		Copyright (C) 2018 - [MAGNIEZ Florentin] and [SAUVAGE Antoine : https://asauvage.fr/] 
+	-->
+
 </head>
 
 <body>
 	<nav class="navbar navbar-dark bg-dark flex-md-nowrap p-0 shadow">
-		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">CodinSchool</a>
+		<a  id="logo" class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">CodinSchool <img src="assets/img/favicon.png" /></a>
 		<ul class="navbar-nav px-3 top-right">
 			<li class="nav-item text-nowrap">
-				<a class="nav-link" href="#refresh" role="refresh-data"><i id="refresh-icon" class='fas fa-sync-alt'></i> Rafraîchir les données</a>
+				<a class="nav-link" href="#refresh"><i id="refresh-icon" class='fas fa-sync-alt'></i> Rafraîchir les données</a>
 			</li>
 			<li class="nav-item text-nowrap">
-				<a class="nav-link" href="#switch-profile" role="username">{{username}}</a>
+				<a class="nav-link" href="#switch-profile"><i class="fas fa-user-alt"></i> <span id="username">{{username}}</span></a>
 			</li>
 			<li class="nav-item text-nowrap">
-				<a class="nav-link" href="#logout" role="logout">Se déconnecter</a>
+				<a class="nav-link" href="#logout" >Se déconnecter <i class="fas fa-sign-out-alt"></i></a>
 			</li>
 		</ul>
 	</nav>
@@ -38,7 +50,7 @@
 				<div class="sidebar-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link active" role="switch-home" href="#switch-home">
+							<a class="nav-link active" href="#switch-home">
 								Liste des exercices <span class="sr-only">(current)</span>
 							</a>
 						</li>
@@ -56,7 +68,7 @@
 					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
 						<span>Profil</span>
 					</h6>
-					
+
 					<ul class="nav flex-column">
 						<li class="nav-item">
 							<a class="nav-link" href="#switch-profile">

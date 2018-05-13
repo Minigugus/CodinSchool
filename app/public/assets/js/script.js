@@ -286,7 +286,7 @@ const setHash = urlHash => location.hash = urlHash
 const setUsername = () => {
     const user = getSessionStorageObj("login")
     if (user)
-        $("[role=username]").html(stripHtml(user.name) || "")
+        $("#username").html(stripHtml(user.name) || "")
 }
 
 //Parse skills (Return buttons with icon and tooltip)

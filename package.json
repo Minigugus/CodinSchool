@@ -14,7 +14,7 @@
     "type": "git",
     "url": "http://iut.univ-littoral.fr/gitlab/florentin.magniez/CodinSchool.git"
   },
-  "author": "MAGNIEZ Florentin et SAUVAGE Antoine",
+  "author": "MAGNIEZ Florentin - SAUVAGE Antoine",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^2.0.1",
