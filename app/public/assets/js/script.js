@@ -533,32 +533,38 @@ const switchPage = (eleSection) => {
 
 //Triggered to start an exercice
 const startExercice = exercice_id => {
-    if (exercice_id === "")
+    if (!exercice_id || exercice_id === "")
         return
-    let exercices = toObj(getSessionStorageObj("exercices_parsed"))
-    if (!exercices) {
-        refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
-        return
-    }
-    if (!exercices[exercice_id]) {
-        showNotification("L'exercice demandé n'existe pas.", "info")
-        return
-    }
 
-    setHash(exercice_id)
-    const startedExercice = exercices[exercice_id]
+    setTimeout(() => {
+        let exercices = toObj(getSessionStorageObj("exercices_parsed"))
 
-    //Change the visible section to the start exercice page
-    switchPage(pages.doExercice)
+        if (!exercices) {
+            log("2")
+            refreshData("Il y a eu une erreur inconnue. Les exercices ont été rechargés.", "warning")
+            return
+        }
+        if (!exercices[exercice_id]) {
+            log("3")
+            showNotification("L'exercice demandé n'existe pas.", "info")
+            return
+        }
 
-    //Set the exercice data
-    $("#exerciceName").html(startedExercice.name)
-    $("#exerciceLanguage").html(startedExercice.language)
-    $("#exerciceDescription").html(startedExercice.description)
-    $("#exerciceSkill").html(startedExercice.skills_unlocked)
+        setHash(exercice_id)
+        const startedExercice = exercices[exercice_id]
 
-    //Activate skills tooltip
-    $('[data-toggle="tooltip"]').tooltip()
+        //Change the visible section to the start exercice page
+        switchPage(pages.doExercice)
+
+        //Set the exercice data
+        $("#exerciceName").html(startedExercice.name)
+        $("#exerciceLanguage").html(startedExercice.language)
+        $("#exerciceDescription").html(startedExercice.description)
+        $("#exerciceSkill").html(startedExercice.skills_unlocked)
+
+        //Activate skills tooltip
+        $('[data-toggle="tooltip"]').tooltip()
+    }, 200)
 }
 
 //Load an exercice from the url
