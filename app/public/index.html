@@ -21,7 +21,7 @@
 		<a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">CodinSchool</a>
 		<ul class="navbar-nav px-3 top-right">
 			<li class="nav-item text-nowrap">
-				<a class="nav-link" href="/refresh" role="refresh-data"><i class='fas fa-sync-alt'></i> Rafraîchir la liste</a>
+				<a class="nav-link" href="/refresh" role="refresh-data"><i id="refresh-icon" class='fas fa-sync-alt'></i> Rafraîchir les données</a>
 			</li>
 			<li class="nav-item text-nowrap">
 				<a class="nav-link" href="#profil-???" role="username">{{username}}</a>
@@ -75,7 +75,7 @@
 
 			<div class="col-md-10" id="content">
 
-				<div id="notification" class="col-md-12 pt-4"></div>
+				<div id="notificationLocation" class="col-md-12 pt-4"></div>
 
 				<!-- Show the exercices list -->
 				<section id="listExercices" style="display: block;" class="animated">
@@ -148,10 +148,7 @@
 	<script type="text/javascript" src="assets/js/script.js"></script>
 	<script>
 		$(document).ready(function() {
-			//Set username if data has already been fetched
-			const user = getSessionStorageObj("login")
-			if (!fetchToSessionStorage() && user)
-				$("[role=username]").html(stripHtml(user.name) || "")
+			fetchToSessionStorage()
 
 			$("[role=logout]").click(event => {
 				event.preventDefault()
@@ -163,6 +160,7 @@
 			})
 
 			loadNotification()
+			loadExercice()
 
 			//The function fetchToSessionStorage() already do these, but it's in case of a page refresh !
 			//Set the username
@@ -170,10 +168,6 @@
 			//Set the exercices to the table
 			setExercices()
 
-			$("[role=refresh-data]").click(event => {
-				event.preventDefault()
-				refreshData()
-			})
 		})
 	</script>
 </body>
