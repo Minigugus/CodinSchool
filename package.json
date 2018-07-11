@@ -2,13 +2,10 @@
   "name": "codinschool",
   "version": "0.1.0",
   "description": "Site Web de résolution de problèmes d'algorithmique en ligne.",
-  "main": "app/index.js",
-  "directories": {
-    "doc": "doc"
-  },
   "scripts": {
-    "start": "cd app && node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "repository": {
     "type": "git",
@@ -17,13 +14,39 @@
   "author": "MAGNIEZ Florentin - SAUVAGE Antoine",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^2.0.1",
-    "compression": "^1.7.2",
-    "connect-pg-simple": "^4.2.1",
-    "cors": "^2.8.4",
-    "debug": "^3.1.0",
-    "express": "^4.16.3",
-    "express-session": "^1.15.6",
-    "pg": "^7.4.3"
-  }
+    "vue": "^2.5.16",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.0.0-beta.15",
+    "@vue/cli-plugin-eslint": "^3.0.0-beta.15",
+    "@vue/cli-service": "^3.0.0-beta.15",
+    "@vue/eslint-config-standard": "^3.0.0-rc.3",
+    "vue-template-compiler": "^2.5.16"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/standard"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
