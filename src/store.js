@@ -9,7 +9,7 @@ const isHttpCodeGood = httpCode => (httpCodesList.hasOwnProperty(httpCode) && ht
 
 const API_PREFIX = 'http://localhost:3000/api'
 const API_ROUTES = {
-  login: {path: '/login', method: 'POST'}
+  login: { path: '/login', method: 'POST' }
 }
 const apiCall = (_, apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
   return new Promise((resolve, reject) => {
@@ -28,24 +28,47 @@ const apiCall = (_, apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
 }
 
 Vue.use(Vuex)
+
 export default new Vuex.Store({
   state: {
+    notification: {
+      visible: true,
+      type: 'info',
+      header: 'Irure officia ex officia cillum sit duis voluptate sint est deserunt.',
+      message: 'Velit id nulla aliquip non. Lorem fugiat eiusmod commodo sunt deserunt ad ea velit reprehenderit Lorem ipsum pariatur enim magna. Ut nulla magna est do adipisicing cillum dolor nostrud sunt adipisici'
+    },
     apiCall,
     userData: {
       username: ''
     }
   },
   getters: {
-    API_ROUTES: () => API_ROUTES
+    API_ROUTES: () => API_ROUTES,
+    notification: state => { return state.notification }
   },
   mutations: {
-    SET_USER_DATA: (state, data) => {
-      console.log('mutations looool')
+    SET_NOTIFICATION (state, type, content) {
+      console.log('Mutation : SET_NOTIFICATION=' + content)
+      state.notification.visible = true
+      state.notification.type = type || 'info'
+      state.notification.header = content || ''
+      state.notification.message = content || ''
+    },
+    CLOSE_NOTIFICATION (state) {
+      console.log('Mutation : CLOSE_NOTIFICATION')
+      state.notification.visible = false
+      state.notification.type = 'info'
+      state.notification.header = ''
+      state.notification.message = ''
+    },
+    SET_USER_DATA (state, data) {
+      console.log('Mutation : SET_USER_DATA=' + data)
       console.log(data)
-      // state.userData.username = data
     }
   },
   actions: {
+    setNotification: (store, type, header, content) => store.commit('SET_NOTIFICATION', type, header, content),
+    closeNotification: (store) => store.commit('CLOSE_NOTIFICATION'),
     setUserData: (store, data) => store.commit('SET_USER_DATA', data)
   },
   strict: true

@@ -1,18 +1,12 @@
 {
   "name": "codinschool",
   "version": "0.1.0",
-  "description": "Site Web de résolution de problèmes d'algorithmique en ligne.",
+  "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://iut.univ-littoral.fr/gitlab/florentin.magniez/CodinSchool.git"
-  },
-  "author": "MAGNIEZ Florentin - SAUVAGE Antoine",
-  "license": "ISC",
   "dependencies": {
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
