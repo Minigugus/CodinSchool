@@ -1,32 +1,22 @@
-# CodinSchool - API
+# Recherche des modèles nécessaires
 
-Adresse de base : `/api`
+## Analyse des besoins
 
-## Réponses possibles du serveur
+* Le site propose à l'utilisateur une suite de Niveau.
+* Chaque Niveau est constitué d'une suite de Chapitre.
+* Un chapitre est peut être une suite d'activité qui fait progresser dans le niveau ou une épreuve dite de déblocage de Niveau.
+* Tout le monde peut accèder au niveau 1. Un utilisateur peut accèder au niveau N si et seulement s'il a réussi toutes les évaluations du niveau N-1 ou s'il a réussi une épreuve.
+de déblocage du niveau N.
+* Une activité peut-être :
+ - Un cours
+ - Un TD
+ - Un TP
+ - Une évaluation
 
-Codes HTTP qui peuvent être retournés par le serveur dans certains cas :
- - `400 Bad Request` : Requête mal formée.
- - `401 Unauthorized` : L'opération demandée requière une authentification.
+## Modèles
 
-Les autres codes sont spécifiques à chaque route (spécifié leur documentation).
-
-## Fonctionnement de l'API
-
-Un [Utilisateur](./User.md) (`User`) peut résoudre des exercices.
-
-Un [Exercice](./Exercice.md) (`Exercice`) est disponible dans un seul [Langage de programmation](./Language.md) (`Language`).
-
-Un [Exercice](./Exercice.md) est « résolu » lorsqu'un [Utilisateur](./User.md) passe tous les tests de celui-ci.
-
-Un score est attribué à chaque [Exercice](./Exercice.md) en fonction du nombre de tests passés, de 0 à 1 inclu.
-Il est calculé ainsi : `[NOMBRE_TESTS_PASSÉS] / [NOMBRE_TESTS_DE_L_EXERCICE]`.
-
-Un [Exercice](./Exercice.md) « résolu » apporte 1 point dans chaque compétence qu'il met en pratique.
-
-Une [Compétence](./Skill.md) (`Skill`) est évaluée grâce au nombre de points que l'[Utilisateur](./User.md) a acqui en résolvant des exercices, de 0 à 1 inclu.
-Elle est calculée ainsi : `[NOMBRE_D_EXERCICES_RÉSOLUS_APPORTANT_CETTE_COMPÉTENCE] / [NOMBRE_TOTAL_D_EXERCICES_APPORTANT_CETTE_COMPÉTENCE]`
-
-## Améliorations possibles
-
- - Séparer les Utilisateurs dans des Groupes. Chaque Exercice pourrait ainsi être accessible à certains groupes uniquement.
- - Proposer plusieurs Langages pour un même Exercice.
+ * [Activité](./Activité.md) - Représente une Activité (« étape / page ») que possède un Chapitre.
+ * [Chapitre](./Chapitre.md) - Représente un Chapitre, contenant une ou plusieurs Activité.
+ * [ModèleActivité](./ModèleActivité.md) - Défini les caractéristiques communes aux Activités de ce Modèle.
+ * [Niveau](./Niveau.md) - Représente un Niveu, contenant un ou plusieurs Chapitres.
+ * [Utilisateur](./Utilisateur.md) - Représente un Utilisateur de CodinSchool.
