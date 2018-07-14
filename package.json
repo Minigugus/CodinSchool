@@ -16,6 +16,16 @@
     "url": "http://iut.univ-littoral.fr/gitlab/florentin.magniez/CodinSchool.git"
   },
   "author": "MAGNIEZ Florentin - SAUVAGE Antoine",
+  "contributors": [
+    {
+      "name": "Antoine Sauvage",
+      "url": "https://asauvage.fr/"
+    },
+    {
+      "name": "Florentin Magniez",
+      "email": "Florentin.Magniez@etu.univ-littoral.fr"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.0",
