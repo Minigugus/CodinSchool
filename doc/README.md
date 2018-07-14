@@ -15,13 +15,13 @@ de déblocage du niveau N.
 
 ## Modèles
 
- * [Activité](./Activite.md) - Représente une Activité (« étape / page ») que possède un Chapitre.
- * [Chapitre](./Chapitre.md) - Représente un Chapitre, contenant une ou plusieurs Activité.
- * [ModèleActivité](./ModeleActivite.md) - Défini les caractéristiques communes aux Activités de ce Modèle.
- * [Module](./Module.md) - Représente un Niveu, contenant un ou plusieurs Chapitres.
- * [Niveau](./Niveau.md) - Représente un Module de cours (ex : « M2103 »), contenant plusieurs Niveaux.
- * [Rôle](./Role.md) - Représente un Rôle auquel appartient un Utilisateur (s'apparente à un groupe).
- * [Utilisateur](./Utilisateur.md) - Représente un Utilisateur de CodinSchool.
+ * [Activité](Activite.md) - Représente une Activité (« étape / page ») que possède un Chapitre.
+ * [Chapitre](Chapitre.md) - Représente un Chapitre, contenant une ou plusieurs Activité.
+ * [ModèleActivité](ModeleActivite.md) - Défini les caractéristiques communes aux Activités de ce Modèle.
+ * [Module](Module.md) - Représente un Niveu, contenant un ou plusieurs Chapitres.
+ * [Niveau](Niveau.md) - Représente un Module de cours (ex : « M2103 »), contenant plusieurs Niveaux.
+ * [Rôle](Role.md) - Représente un Rôle auquel appartient un Utilisateur (s'apparente à un groupe).
+ * [Utilisateur](Utilisateur.md) - Représente un Utilisateur de CodinSchool.
 
 ### Détails : les Modèle d'Activité et les Évaluateurs
 

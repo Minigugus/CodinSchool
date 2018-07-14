@@ -2,7 +2,7 @@
 
 ## Modèle
 
-Défini les caractéristiques communes aux [Activités](./Activite.md) de ce Modèle.
+Défini les caractéristiques communes aux [Activités](Activite.md) de ce Modèle.
 
 ### Propriétés
 
