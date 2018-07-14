@@ -10,10 +10,9 @@ La date du premier accès à l'Activité est sauvegardé pour chaque [Utilisateu
  * `id` - Identifiant de l'Activité.
  * `numéro` - Position de l'Activité dans le chapitre.
  * `chapitre` - Chapitre dans lequel se trouve cette Activité.
- * `modèle` - Modèle d'Activité de cette Activité.
- * `estNotée` - Est-ce que cette Activité est évaluée.
+ * `modèle` - [Modèle d'Activité](./ModeleActivite.md) de cette Activité.
  * `premièreLecture` - Date de la première lecture de l'Activité, ou vide si non lue.
- * `titre` - Titre qui apparaitra dans le chapitre.
+ * `titre` - Titre qui apparaitra dans le Chapitre.
  * `description` - Présentation brève de l'Activité.
  * `corps` - Texte affiché dans l'Activité (en `Markdown` ou `HTML`).
 
