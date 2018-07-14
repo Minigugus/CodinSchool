@@ -16,6 +16,16 @@
     "url": "http://iut.univ-littoral.fr/gitlab/prenom.magniez/CodinSchool.git"
   },
   "author": "NOM Prenom - Nom Prenom",
+  "contributors": [
+    {
+      "name": "Prenom Sauvage",
+      "url": "https://anom.fr/"
+    },
+    {
+      "name": "Prenom Magniez",
+      "email": "Prenom.Magniez@etu.univ-littoral.fr"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.0",
