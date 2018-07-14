@@ -12,7 +12,7 @@ Représente un utilisateur enregistré sur CodinSchool.
  * `email` - Adresse email de l'Utilisateur.
  * `avatar` - Lien vers l'image représentant l'Utilisateur.
  * `estActif` - Le compte peut-il être utilisé.
- * `roles` - [Rôles](./Role.md) auxquel appartient cet Utilisateur.
+ * `roles` - [Rôles](Role.md) auxquel appartient cet Utilisateur.
 
 ### Opérations
 

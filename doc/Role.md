@@ -2,7 +2,7 @@
 
 ## Modèle
 
-Représente un Rôle auquel appartient un [Utilisateur](./Utilisateur.md) (s'apparente à un groupe).
+Représente un Rôle auquel appartient un [Utilisateur](Utilisateur.md) (s'apparente à un groupe).
 
 ### Propriétés
 
