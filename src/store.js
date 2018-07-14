@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+const storeDebugMode = true
+const debug = (...el) => storeDebugMode ? console.log(...el) : null
+
 const notificationTypes = [
   {type: 'info', header: 'Information'},
   {type: 'warning', header: 'Attention'},
@@ -27,7 +30,7 @@ const apiCall = (_, apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
     fetch(API_PREFIX + apiCallUrl, options)
       .then(res => isHttpCodeGood(res.status) ? resolve(res) : reject(res)) // Request sent successfully, check if it worked
       .catch(err => {
-        console.log('blablabla', err)
+        debug('blablabla', err)
         reject(err)
       })
   })
@@ -51,9 +54,9 @@ export default new Vuex.Store({
   mutations: {
     ADD_NOTIFICATION (state, notif) {
       let header = ''
-      // Check if type exists and gfet its corresponding header text
+      // Check if type exists and get its corresponding header text
       if (notif.type && notif.message && ({header} = notificationTypes.find(x => x.type === notif.type))) {
-        console.log(`Mutation : ADD_NOTIFICATION= ${notif.type} : ${notif.message}`)
+        debug(`Mutation : ADD_NOTIFICATION= ${notif.type} : ${notif.message}`)
         state.notification.push({
           type: notif.type,
           header,
@@ -63,12 +66,12 @@ export default new Vuex.Store({
     },
     CLOSE_NOTIFICATION (state, index) {
       if (state.notification.hasOwnProperty(index)) {
-        console.log('Mutation : CLOSE_NOTIFICATION=' + index)
+        debug('Mutation : CLOSE_NOTIFICATION=' + index)
         state.notification.splice(index, 1)
       }
     },
     SET_USER_DATA (state, data) {
-      console.log('Mutation : SET_USER_DATA=' + data)
+      debug('Mutation : SET_USER_DATA=' + data)
     }
   },
   actions: {
