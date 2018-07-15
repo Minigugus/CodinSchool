@@ -13,14 +13,14 @@
 
     <div class="ui container">
 
-      <div class="ui button" @click="addNotification({type: 'info', message: Math.random().toString(36).substr(2, 5)})">Ajouter une notification</div>
+      <div class="ui button" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: Math.random().toString(36).substr(2, 15)})">Ajouter une notification</div>
 
       <transition name="fade">
         <div v-if="notificationCount > 0" id="notification">
-          <transition-group name="list" mode="out-in">
-            <div v-for="(notif, index) in notification" :key="index" v-bind:class="notif.type" class="ui message list-item">
-              <i @click="closeNotification(index)" class="close icon"></i>
-              <div class="header">{{ notif.header }}</div>
+          <transition-group name="list" mode="out-in" v-on:after-leave="reorderNotification">
+            <div v-for="notif in notification" v-bind:key="notif.id" v-bind:class="notif.type" class="ui message list-item">
+              <i @click="closeNotification(notif.id)" class="close icon"></i>
+              <div class="header">{{ notif.header }} - {{notif.id}}</div>
               <p>{{ notif.message }}</p>
             </div>
           </transition-group>
@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     ...Vuex.mapActions([
+      'reorderNotification',
       'addNotification',
       'closeNotification'
     ])
@@ -58,38 +59,23 @@ export default {
 
   /* START Notification container animation*/
 
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity .3s ease;
-  }
-
-  .fade-enter,
-  .fade-leave-to {
-    opacity: 0;
-  }
-
   /* END Notification container animation*/
 
   /* START Notification list animation*/
 
-  .list-item {
-    transition: all 1s !important;
-    display: block;
-    width: 100%
-  }
-
-  .list-enter,
-  .list-leave-to {
-    opacity: 0 !important;
-  }
-
-  .list-leave-active {
-    position: absolute !important;
-  }
-
-  .list-move {
-    transition: transform 1s;
-  }
+.list-item {
+  transition: all 1s !important;
+  display: block !important;
+}
+.list-enter, .list-leave-to {
+  opacity: 0 !important;
+  transform: translateY(30px) !important;
+}
+.list-leave-active {
+}
+.list-move {
+  transition: transform 1s;
+}
 
   /* END Notification list animation*/
 

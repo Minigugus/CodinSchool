@@ -36,6 +36,8 @@ const apiCall = (_, apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
   })
 }
 
+const assignIndexToId = arrayOfObj => arrayOfObj.forEach((x, index) => { x.id = index })
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -52,21 +54,26 @@ export default new Vuex.Store({
     notificationCount: state => state.notification.length
   },
   mutations: {
+    REORDER_NOTIFICATION (state) {
+      // assignIndexToId(state.notification)
+    },
     ADD_NOTIFICATION (state, notif) {
       let header = ''
       // Check if type exists and get its corresponding header text
       if (notif.type && notif.message && ({header} = notificationTypes.find(x => x.type === notif.type))) {
-        debug(`Mutation : ADD_NOTIFICATION= ${notif.type} : ${notif.message}`)
+        debug(`Mutation : ADD_NOTIFICATION=type:${notif.type}, message:${notif.message}`)
         state.notification.push({
+          id: state.notification.length === 0 ? 0 : state.notification[state.notification.length - 1].id + 1,
           type: notif.type,
           header,
           message: notif.message
         })
       }
     },
-    CLOSE_NOTIFICATION (state, index) {
-      if (state.notification.hasOwnProperty(index)) {
-        debug('Mutation : CLOSE_NOTIFICATION=' + index)
+    CLOSE_NOTIFICATION (state, id) {
+      let index = -1
+      if ((index = state.notification.findIndex(x => x.id === id))) {
+        debug(`Mutation : CLOSE_NOTIFICATION=id:${id}, index:${index}`)
         state.notification.splice(index, 1)
       }
     },
@@ -75,6 +82,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    reorderNotification: ({commit}) => commit('REORDER_NOTIFICATION'),
     addNotification: ({commit}, notif) => commit('ADD_NOTIFICATION', notif),
     closeNotification: ({commit}, index) => commit('CLOSE_NOTIFICATION', index),
     setUserData: ({commit}, data) => commit('SET_USER_DATA', data)
