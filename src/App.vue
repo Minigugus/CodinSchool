@@ -13,17 +13,20 @@
 
     <div class="ui container">
 
-      <div class="ui button" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: Math.random().toString(36).substr(2, 15)})">Ajouter une notification</div>
+      <button class="ui button" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})">Ajouter une notification</button>
 
       <transition name="fade">
         <div v-if="notificationCount > 0" id="notification">
           <transition-group name="list" mode="out-in">
             <div v-for="notif in notification" v-bind:key="notif.id" v-bind:class="notif.type" class="ui message list-item">
               <i @click="closeNotification(notif.id)" class="close icon"></i>
-              <div class="header">{{ notif.header }} - {{notif.id}}</div>
+              <div class="header">{{ notif.header }}</div>
               <p>{{ notif.message }}</p>
             </div>
           </transition-group>
+          <div class="text-right" style="padding-top: .5em;">
+            <button @click="closeAllNotifications" class="ui mini right labeled icon button"><i class="right close icon"></i>Fermer les notifications</button>
+          </div>
         </div>
       </transition>
 
@@ -45,41 +48,72 @@ export default {
   methods: {
     ...Vuex.mapActions([
       'addNotification',
-      'closeNotification'
+      'closeNotification',
+      'closeAllNotifications'
     ])
   }
 }
 </script>
 
 <style>
+  .text-left {
+    text-align: left !important;
+  }
+
+  .text-center {
+    text-align: center !important;
+  }
+
+  .text-right {
+    text-align: right !important;
+  }
+
   #notification {
-    margin-bottom: 20px !important;
+    position: fixed !important;
+    margin-top: 30px !important;
+    right: 30px !important;
+    bottom: 20px !important;
   }
 
   /* START Notification container animation*/
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all .5s !important;
+  }
+
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0 !important;
+    transform: translateY(30px) !important;
+  }
+
   /* END Notification container animation*/
 
   /* START Notification list animation*/
 
-.list-item {
-  transition: all 1s !important;
-  display: block !important;
-}
-.list-enter, .list-leave-to {
-  opacity: 0 !important;
-  transform: translateY(30px) !important;
-}
-.list-leave-active {
-}
-.list-move {
-  transition: transform 1s;
-}
+  .list-item {
+    transition: opacity 1s, !important;
+    display: block !important;
+  }
+
+  .list-enter {
+    opacity: 0 !important;
+    transform: translateY(30px) !important;
+  }
+
+  .list-leave-to {
+    opacity: 0 !important;
+    transform: translateX(50px) !important;
+  }
+
+  .list-leave-active {
+    transition: all 1s !important;
+  }
+
+  .list-move {
+    transition: transform 1s !important;
+  }
 
   /* END Notification list animation*/
 
