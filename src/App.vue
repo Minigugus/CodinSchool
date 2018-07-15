@@ -73,6 +73,7 @@ export default {
     margin-top: 30px !important;
     right: 30px !important;
     bottom: 20px !important;
+    z-index: 999;
   }
 
   /* START Notification container animation*/

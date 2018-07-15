@@ -8,7 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     apiCall: fn.apiCall,
-    notifications: [],
+    notifications: fn.loadFromStorage('notifications') || [],
     userData: {
       username: ''
     }
@@ -30,15 +30,21 @@ export default new Vuex.Store({
           header,
           message: notif.message
         })
+        fn.saveToStorage('notifications', state.notifications)
       }
     },
-    CLOSE_ALL_NOTIFICATIONS (state) { fn.debug(`Mutation : CLOSE_ALL_NOTIFICATIONS`); state.notifications = [] },
     CLOSE_NOTIFICATION (state, id) {
       let index = -1
       if ((index = state.notifications.findIndex(x => x.id === id)) >= 0) {
         fn.debug(`Mutation : CLOSE_NOTIFICATION=id:${id}, index:${index}`)
         state.notifications.splice(index, 1)
+        fn.saveToStorage('notifications', state.notifications)
       }
+    },
+    CLOSE_ALL_NOTIFICATIONS (state) {
+      fn.debug(`Mutation : CLOSE_ALL_NOTIFICATIONS`)
+      state.notifications = []
+      fn.saveToStorage('notifications', state.notifications)
     },
     SET_USER_DATA (state, data) {
       fn.debug('Mutation : SET_USER_DATA=' + data)
