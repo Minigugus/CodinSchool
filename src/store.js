@@ -36,34 +36,29 @@ const apiCall = (_, apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
   })
 }
 
-const assignIndexToId = arrayOfObj => arrayOfObj.forEach((x, index) => { x.id = index })
-
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    notification: [],
     apiCall,
+    notifications: [],
     userData: {
       username: ''
     }
   },
   getters: {
     API_ROUTES: () => API_ROUTES,
-    notification: state => state.notification,
-    notificationCount: state => state.notification.length
+    notification: state => state.notifications,
+    notificationCount: state => state.notifications.length
   },
   mutations: {
-    REORDER_NOTIFICATION (state) {
-      // assignIndexToId(state.notification)
-    },
     ADD_NOTIFICATION (state, notif) {
       let header = ''
       // Check if type exists and get its corresponding header text
       if (notif.type && notif.message && ({header} = notificationTypes.find(x => x.type === notif.type))) {
         debug(`Mutation : ADD_NOTIFICATION=type:${notif.type}, message:${notif.message}`)
-        state.notification.push({
-          id: state.notification.length === 0 ? 0 : state.notification[state.notification.length - 1].id + 1,
+        state.notifications.push({
+          id: state.notifications.length === 0 ? 0 : state.notifications[state.notifications.length - 1].id + 1,
           type: notif.type,
           header,
           message: notif.message
@@ -72,9 +67,9 @@ export default new Vuex.Store({
     },
     CLOSE_NOTIFICATION (state, id) {
       let index = -1
-      if ((index = state.notification.findIndex(x => x.id === id))) {
+      if ((index = state.notifications.findIndex(x => x.id === id)) >= 0) {
         debug(`Mutation : CLOSE_NOTIFICATION=id:${id}, index:${index}`)
-        state.notification.splice(index, 1)
+        state.notifications.splice(index, 1)
       }
     },
     SET_USER_DATA (state, data) {
@@ -82,9 +77,8 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    reorderNotification: ({commit}) => commit('REORDER_NOTIFICATION'),
     addNotification: ({commit}, notif) => commit('ADD_NOTIFICATION', notif),
-    closeNotification: ({commit}, index) => commit('CLOSE_NOTIFICATION', index),
+    closeNotification: ({commit}, id) => commit('CLOSE_NOTIFICATION', id),
     setUserData: ({commit}, data) => commit('SET_USER_DATA', data)
   },
   strict: true

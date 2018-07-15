@@ -17,7 +17,7 @@
 
       <transition name="fade">
         <div v-if="notificationCount > 0" id="notification">
-          <transition-group name="list" mode="out-in" v-on:after-leave="reorderNotification">
+          <transition-group name="list" mode="out-in">
             <div v-for="notif in notification" v-bind:key="notif.id" v-bind:class="notif.type" class="ui message list-item">
               <i @click="closeNotification(notif.id)" class="close icon"></i>
               <div class="header">{{ notif.header }} - {{notif.id}}</div>
@@ -44,7 +44,6 @@ export default {
   },
   methods: {
     ...Vuex.mapActions([
-      'reorderNotification',
       'addNotification',
       'closeNotification'
     ])
@@ -58,7 +57,12 @@ export default {
   }
 
   /* START Notification container animation*/
-
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
   /* END Notification container animation*/
 
   /* START Notification list animation*/
