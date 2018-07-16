@@ -13,11 +13,20 @@
 
     <div class="ui container">
 
-      <div class="text-center">
+      <div class="text-center" style="position:fixed">
+        <div class="ui vertical menu small">
         Debug :
-        <button class="ui button mini" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})">Ajouter une notification</button>
-
-        <button class="ui button mini" @click="setUserData({firstname: 'Prenom', lastname: 'Sauvage', username: 'pseudo'})">Charger un utilisateur</button>
+        <br>
+          <a @click.prevent="resetData()" class="link item">
+            Reset Store/Local Storage
+          </a>
+          <a @click.prevent="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})" class="link item">
+            Ajouter une notification
+          </a>
+          <a @click.prevent="setUserData({firstname: 'Prenom', lastname: 'Sauvage', username: 'pseudo'})" class="link item">
+            Charger un utilisateur
+          </a>
+        </div>
       </div>
 
       <transition name="fade">
@@ -55,6 +64,7 @@ export default {
   },
   methods: {
     ...Vuex.mapActions([
+      'resetData',
       'addNotification',
       'setUserData',
       'closeNotification',

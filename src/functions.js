@@ -32,6 +32,7 @@ const httpCodesList = {
 }
 const isHttpCodeGood = httpCode => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode])
 
+const clearStorage = () => localStorage.clear()
 const saveToStorage = (key, obj) => localStorage.setItem(key, JSON.stringify(obj))
 const loadFromStorage = key => {
   try {
@@ -47,6 +48,7 @@ module.exports = {
   isHttpCodeGood,
   API_ROUTES,
   apiCall,
+  clearStorage,
   saveToStorage,
   loadFromStorage
 }
