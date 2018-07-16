@@ -18,10 +18,13 @@
       <transition name="fade">
         <div v-if="notificationsCount > 0" id="notification">
           <transition-group name="list" mode="out-in">
-            <div v-for="notif in notifications" v-bind:key="notif.id" v-bind:class="notif.type" class="ui message list-item">
+            <div v-for="notif in notifications" v-bind:key="notif.id" v-bind:class="notif.type" class="ui icon message list-item">
+              <i v-bind:class="notif.icon" class="icon"></i>
               <i @click="closeNotification(notif.id)" class="close icon"></i>
-              <div class="header">{{ notif.header }}</div>
-              <p>{{ notif.message }}</p>
+              <div class="content">
+                <div class="header">{{ notif.header }}</div>
+                <p>{{ notif.message }}</p>
+              </div>
             </div>
           </transition-group>
           <div class="text-right" style="padding-top: .5em;">
@@ -95,7 +98,6 @@ export default {
 
   .list-item {
     transition: opacity 1s, !important;
-    display: block !important;
   }
 
   .list-enter {

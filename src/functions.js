@@ -21,10 +21,10 @@ const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
 }
 
 const notificationTypes = [
-  { type: 'info', header: 'Information' },
-  { type: 'warning', header: 'Attention' },
-  { type: 'success', header: 'Succès' },
-  { type: 'error', header: 'Erreur' }
+  { type: 'info', header: 'Information', icon: 'info circle' },
+  { type: 'warning', header: 'Attention', icon: 'exclamation triangle' },
+  { type: 'success', header: 'Succès', icon: 'check circle' },
+  { type: 'error', header: 'Erreur', icon: 'exclamation circle' }
 ]
 const httpCodesList = {
   200: true,

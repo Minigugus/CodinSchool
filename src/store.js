@@ -23,14 +23,15 @@ export default new Vuex.Store({
   },
   mutations: {
     ADD_NOTIFICATION (state, notif) {
-      let header = ''
+      let notifTypeData = ''
       // Check if type exists and get its corresponding header text
-      if (notif.type && notif.message && ({header} = notificationTypes.find(x => x.type === notif.type))) {
+      if (notif.type && notif.message && (notifTypeData = notificationTypes.find(x => x.type === notif.type))) {
         debug(`Mutation : ADD_NOTIFICATION=type:${notif.type}, message:${notif.message}`)
         state.notifications.push({
           id: state.notifications.length === 0 ? 0 : state.notifications[state.notifications.length - 1].id + 1,
           type: notif.type,
-          header,
+          icon: notifTypeData.icon,
+          header: notifTypeData.header,
           message: notif.message
         })
         saveToStorage('notifications', state.notifications)
