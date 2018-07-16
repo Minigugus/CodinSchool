@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import {
+  clearStorage,
   saveToStorage,
   loadFromStorage,
   notificationTypes,
@@ -20,11 +21,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     notifications: loadFromStorage('notifications') || [],
-    userData: loadFromStorage('userData') || {
-      firstname: '',
-      lastname: '',
-      username: ''
-    }
+    userData: loadFromStorage('userData') || {}
   },
   getters: {
     getNotifications: state => state.notifications,
@@ -32,6 +29,11 @@ export default new Vuex.Store({
     getUserData: state => stripObjHtml(state.userData)
   },
   mutations: {
+    RESET_DATA (state) {
+      state.notifications = []
+      state.userData = {}
+      clearStorage()
+    },
     ADD_NOTIFICATION (state, notif) {
       let notifTypeData = ''
       // Check if type exists and get its corresponding header text
@@ -66,6 +68,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    resetData: ({commit}) => commit('RESET_DATA'),
     addNotification: ({commit}, notif) => commit('ADD_NOTIFICATION', notif),
     closeNotification: ({commit}, id) => commit('CLOSE_NOTIFICATION', id),
     closeAllNotifications: ({commit}) => commit('CLOSE_ALL_NOTIFICATIONS'),
