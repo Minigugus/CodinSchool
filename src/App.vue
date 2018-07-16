@@ -13,12 +13,17 @@
 
     <div class="ui container">
 
-      <button class="ui button" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})">Ajouter une notification</button>
+      <div class="text-center">
+        Debug :
+        <button class="ui button mini" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})">Ajouter une notification</button>
+
+        <button class="ui button mini" @click="setUserData({firstname: 'Prenom', lastname: 'Sauvage', username: 'pseudo'})">Charger un utilisateur</button>
+      </div>
 
       <transition name="fade">
-        <div v-if="notificationsCount > 0" id="notification">
+        <div v-if="getNotificationsCount > 0" id="notification">
           <transition-group name="list" mode="out-in">
-            <div v-for="notif in notifications" v-bind:key="notif.id" v-bind:class="notif.type" class="ui icon message list-item">
+            <div v-for="notif in getNotifications" v-bind:key="notif.id" v-bind:class="notif.type" class="ui icon message list-item">
               <i v-bind:class="notif.icon" class="icon"></i>
               <i @click="closeNotification(notif.id)" class="close icon"></i>
               <div class="content">
@@ -33,7 +38,7 @@
         </div>
       </transition>
 
-      <router-view/>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -44,13 +49,14 @@ import Vuex from 'vuex'
 export default {
   computed: {
     ...Vuex.mapGetters([
-      'notifications',
-      'notificationsCount'
+      'getNotifications',
+      'getNotificationsCount'
     ])
   },
   methods: {
     ...Vuex.mapActions([
       'addNotification',
+      'setUserData',
       'closeNotification',
       'closeAllNotifications'
     ])
