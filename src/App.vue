@@ -16,9 +16,9 @@
       <button class="ui button" @click="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})">Ajouter une notification</button>
 
       <transition name="fade">
-        <div v-if="notificationCount > 0" id="notification">
+        <div v-if="notificationsCount > 0" id="notification">
           <transition-group name="list" mode="out-in">
-            <div v-for="notif in notification" v-bind:key="notif.id" v-bind:class="notif.type" class="ui message list-item">
+            <div v-for="notif in notifications" v-bind:key="notif.id" v-bind:class="notif.type" class="ui message list-item">
               <i @click="closeNotification(notif.id)" class="close icon"></i>
               <div class="header">{{ notif.header }}</div>
               <p>{{ notif.message }}</p>
@@ -41,8 +41,8 @@ import Vuex from 'vuex'
 export default {
   computed: {
     ...Vuex.mapGetters([
-      'notification',
-      'notificationCount'
+      'notifications',
+      'notificationsCount'
     ])
   },
   methods: {
