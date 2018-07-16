@@ -8,27 +8,10 @@
 import Vuex from 'vuex'
 export default {
   name: 'Profile',
-  data () {
-    return {
-      formData: {
-        username: '',
-        password: ''
-      },
-      notification: {
-        visible: false,
-        message: ''
-      }
-    }
-  },
-  computed: {
-  },
   methods: {
     ...Vuex.mapActions([
-      'setUserData'
-    ]),
-    setErrorVisible (b) { // Show/hide error message
-      this.error.visible = b
-    }
+
+    ])
   }
 }
 </script>
