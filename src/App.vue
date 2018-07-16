@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="ui inverted menu">
+    <div class="ui inverted menu main-menu">
       <div class="ui container">
         <router-link to="/" class="header item prevent-active">
           <img class="logo" src="/static/img/favicon.png"> Codinschool
@@ -13,9 +13,9 @@
 
     <div class="ui container">
 
-      <div class="text-center" style="position:fixed">
+      <div class="text-center" style="position:fixed;left: 30px;z-index:999;">
         <div class="ui vertical menu small">
-        Debug :
+        - Debug menu -
         <br>
           <a @click.prevent="resetData()" class="link item">
             Reset Store/Local Storage
@@ -146,5 +146,8 @@ export default {
     font-family: Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  .main-menu {
+    border-radius: 0 !important;
   }
 </style>
