@@ -21,9 +21,6 @@ export default {
     }
   },
   computed: {
-    ...Vuex.mapGetters([
-      'API_ROUTES'
-    ])
   },
   methods: {
     ...Vuex.mapActions([
