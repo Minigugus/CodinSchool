@@ -8,18 +8,28 @@ import {
   debug
 } from './functions.js'
 
+const stripHtml = str => str.replace(/[\u00A0-\u9999<>&]/gim, i => '&#' + i.charCodeAt(0) + ';')
+const stripObjHtml = obj => {
+  const temp = {}
+  for (let x in obj) temp[x] = stripHtml(obj[x])
+  return temp
+}
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     notifications: loadFromStorage('notifications') || [],
     userData: loadFromStorage('userData') || {
+      firstname: '',
+      lastname: '',
       username: ''
     }
   },
   getters: {
-    notifications: state => state.notifications,
-    notificationsCount: state => state.notifications.length
+    getNotifications: state => state.notifications,
+    getNotificationsCount: state => state.notifications.length,
+    getUserData: state => stripObjHtml(state.userData)
   },
   mutations: {
     ADD_NOTIFICATION (state, notif) {
@@ -51,7 +61,8 @@ export default new Vuex.Store({
       saveToStorage('notifications', state.notifications)
     },
     SET_USER_DATA (state, data) {
-      debug('Mutation : SET_USER_DATA=' + data)
+      debug(`Mutation : SET_USER_DATA=firstname:${data.firstname}, lastname:${data.lastname}, username:${data.username}`)
+      state.userData = data
     }
   },
   actions: {
