@@ -42,6 +42,8 @@ const loadFromStorage = key => {
   } catch (error) { console.error(error) }
 }
 
+const isEmailValid = email => /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email)
+
 module.exports = {
   debug,
   notificationTypes,
@@ -50,5 +52,6 @@ module.exports = {
   apiCall,
   clearStorage,
   saveToStorage,
-  loadFromStorage
+  loadFromStorage,
+  isEmailValid
 }
