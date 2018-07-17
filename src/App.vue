@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <transition name="fade">
+      <transition name="fade-notif-group">
         <div v-if="getNotificationsCount > 0" id="notification">
           <transition-group name="list" mode="out-in">
             <div v-for="notif in getNotifications" :key="notif.id" :class="notif.type" class="ui icon message list-item">
@@ -98,13 +98,13 @@ export default {
 
   /* START Notification container animation*/
 
-  .fade-enter-active,
-  .fade-leave-active {
+  .fade-notif-group-enter-active,
+  .fade-notif-group-leave-active {
     transition: all .5s !important;
   }
 
-  .fade-enter,
-  .fade-leave-to {
+  .fade-notif-group-enter,
+  .fade-notif-group-leave-to {
     opacity: 0 !important;
     transform: translateY(30px) !important;
   }

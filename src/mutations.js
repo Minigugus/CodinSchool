@@ -2,8 +2,7 @@ import {
   clearStorage,
   saveToStorage,
   notificationTypes,
-  debug,
-  isEmailValid
+  debug
 } from './functions.js'
 
 const ADD_NOTIFICATION = (state, notif) => {
@@ -51,10 +50,6 @@ const SET_USER_DATA = (state, data) => {
 
 const UPDATE_USER_DATA = (state, data) => {
   debug(`Mutation : UPDATE_USER_DATA=`, data)
-  if (data.property === 'email' && !isEmailValid(data.content)) {
-    ADD_NOTIFICATION(state, { type: 'error', message: `L'adresse email renseignée est incorrecte.` })
-    return
-  }
   state.userData[data.property] = data.content
   saveToStorage('userData', state.userData)
   ADD_NOTIFICATION(state, { type: 'success', message: 'Les données ont bien été mises à jour.' })
