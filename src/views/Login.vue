@@ -16,7 +16,7 @@
         <label for="password">Mot de passe</label>
         <input type="password" id="password" v-model="formData.password" placeholder="Mot de passe" />
       </div>
-      <button class="ui button" v-bind:class="{ loading: buttonLoading }" type="submit" @click.prevent="checkLogin">Se connecter</button>
+      <button class="ui button" :class="{ loading: buttonLoading }" type="submit" @click.prevent="checkLogin">Se connecter</button>
     </form>
     <div class="ui negative message transition" v-show="error.visible">
       <i class="close icon" @click="setErrorVisible(false)"></i>

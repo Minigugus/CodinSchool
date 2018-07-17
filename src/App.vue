@@ -23,7 +23,7 @@
           <a @click.prevent="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})" class="link item">
             Ajouter une notification
           </a>
-          <a @click.prevent="setUserData({firstname: 'Prenom', lastname: 'Sauvage', email: 'pseudo@example.com', avatar: 'http://via.placeholder.com/150x150', roles: ['Utilisateur', 'Administrateur']})" class="link item">
+          <a @click.prevent="setUserData({firstname: 'Prenom', lastname: 'Sauvage', email: 'pseudo@example.com', avatar: 'https://via.placeholder.com/150x150', roles: ['Utilisateur', 'Administrateur']})" class="link item">
             Charger un utilisateur
           </a>
         </div>

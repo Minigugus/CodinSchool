@@ -6,7 +6,8 @@ import {
   saveToStorage,
   loadFromStorage,
   notificationTypes,
-  debug
+  debug,
+  isEmailValid
 } from './functions.js'
 
 const stripHtml = str => str.replace(/[\u00A0-\u9999<>&]/gim, i => '&#' + i.charCodeAt(0) + ';')
@@ -66,8 +67,14 @@ export default new Vuex.Store({
       saveToStorage('notifications', state.notifications)
     },
     SET_USER_DATA (state, data) {
-      debug(`Mutation : SET_USER_DATA=firstname:${data.firstname}, lastname:${data.lastname}, username:${data.username}`)
+      debug(`Mutation : SET_USER_DATA=`, data)
       state.userData = data
+      saveToStorage('userData', state.userData)
+    },
+    UPDATE_USER_DATA (state, data) {
+      debug(`Mutation : UPDATE_USER_DATA=`, data)
+      if (data.property === 'email' && !isEmailValid(data.content)) return
+      state.userData[data.property] = data.content
       saveToStorage('userData', state.userData)
     }
   },
@@ -76,7 +83,8 @@ export default new Vuex.Store({
     addNotification: ({commit}, notif) => commit('ADD_NOTIFICATION', notif),
     closeNotification: ({commit}, id) => commit('CLOSE_NOTIFICATION', id),
     closeAllNotifications: ({commit}) => commit('CLOSE_ALL_NOTIFICATIONS'),
-    setUserData: ({commit}, data) => commit('SET_USER_DATA', data)
+    setUserData: ({ commit }, data) => commit('SET_USER_DATA', data),
+    updateUserData: ({commit}, data) => commit('UPDATE_USER_DATA', data)
   },
   strict: true
 })
