@@ -32,9 +32,9 @@
 import Vuex from 'vuex'
 import { apiCall, API_ROUTES } from '../functions.js'
 
-const setInputError = (activateErr, ...ele) => ele.forEach(input => activateErr
-  ? input.parentElement.classList.add('error')
-  : input.parentElement.classList.remove('error'))
+const setInputError = (activateErr, ...id) => id.forEach(input => activateErr
+  ? document.getElementById(id).parentElement.classList.add('error')
+  : document.getElementById(id).parentElement.classList.remove('error'))
 
 export default {
   name: 'Login',
@@ -59,21 +59,21 @@ export default {
     setErrorVisible (boolVisible) { this.error.visible = boolVisible },
     // Test login form with server
     checkLogin () {
-      const username = {data: this.formData.username, ele: document.getElementById('username')}
-      const password = {data: this.formData.password, ele: document.getElementById('password')}
-      setInputError(!username.data, username.ele)
-      setInputError(!password.data, password.ele)
+      const username = this.formData.username
+      const password = this.formData.password
+      setInputError(!username, 'username')
+      setInputError(!password, 'password')
       if (!username.data || !password.data) {
         this.error.visible = true
         this.error.message = 'Le nom d\'utilisateur ou mot de passe est vide.'
         return
       }
-      setInputError(false, username.ele, password.ele)
+      setInputError(false, 'username', 'password')
       this.error.visible = false
       this.buttonLoading = true
 
       const apiLogin = API_ROUTES.login
-      apiCall(apiLogin.path, apiLogin.method, { username: username.data, password: password.data })
+      apiCall(apiLogin.path, apiLogin.method, { username, password })
         .then(res => res.json())
         .then(res => {
           this.buttonLoading = false
@@ -83,7 +83,7 @@ export default {
           this.buttonLoading = false
           this.error.visible = true
           this.error.message = 'Nom d\'utilisateur ou mot de passe incorrect.'
-          setInputError(true, username.ele, password.ele)
+          setInputError(true, 'username', 'password')
         })
     }
   }
