@@ -7,7 +7,7 @@
         </router-link>
         <router-link to="/" class="item">Accueil</router-link>
         <router-link to="/login" class="item">Login</router-link>
-        <router-link to="/profile" class="item">Prenom S.</router-link>
+        <router-link to="/profile" class="item right">{{ `${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.` }}</router-link>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
           <a @click.prevent="addNotification({type: ['info','warning','error','success'][[Math.floor(Math.random() * 4)]], message: 'Laborum in sit et fugiat ea do cupidatat exercitation enim ea laboris. ' + Math.random().toString(36).substr(2, 30)})" class="link item">
             Ajouter une notification
           </a>
-          <a @click.prevent="setUserData({firstname: 'Prenom', lastname: 'Sauvage', username: 'pseudo'})" class="link item">
+          <a @click.prevent="setUserData({firstname: 'Prenom', lastname: 'Sauvage', email: 'pseudo@example.com', avatar: 'http://via.placeholder.com/150x150', roles: ['Utilisateur', 'Administrateur']})" class="link item">
             Charger un utilisateur
           </a>
         </div>
@@ -32,8 +32,8 @@
       <transition name="fade">
         <div v-if="getNotificationsCount > 0" id="notification">
           <transition-group name="list" mode="out-in">
-            <div v-for="notif in getNotifications" v-bind:key="notif.id" v-bind:class="notif.type" class="ui icon message list-item">
-              <i v-bind:class="notif.icon" class="icon"></i>
+            <div v-for="notif in getNotifications" :key="notif.id" :class="notif.type" class="ui icon message list-item">
+              <i :class="notif.icon" class="icon"></i>
               <i @click="closeNotification(notif.id)" class="close icon"></i>
               <div class="content">
                 <div class="header">{{ notif.header }}</div>
@@ -58,6 +58,7 @@ import Vuex from 'vuex'
 export default {
   computed: {
     ...Vuex.mapGetters([
+      'getUserData',
       'getNotifications',
       'getNotificationsCount'
     ])

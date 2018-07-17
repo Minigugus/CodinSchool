@@ -12,7 +12,10 @@ import {
 const stripHtml = str => str.replace(/[\u00A0-\u9999<>&]/gim, i => '&#' + i.charCodeAt(0) + ';')
 const stripObjHtml = obj => {
   const temp = {}
-  for (let x in obj) temp[x] = stripHtml(obj[x])
+  for (let x in obj) {
+    if (typeof obj[x] === 'string') temp[x] = stripHtml(obj[x])
+    else temp[x] = obj[x]
+  }
   return temp
 }
 
@@ -65,6 +68,7 @@ export default new Vuex.Store({
     SET_USER_DATA (state, data) {
       debug(`Mutation : SET_USER_DATA=firstname:${data.firstname}, lastname:${data.lastname}, username:${data.username}`)
       state.userData = data
+      saveToStorage('userData', state.userData)
     }
   },
   actions: {
