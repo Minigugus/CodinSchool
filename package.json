@@ -2,7 +2,7 @@
   "name": "codinschool",
   "version": "0.1.0",
   "description": "Site Web de résolution de problèmes d'algorithmique en ligne.",
-  "main": "app/index.js",
+  "main": "index.js",
   "private": true,
   "directories": {
     "doc": "doc"
