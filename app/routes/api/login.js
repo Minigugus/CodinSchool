@@ -21,12 +21,13 @@ module.exports = express.Router()
 						enabled: user.enabled
 					});
 				else
-					send(res, 401, { message: 'Unauthorized' });
+					req.session.destroy(err => send(res, 401, { message: 'Unauthorized' }));
 			});
 	else
 		send(res, 401, { message: 'Unauthorized' });
 })
 .use(express.json({ limit: '1kb' }))
+.use(express.urlencoded({ limit: '1kb', parameterLimit: 2 }))
 .post('/', checkSchema({
 	email: {
 		in: [ 'body' ],
@@ -35,8 +36,10 @@ module.exports = express.Router()
 	},
 	password: {
 		in: [ 'body' ],
-		errorMessage: 'Invalid password',
-		options: { min: 3, max: 30 }
+		isLength: {
+			errorMessage: 'Invalid password',
+			options: { min: 3, max: 30 }
+		}
 	}
 }), (req, res) => {
 	const errors = validationResult(req);

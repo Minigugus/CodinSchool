@@ -10,23 +10,7 @@ const { User } = require('../../db');
 
 module.exports = express.Router()
 .use(express.json({ limit: '2kb' }))
-.get('/', (req, res) => {
-	if ('user_id' in req.session)
-		User.findOne({ where: { id: req.session.user_id } })
-			.then(user => {
-				if (user)
-					ok(res, {
-						lastname: user.lastname,
-						firstname: user.firstname,
-						email: user.email,
-						enabled: user.enabled
-					});
-				else
-					send(res, 401, { message: 'Unauthorized' });
-			});
-	else
-		send(res, 401, { message: 'Unauthorized' });
-})
+.use(express.urlencoded({ limit: '2kb', parameterLimit: 2 }))
 .post('/', checkSchema({
 	email: {
 		in: [ 'body' ],
