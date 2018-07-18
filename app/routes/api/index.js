@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const cors = require('cors');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
@@ -21,6 +22,7 @@ router.use(session({
 		secure: config.session_cookie_secure
 	}
 }));
+router.use(cors({ origin: '*' }));
 
 router.use('/register', require('./register'));
 router.use('/login', require('./login'));
