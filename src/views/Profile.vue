@@ -92,7 +92,7 @@ export default {
     showEditInput (property, boolShow) { this.editable[property].editVisible = boolShow },
     sendToStore (property) {
       if (property === 'email' && !isEmailValid(this.editable[property].content)) {
-        this.addNotification({ type: 'error', message: `L'adresse email renseignée est incorrecte.` })
+        this.addNotification({ type: 'error', message: `L'adresse email renseignée est invalide.` })
         setInputError(true, 'editEmail')
         return
       }

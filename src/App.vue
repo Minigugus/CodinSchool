@@ -6,7 +6,8 @@
           <img class="logo" src="/static/img/favicon.png"> Codinschool
         </router-link>
         <router-link to="/" class="item">Accueil</router-link>
-        <router-link to="/login" class="item">Login</router-link>
+        <router-link to="/login" class="item right">Connexion</router-link>
+        <router-link to="/register" class="item">Inscription</router-link>
         <router-link to="/profile" class="item right">{{ `${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.` }}</router-link>
       </div>
     </div>
@@ -95,6 +96,17 @@ export default {
     bottom: 20px !important;
     z-index: 999;
   }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all .5s !important;
+  }
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0 !important;
+  }
+
+  /* END Notification container animation*/
 
   /* START Notification container animation*/
 
