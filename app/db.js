@@ -8,5 +8,3 @@ const sequelize = new Sequelize({
 
 module.exports = sequelize
 module.exports.User = sequelize.import('./models/User.js');
-
-sequelize.sync();
