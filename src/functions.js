@@ -3,6 +3,7 @@ const debug = (...el) => storeDebugMode ? console.log(...el) : null
 
 const API_PREFIX = 'http://localhost:3000/api'
 const API_ROUTES = {
+  register: { path: '/register', method: 'POST' },
   login: { path: '/login', method: 'POST' }
 }
 const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
@@ -44,7 +45,7 @@ const loadFromStorage = key => {
 
 const isEmailValid = email => /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email)
 
-module.exports = {
+export {
   debug,
   notificationTypes,
   isHttpCodeGood,
