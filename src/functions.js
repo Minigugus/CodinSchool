@@ -1,7 +1,7 @@
 const storeDebugMode = true
 const debug = (...el) => storeDebugMode ? console.log(...el) : null
 
-const API_PREFIX = 'http://localhost:3000/api'
+const API_PREFIX = 'https://codinschool-bibaohmicw.now.sh/api'
 const API_ROUTES = {
   register: { path: '/register', method: 'POST' },
   login: { path: '/login', method: 'POST' }
@@ -13,6 +13,7 @@ const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
       body: fetchArgsObj ? JSON.stringify(fetchArgsObj) : {},
       headers: fetchHeadersObj || {}
     }
+    options.headers['Content-Type'] = 'application/json'
     fetch(API_PREFIX + apiCallUrl, options)
       .then(res => isHttpCodeGood(res.status) ? resolve(res) : reject(res)) // Request sent successfully, check if it worked
       .catch(err => {
