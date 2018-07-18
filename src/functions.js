@@ -1,6 +1,9 @@
 const storeDebugMode = true
 const debug = (...el) => storeDebugMode ? console.log(...el) : null
 
+const isHttpCodeGood = (httpCodesList, httpCode) => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode].ok)
+const getHttpMessage = (httpCodesList, httpCode) => httpCodesList.hasOwnProperty(httpCode) ? httpCodesList[httpCode].message : ''
+
 const API_PREFIX = 'https://codinschool-bibaohmicw.now.sh/api'
 const API_ROUTES = {
   register: { path: '/register', method: 'POST' },
@@ -15,10 +18,8 @@ const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
     }
     options.headers['Content-Type'] = 'application/json'
     fetch(API_PREFIX + apiCallUrl, options)
-      .then(res => isHttpCodeGood(res.status) ? resolve(res) : reject(res)) // Request sent successfully, check if it worked
-      .catch(err => {
-        reject(err)
-      })
+      .then(res => resolve(res)) // Request sent successfully, check if it worked
+      .catch(err => reject(err))
   })
 }
 
@@ -28,11 +29,6 @@ const notificationTypes = [
   { type: 'success', header: 'Succès', icon: 'check circle' },
   { type: 'error', header: 'Erreur', icon: 'exclamation circle' }
 ]
-const httpCodesList = {
-  200: true,
-  404: false
-}
-const isHttpCodeGood = httpCode => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode])
 
 const clearStorage = () => localStorage.clear()
 const saveToStorage = (key, obj) => localStorage.setItem(key, JSON.stringify(obj))
@@ -50,6 +46,7 @@ export {
   debug,
   notificationTypes,
   isHttpCodeGood,
+  getHttpMessage,
   API_ROUTES,
   apiCall,
   clearStorage,

@@ -5,6 +5,7 @@ import {
   debug
 } from './functions.js'
 
+// notif = { type: 'info/warning/success/error', message: String }
 const ADD_NOTIFICATION = (state, notif) => {
   let notifTypeData = ''
   // Check if type exists and get its corresponding header text
