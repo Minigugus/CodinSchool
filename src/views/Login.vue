@@ -41,8 +41,15 @@ import {
   debug,
   apiCall,
   API_ROUTES,
-  isEmailValid
+  isEmailValid,
+  isHttpCodeGood,
+  getHttpMessage
 } from '../functions.js'
+
+const httpCodesList = {
+  200: { ok: true, message: 'Vous êtes connecté.' },
+  403: { ok: false, message: 'Adresse email ou mot de passe incorrect.' }
+}
 
 export default {
   name: 'Login',
@@ -61,6 +68,7 @@ export default {
   },
   methods: {
     ...Vuex.mapActions([
+      'addNotification',
       'setUserData'
     ]),
     setInputError (activateErr, ...id) {
@@ -70,7 +78,7 @@ export default {
     },
     setAllInputError (activateErr) { this.setInputError(activateErr, ...Object.keys(this.formData)) },
 
-    addFormErrorMessage (message) { this.error.messages.push(message) },
+    addFormErrorMessage (message) { this.error.messages.push(message || 'Erreur inconnue.') },
     showFormErrorMessage (boolVisible) { this.error.visible = boolVisible },
 
     resetFormErrors () {
@@ -119,16 +127,19 @@ export default {
         email: this.formData.email,
         password: this.formData.password
       })
-        .then(res => res.json())
         .then(res => {
+          this.buttonLoading = false
+          if (!isHttpCodeGood(httpCodesList, res.status)) return Promise.reject(res)
           debug(res)
-          this.buttonLoading = false
-          return this.setUserData(res)
+          this.addNotification({ type: 'success', message: getHttpMessage(httpCodesList, res.status) })
+          return res.json()
         })
-        .catch(_ => {
+        .then(res => this.setUserData(res))
+        .catch(err => {
+          debug(err)
           this.buttonLoading = false
+          this.addFormErrorMessage(getHttpMessage(httpCodesList, err.status))
           this.showFormErrorMessage(true)
-          this.addFormErrorMessage('TODO : MESSAGE A MODIFIER')
           this.setAllInputError(true)
         })
     }
