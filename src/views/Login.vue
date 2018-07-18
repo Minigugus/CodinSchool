@@ -16,37 +16,45 @@
         <label for="password">Mot de passe</label>
         <input type="password" id="password" v-model="formData.password" placeholder="Mot de passe" />
       </div>
-      <button class="ui button" :class="{ loading: buttonLoading }" type="submit" @click.prevent="checkLogin">Se connecter</button>
+      <button class="ui button" :class="{ loading: buttonLoading }" type="submit" @click.prevent="checkForm">Se connecter</button>
     </form>
-    <div class="ui negative message" v-show="error.visible">
-      <i class="close icon" @click="setErrorVisible(false)"></i>
-      <div class="header">
-        Erreur
+
+    <transition name="fade">
+      <div class="ui negative message" v-show="error.visible">
+        <i class="close icon" @click="showFormErrorMessage(false)"></i>
+        <div class="header">
+          Erreur
+        </div>
+        <ul class="list">
+          <transition-group name="fade">
+            <li v-for="(errMsg, index) in error.messages" :key="index">{{ errMsg }}</li>
+          </transition-group>
+        </ul>
       </div>
-      <p>{{ error.message }}</p>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import Vuex from 'vuex'
-import { apiCall, API_ROUTES } from '../functions.js'
-
-const setInputError = (activateErr, ...id) => id.forEach(input => activateErr
-  ? document.getElementById(id).parentElement.classList.add('error')
-  : document.getElementById(id).parentElement.classList.remove('error'))
+import {
+  debug,
+  apiCall,
+  API_ROUTES,
+  isEmailValid
+} from '../functions.js'
 
 export default {
   name: 'Login',
   data () {
     return {
       formData: {
-        email: '',
-        password: ''
+        email: 'test@test.com',
+        password: 'test'
       },
       error: {
         visible: false,
-        message: ''
+        messages: []
       },
       buttonLoading: false
     }
@@ -55,35 +63,73 @@ export default {
     ...Vuex.mapActions([
       'setUserData'
     ]),
-    // Show/hide error message
-    setErrorVisible (boolVisible) { this.error.visible = boolVisible },
-    // Test login form with server
-    checkLogin () {
-      const email = this.formData.email
-      const password = this.formData.password
-      setInputError(!email, 'email')
-      setInputError(!password, 'password')
-      if (!email.data || !password.data) {
-        this.error.visible = true
-        this.error.message = 'Adresse email ou mot de passe vide.'
-        return
-      }
-      setInputError(false, 'email', 'password')
+    setInputError (activateErr, ...id) {
+      id.forEach(input => activateErr
+        ? document.getElementById(input).parentElement.classList.add('error')
+        : document.getElementById(input).parentElement.classList.remove('error'))
+    },
+    setAllInputError (activateErr) { this.setInputError(activateErr, ...Object.keys(this.formData)) },
+
+    addFormErrorMessage (message) { this.error.messages.push(message) },
+    showFormErrorMessage (boolVisible) { this.error.visible = boolVisible },
+
+    resetFormErrors () {
+      this.setAllInputError(false)
       this.error.visible = false
+      this.error.messages = []
+    },
+
+    checkAllInputCompleted () {
+      let allInputCompleted = true
+      Object.keys(this.formData).forEach(property => {
+        if (!this.formData[property]) {
+          this.setInputError(true, property)
+          allInputCompleted = false
+        }
+      })
+      if (!allInputCompleted) {
+        this.addFormErrorMessage('Tous les champs sont obligatoires.')
+        this.showFormErrorMessage(true)
+      }
+      return allInputCompleted
+    },
+
+    checkEmailField () {
+      if (!isEmailValid(this.formData.email)) {
+        this.addFormErrorMessage(`L'adresse email renseignée est invalide.`)
+        this.showFormErrorMessage(true)
+        this.setInputError(true, 'email')
+        return false
+      }
+      return true
+    },
+
+    checkForm () {
+      this.resetFormErrors()
+      let sendForm = true
+      if (!this.checkAllInputCompleted()) sendForm = false
+      if (!this.checkEmailField()) sendForm = false
+      if (!sendForm) return
+
+      // Form ready to be sent
       this.buttonLoading = true
 
-      const apiLogin = API_ROUTES.login
-      apiCall(apiLogin.path, apiLogin.method, { email, password })
+      const api = API_ROUTES.login
+      apiCall(api.path, api.method, {
+        email: this.formData.email,
+        password: this.formData.password
+      })
         .then(res => res.json())
         .then(res => {
+          debug(res)
           this.buttonLoading = false
           return this.setUserData(res)
         })
         .catch(_ => {
           this.buttonLoading = false
-          this.error.visible = true
-          this.error.message = 'Adresse email ou mot de passe incorrect.'
-          setInputError(true, 'email', 'password')
+          this.showFormErrorMessage(true)
+          this.addFormErrorMessage('TODO : MESSAGE A MODIFIER')
+          this.setAllInputError(true)
         })
     }
   }

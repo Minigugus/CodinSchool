@@ -48,13 +48,22 @@
         </div>
       </transition>
 
-      <router-view></router-view>
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
     </div>
   </div>
 </template>
 
 <script>
 import Vuex from 'vuex'
+
+window.addEventListener('storage', e => {
+  console.log(e)
+  if (e.key === 'mytoken' && e.newValue === null) {
+    // TODO
+  }
+})
 
 export default {
   computed: {
@@ -99,7 +108,7 @@ export default {
 
   .fade-enter-active,
   .fade-leave-active {
-    transition: all .5s !important;
+    transition: all .2s !important;
   }
   .fade-enter,
   .fade-leave-to {
