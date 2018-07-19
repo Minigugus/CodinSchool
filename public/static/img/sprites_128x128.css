@@ -1,0 +1,239 @@
+.sprite-zip {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -10px;
+}
+
+.sprite-adobe {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -602px;
+}
+
+.sprite-android {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -158px;
+}
+
+.sprite-atom {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -158px;
+}
+
+.sprite-bitcoin {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -10px;
+}
+
+.sprite-blender {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -158px;
+}
+
+.sprite-brain {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -306px;
+}
+
+.sprite-cisco {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -306px;
+}
+
+.sprite-console {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -306px;
+}
+
+.sprite-cplusplus {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -10px;
+}
+
+.sprite-csharp {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -158px;
+}
+
+.sprite-css {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -306px;
+}
+
+.sprite-discord {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -454px;
+}
+
+.sprite-eclipse {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -454px;
+}
+
+.sprite-ethereum {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -454px;
+}
+
+.sprite-excel {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -454px;
+}
+
+.sprite-github {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -10px;
+}
+
+.sprite-html {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -158px;
+}
+
+.sprite-illustrator {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -306px;
+}
+
+.sprite-indesign {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -454px;
+}
+
+.sprite-inkscape {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -602px;
+}
+
+.sprite-ios {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -602px;
+}
+
+.sprite-java {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -602px;
+}
+
+.sprite-java2 {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -602px;
+}
+
+.sprite-javascript {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -10px;
+}
+
+.sprite-jquery {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -10px;
+}
+
+.sprite-laravel {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -158px;
+}
+
+.sprite-linux {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -306px;
+}
+
+.sprite-linux2 {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -454px;
+}
+
+.sprite-monero {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -602px;
+}
+
+.sprite-nodejs {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -750px;
+}
+
+.sprite-pdf {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -750px;
+}
+
+.sprite-photoshop {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -750px;
+}
+
+.sprite-php {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -750px;
+}
+
+.sprite-php2 {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -750px;
+}
+
+.sprite-powerpoint {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -750px;
+}
+
+.sprite-premiere {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -898px -10px;
+}
+
+.sprite-python {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -898px -158px;
+}
+
+.sprite-ruby {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -898px -306px;
+}
+
+.sprite-sublime {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -898px -454px;
+}
+
+.sprite-tor {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -898px -602px;
+}
+
+.sprite-twitter {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -898px -750px;
+}
+
+.sprite-twitter2 {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -10px -898px;
+}
+
+.sprite-virtualbox {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -158px -898px;
+}
+
+.sprite-visualstudio {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -306px -898px;
+}
+
+.sprite-web {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -454px -898px;
+}
+
+.sprite-windows {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -602px -898px;
+}
+
+.sprite-word {
+    width: 128px; height: 128px;
+    background: url('sprites_128x128.png') -750px -898px;
+}
