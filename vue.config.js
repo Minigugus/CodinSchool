@@ -1,3 +1,6 @@
+const path = require('path')
 module.exports = {
-  productionSourceMap: false
+  productionSourceMap: false,
+  lintOnSave: true,
+  outputDir: path.resolve(__dirname, "./app/public")
 }
