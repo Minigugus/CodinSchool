@@ -1,5 +1,5 @@
-const storeDebugMode = true
-const debug = (...el) => storeDebugMode ? console.log(...el) : null
+const productionMode = process.env.NODE_ENV === 'production'
+const debug = (...el) => (!productionMode && console.log(...el))
 
 const isHttpCodeGood = (httpCodesList, httpCode) => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode].ok)
 const getHttpMessage = (httpCodesList, httpCode) => httpCodesList.hasOwnProperty(httpCode) ? httpCodesList[httpCode].message : ''
