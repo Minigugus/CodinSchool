@@ -5,14 +5,14 @@ const production = (process.env.NODE_ENV === 'production');
 module.exports = {
 	production: production,
 
-	origin: process.env.ORIGIN || 'localhost',
+	origin: process.env.ORIGIN || (production ? '*' : 'localhost'),
 
 	port: process.env.PORT || (production ? 80 : 3000),
 	root: process.env.ROOT || '/',
 
 	bcrypt_rounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 10, // Don't change this if users are already registered !
 
-	session_cookie_secure: !!process.env.SESSION_COOKIE_SECURE || production,
+	session_cookie_secure: ('SESSION_COOKIE_SECURE' in process.env ? process.env.SESSION_COOKIE_SECURE : production),
 	session_cookie_name: process.env.SESSION_COOKIE_NAME || 'codinschool_session',
 	session_secret: process.env.SESSION_SECRET || 'codinschool',
 
