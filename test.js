@@ -1,15 +1,20 @@
+#!/usr/bin/env node
+
 'use strict';
 
 const express = require('express');
 
-const db = require('./db');
-const config = require('./config');
+const db = require('./app/db');
+const config = require('./app/config');
+const { send } = require('./app/api');
 
 const app = express();
 
 app.set('trust proxy', 1);
 
-app.use(config.root, require('./routes'));
+app.use(config.root + 'api', require('./app/routes/api'));
+
+app.use((req, res) => send(res, 404, { message: 'Route not found' }));
 
 db
 .sync()

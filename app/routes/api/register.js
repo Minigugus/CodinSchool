@@ -50,7 +50,7 @@ module.exports = express.Router()
 				email: req.body.email,
 				password_hash: password_hash
 			}))
-			.then(user => ok(res, {
+			.then(user => send(res, 201, {
 				lastname: user.lastname,
 				firstname: user.firstname,
 				email: user.email,

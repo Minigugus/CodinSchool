@@ -25,8 +25,22 @@ router.use(session({
 	}
 }));
 
+if (!config.production) {
+	const debug = require('debug');
+	const log_network = debug('codinschool:network');
+	router.use((req, res, next) => {
+		const _end = res.end;
+		res.end = (...args) => {
+			log_network(`${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl} - ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`);
+			_end.apply(res, args);
+		};
+		next();
+	});
+}
+
 router.use('/register', require('./register'));
 router.use('/login', require('./login'));
+router.use('/logout', require('./logout'));
 
 router.use((req, res, next) => ('user_id' in req.session ? next() : send(res, 401, { message: 'You must be authentificated to use this route' })));
 
