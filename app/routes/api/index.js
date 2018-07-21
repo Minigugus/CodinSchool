@@ -38,6 +38,15 @@ if (!config.production) {
 	});
 }
 
+// Désactivation du cache + Content Security Policy
+router.use((req, res, next) => {
+	res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+	res.header('Expires', '-1');
+	res.header('Pragma', 'no-cache');
+	res.header('Content-Security-Policy', `default-src 'self';${!config.production ? ' upgrade-insecure-requests;' : ''} referrer no-referrer`);
+	next();
+});
+
 router.use('/register', require('./register'));
 router.use('/login', require('./login'));
 router.use('/logout', require('./logout'));

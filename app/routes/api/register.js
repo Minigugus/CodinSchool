@@ -21,7 +21,7 @@ module.exports = express.Router()
 		in: [ 'body' ],
 		isLength: {
 			errorMessage: 'Invalid password',
-			options: { min: 3, max: 30 }
+			options: { min: 3, max: 80 }
 		}
 	},
 	lastname: {
