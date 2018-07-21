@@ -16,6 +16,8 @@ module.exports = {
 	session_cookie_name: process.env.SESSION_COOKIE_NAME || 'codinschool_session',
 	session_secret: process.env.SESSION_SECRET || 'codinschool',
 
+	db_dialect: process.env.DB_DIALECT || 'sqlite',
+	db_storage: process.env.DB_STORAGE,
 	db_host: process.env.DB_HOST,
 	db_port: process.env.DB_PORT,
 	db_name: process.env.DB_NAME,
