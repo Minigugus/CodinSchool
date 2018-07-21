@@ -52,11 +52,14 @@
 </template>
 
 <script>
+import Vuex from 'vuex'
 import {
   debug,
   apiCall,
   API_ROUTES,
-  isEmailValid
+  isEmailValid,
+  isHttpCodeGood,
+  getHttpMessage
 } from '../functions.js'
 
 export default {
@@ -78,6 +81,9 @@ export default {
     }
   },
   methods: {
+    ...Vuex.mapActions([
+      'addNotification'
+    ]),
     setInputError (activateErr, ...id) {
       id.forEach(input => activateErr
         ? document.getElementById(input).parentElement.classList.add('error')
@@ -140,6 +146,10 @@ export default {
       // Form ready to be sent
       this.buttonLoading = true
 
+      const httpCodesList = {
+        201: { ok: true, message: 'Vous êtes inscrit.' },
+        409: { ok: false, message: `L'adresse email renseignée est déjà enregistrée.` }
+      }
       const api = API_ROUTES.register
       apiCall(api.path, api.method, {
         firstname: this.formData.firstname,
@@ -147,17 +157,21 @@ export default {
         email: this.formData.email,
         password: this.formData.password
       })
-        .then(res => res.json())
         .then(res => {
-          debug(res)
           this.buttonLoading = false
+          if (!isHttpCodeGood(httpCodesList, res.status)) {
+            this.addFormErrorMessage(getHttpMessage(httpCodesList, res.status))
+            this.showFormErrorMessage(true)
+            this.setAllInputError(true)
+            return
+          }
+          this.addNotification({ type: 'success', message: getHttpMessage(httpCodesList, res.status) })
+          return res.json()
         })
-        .catch(_ => {
-          this.buttonLoading = false
-          this.showFormErrorMessage(true)
-          this.addFormErrorMessage('TODO : MESSAGE A MODIFIER')
-          this.setAllInputError(true)
+        .then(res => {
+          if (res) debug(res)
         })
+        .catch(debug)
     }
   }
 }
