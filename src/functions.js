@@ -4,10 +4,11 @@ const debug = (...el) => (!productionMode && console.log(...el))
 const isHttpCodeGood = (httpCodesList, httpCode) => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode].ok)
 const getHttpMessage = (httpCodesList, httpCode) => httpCodesList.hasOwnProperty(httpCode) ? httpCodesList[httpCode].message : ''
 
-const API_PREFIX = 'https://codinschool-bibaohmicw.now.sh/api'
+const API_PREFIX = `${productionMode ? '/api' : 'http://localhost:3000/api'}`
 const API_ROUTES = {
   register: { path: '/register', method: 'POST' },
-  login: { path: '/login', method: 'POST' }
+  login: { path: '/login', method: 'POST' },
+  logout: { path: '/logout', method: 'POST' }
 }
 const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
   return new Promise((resolve, reject) => {
@@ -42,6 +43,16 @@ const loadFromStorage = key => {
 
 const isEmailValid = email => /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email)
 
+const stripHtml = str => str.replace(/[\u00A0-\u9999<>&]/gim, i => '&#' + i.charCodeAt(0) + ';')
+const stripObjHtml = obj => {
+  const temp = {}
+  for (let x in obj) {
+    if (typeof obj[x] === 'string') temp[x] = stripHtml(obj[x])
+    else temp[x] = obj[x]
+  }
+  return temp
+}
+
 export {
   debug,
   notificationTypes,
@@ -52,5 +63,7 @@ export {
   clearStorage,
   saveToStorage,
   loadFromStorage,
-  isEmailValid
+  isEmailValid,
+  stripHtml,
+  stripObjHtml
 }

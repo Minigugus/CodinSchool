@@ -46,11 +46,6 @@ import {
   getHttpMessage
 } from '../functions.js'
 
-const httpCodesList = {
-  200: { ok: true, message: 'Vous êtes connecté.' },
-  403: { ok: false, message: 'Adresse email ou mot de passe incorrect.' }
-}
-
 export default {
   name: 'Login',
   data () {
@@ -69,6 +64,7 @@ export default {
   methods: {
     ...Vuex.mapActions([
       'addNotification',
+      'closeAllNotifications',
       'setUserData'
     ]),
     setInputError (activateErr, ...id) {
@@ -122,6 +118,10 @@ export default {
       // Form ready to be sent
       this.buttonLoading = true
 
+      const httpCodesList = {
+        200: { ok: true, message: 'Vous êtes connecté.' },
+        403: { ok: false, message: 'Adresse email ou mot de passe incorrect.' }
+      }
       const api = API_ROUTES.login
       apiCall(api.path, api.method, {
         email: this.formData.email,
@@ -129,19 +129,23 @@ export default {
       })
         .then(res => {
           this.buttonLoading = false
-          if (!isHttpCodeGood(httpCodesList, res.status)) return Promise.reject(res)
-          debug(res)
+          if (!isHttpCodeGood(httpCodesList, res.status)) {
+            this.addFormErrorMessage(getHttpMessage(httpCodesList, res.status))
+            this.showFormErrorMessage(true)
+            this.setAllInputError(true)
+            return
+          }
+          this.closeAllNotifications()
           this.addNotification({ type: 'success', message: getHttpMessage(httpCodesList, res.status) })
           return res.json()
         })
-        .then(res => this.setUserData(res))
-        .catch(err => {
-          debug(err)
-          this.buttonLoading = false
-          this.addFormErrorMessage(getHttpMessage(httpCodesList, err.status))
-          this.showFormErrorMessage(true)
-          this.setAllInputError(true)
+        .then(res => {
+          if (res) {
+            debug(res)
+            this.setUserData(res)
+          }
         })
+        .catch(debug)
     }
   }
 }

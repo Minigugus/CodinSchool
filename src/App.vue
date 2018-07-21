@@ -9,6 +9,7 @@
         <router-link to="/login" class="item right">Connexion</router-link>
         <router-link to="/register" class="item">Inscription</router-link>
         <router-link to="/profile" class="item right">{{ `${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.` }}</router-link>
+        <a @click.prevent="disconnectUser" class="item">Se déconnecter</a>
       </div>
     </div>
 
@@ -79,7 +80,8 @@ export default {
       'addNotification',
       'setUserData',
       'closeNotification',
-      'closeAllNotifications'
+      'closeAllNotifications',
+      'disconnectUser'
     ])
   }
 }

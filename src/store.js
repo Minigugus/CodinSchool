@@ -1,26 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import actions from './actions.js'
 import mutations from './mutations.js'
 
 import {
-  loadFromStorage
+  debug,
+  apiCall,
+  loadFromStorage,
+  stripHtml,
+  stripObjHtml,
+  notificationTypes,
+  API_ROUTES
 } from './functions.js'
-
-const stripHtml = str => str.replace(/[\u00A0-\u9999<>&]/gim, i => '&#' + i.charCodeAt(0) + ';')
-const stripObjHtml = obj => {
-  const temp = {}
-  for (let x in obj) {
-    if (typeof obj[x] === 'string') temp[x] = stripHtml(obj[x])
-    else temp[x] = obj[x]
-  }
-  return temp
-}
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    // [ { id, type, icon, header, message } ]
     notifications: loadFromStorage('notifications') || [],
+    // { firstname, lastname, email, avatar, roles[str] }
     userData: loadFromStorage('userData') || {}
   },
   getters: {
@@ -28,14 +27,7 @@ export default new Vuex.Store({
     getNotificationsCount: state => state.notifications.length,
     getUserData: state => stripObjHtml(state.userData)
   },
+  actions,
   mutations,
-  actions: {
-    resetData: ({commit}) => commit('RESET_DATA'),
-    addNotification: ({commit}, notif) => commit('ADD_NOTIFICATION', notif),
-    closeNotification: ({commit}, id) => commit('CLOSE_NOTIFICATION', id),
-    closeAllNotifications: ({commit}) => commit('CLOSE_ALL_NOTIFICATIONS'),
-    setUserData: ({ commit }, data) => commit('SET_USER_DATA', data),
-    updateUserData: ({commit}, data) => commit('UPDATE_USER_DATA', data)
-  },
   strict: true
 })
