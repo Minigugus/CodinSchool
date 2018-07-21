@@ -20,11 +20,11 @@
             </div>
 
             <div v-else key="name-input">
-              <div class="ui action input mini">
-                <input id="firstname" type="text" placeholder="Prénom" v-model="editable.firstname.content">
+              <div id="firstname" class="ui input mini">
+                <input type="text" placeholder="Prénom" v-model="editable.firstname.content">
               </div>
-              <div class="ui action input mini">
-                <input id="lastname" type="text" placeholder="Nom" v-model="editable.lastname.content" style="margin-right: 0px">
+              <div id="lastname" class="ui action input mini">
+                <input type="text" placeholder="Nom" v-model="editable.lastname.content" style="margin-right: 0px">
               </div>
               <button class="ui icon button positive" @click="sendToStore('firstname', 'lastname')">
                 <i class="icon check"></i>
@@ -32,11 +32,48 @@
             </div>
           </transition>
 
-          <div class="meta">
-            <div>
-              <span>Adresse email : {{ getUserData.email }}</span>
-            </div>
-          </div>
+          <table class="ui celled striped table">
+            <tbody>
+              <tr>
+                <td><i class="folder icon"></i> Adresse email</td>
+                <td class="center aligned">
+                  <transition name="fade-right" mode="out-in">
+                    <div v-if="!editable.email.editVisible" key="email-content">{{ getUserData.email }}</div>
+
+                    <div v-else key="email-input" id="email" class="ui action input mini">
+                      <input type="text" placeholder="Nom" v-model="editable.email.content">
+                      <button class="ui icon button positive" @click="sendToStore('email')"><i class="icon check"></i></button>
+                    </div>
+                  </transition>
+                </td>
+                <td class="center aligned">
+                  <button class="ui icon button primary mini" @click="showEditInput(true, 'email')">
+                    Modifier <i class="icon edit"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><i class="key icon"></i> Mot de passe</td>
+                <td class="center aligned">
+                  <transition name="fade-right" mode="out-in">
+                    <div v-if="!editable.password.editVisible" key="password-content">••••••••</div>
+
+                    <div v-else key="password-input" id="password" class="ui action input mini">
+                      <input type="text" placeholder="Nom" v-model="editable.password.content">
+                      <button class="ui icon button positive" @click="sendToStore('password')"><i class="icon check"></i></button>
+                    </div>
+                  </transition>
+                </td>
+                <td class="center aligned">
+                  <button class="ui icon button primary mini" @click="showEditInput(true, 'password')">
+                    Modifier <i class="icon edit"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
           <div class="extra">Roles :
             <span v-for="(role, index) in getUserData.roles" :key="index">{{ role }}</span>
           </div>
@@ -80,20 +117,17 @@ export default {
   data () {
     return {
       editable: {
-        firstname: {
-          content: '',
-          editVisible: false
-        },
-        lastname: {
-          content: '',
-          editVisible: false
-        }
+        firstname: { content: '', editVisible: false },
+        lastname: { content: '', editVisible: false },
+        email: { content: '', editVisible: false },
+        password: { content: '', editVisible: false }
       }
     }
   },
   mounted () {
     this.editable.firstname.content = this.getUserData.firstname
     this.editable.lastname.content = this.getUserData.lastname
+    this.editable.email.content = this.getUserData.email
   },
   computed: {
     ...Vuex.mapGetters([
@@ -106,9 +140,14 @@ export default {
       'updateUserData'
     ]),
     setInputError (activateErr, ...id) {
-      id.forEach(input => activateErr
-        ? document.getElementById(input).parentElement.classList.add('error')
-        : document.getElementById(input).parentElement.classList.remove('error'))
+      console.log(id)
+      id.forEach(input => {
+        if (activateErr && document.getElementById(input) !== null) {
+          console.log(document.getElementById(input))
+          document.getElementById(input).classList.add('error')
+          document.getElementById(input).classList.remove('error')
+        }
+      })
     },
     setAllInputError (activateErr) { this.setInputError(activateErr, ...Object.keys(this.editable)) },
     showEditInput (boolShow, ...properties) { properties.forEach(property => { this.editable[property].editVisible = boolShow }) },
