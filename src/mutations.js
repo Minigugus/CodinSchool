@@ -43,10 +43,10 @@ const SET_USER_DATA = (state, data) => {
   debug(`Mutation : SET_USER_DATA=`, data)
   state.userData = data
 }
-// data = { property, content }
+
 const UPDATE_USER_DATA = (state, data) => {
+  data.forEach(x => { state.userData[x.property] = x.content })
   debug(`Mutation : UPDATE_USER_DATA=`, data)
-  state.userData[data.property] = data.content
 }
 
 const RESET_USER_DATA = state => {

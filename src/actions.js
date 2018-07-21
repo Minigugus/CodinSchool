@@ -33,11 +33,33 @@ const setUserData = function ({commit}, data) {
   saveToStorage('userData', this.state.userData)
 }
 
+// data = [ { property, content }  ]
 const updateUserData = function ({commit}, data) {
-  commit('UPDATE_USER_DATA', data)
-  saveToStorage('userData', this.state.userData)
-  commit('ADD_NOTIFICATION', { type: 'success', message: 'Les données ont bien été mises à jour.' })
-  saveToStorage('notifications', this.state.notifications)
+  const httpCodesList = {
+    200: { ok: true, message: 'Les données ont bien été mises à jour.' },
+    401: { ok: false, message: `Vous n'êtes pas connecté.` }
+  }
+  const httpArgs = {}
+  data.forEach(x => { httpArgs[x.property] = x.content })
+  const api = API_ROUTES.updateProfile
+  apiCall(api.path, api.method, httpArgs)
+    .then(res => {
+      if (isHttpCodeGood(httpCodesList, res.status)) {
+        commit('UPDATE_USER_DATA', data)
+        saveToStorage('userData', this.state.userData)
+        commit('ADD_NOTIFICATION', { type: 'success', message: getHttpMessage(httpCodesList, res.status) })
+        saveToStorage('notifications', this.state.notifications)
+      } else {
+        commit('ADD_NOTIFICATION', { type: 'error', message: getHttpMessage(httpCodesList, res.status) })
+        saveToStorage('notifications', this.state.notifications)
+      }
+      return res.json()
+    })
+    .then(debug)
+    .catch(err => {
+      debug(err)
+      commit('ADD_NOTIFICATION', { type: 'error', message: 'Erreur inconnue.' })
+    })
 }
 
 const disconnectUser = function ({commit}) {
