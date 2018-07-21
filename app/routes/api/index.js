@@ -25,18 +25,18 @@ router.use(session({
 	}
 }));
 
-if (!config.production) {
-	const debug = require('debug');
-	const log_network = debug('codinschool:network');
-	router.use((req, res, next) => {
-		const _end = res.end;
-		res.end = (...args) => {
-			log_network(`${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl} - ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`);
-			_end.apply(res, args);
-		};
-		next();
-	});
-}
+// if (!config.production) {
+// 	const debug = require('debug');
+// 	const log_network = debug('codinschool:network');
+// 	router.use((req, res, next) => {
+// 		const _end = res.end;
+// 		res.end = (...args) => {
+// 			log_network(`${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl} - ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`);
+// 			_end.apply(res, args);
+// 		};
+// 		next();
+// 	});
+// }
 
 // Désactivation du cache + Content Security Policy
 router.use((req, res, next) => {
@@ -56,6 +56,6 @@ router.use((req, res, next) => ('user_id' in req.session ? next() : send(res, 40
 // router.use('/users', users);
 
 router.use((req, res) => send(res, 404, { message: 'Route not found' }));
-router.use((err, req, res, next) => send(res, 500, { error: (production ? undefined : err) }))
+router.use((err, req, res, next) => send(res, 500, { error: (config.production ? undefined : err) }))
 
 module.exports = router;
