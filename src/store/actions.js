@@ -6,7 +6,7 @@ import {
   API_ROUTES,
   isHttpCodeGood,
   getHttpMessage
-} from './functions.js'
+} from '../assets/functions.js'
 
 const addNotification = function ({commit}, notif) {
   commit('ADD_NOTIFICATION', notif)
