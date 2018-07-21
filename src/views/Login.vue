@@ -44,7 +44,7 @@ import {
   isEmailValid,
   isHttpCodeGood,
   getHttpMessage
-} from '../functions.js'
+} from '../assets/functions.js'
 
 export default {
   name: 'Login',

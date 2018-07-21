@@ -8,7 +8,7 @@ import {
   loadFromStorage,
   // stripHtml,
   stripObjHtml
-} from './functions.js'
+} from '../assets/functions.js'
 
 Vue.use(Vuex)
 

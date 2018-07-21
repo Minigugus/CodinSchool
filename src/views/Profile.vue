@@ -1,9 +1,8 @@
 <template>
   <div class="ui raised very padded text container segment">
     <h2 class="ui center aligned header">
-      <i class="user icon" style="display: inline;position: absolute;margin-left: -44px;margin-top: 7px;"></i>
       <div class="content" style="display: inline-block;">
-        Mon profil
+        {{ `${getUserData.firstname} ${getUserData.lastname}` }}
       </div>
     </h2>
 
@@ -11,45 +10,29 @@
       <img class="ui circular image" :src="getUserData.avatar" style="display: inline;">
       <div class="item">
         <div class="content">
-          <transition name="fade-right" mode="out-in">
-            <div v-if="!editable.firstname.editVisible && !editable.lastname.editVisible" key="name-content">
-              <a class="profileHeader">{{ `${getUserData.firstname} ${getUserData.lastname}` }} </a>
-              <button class="circular ui icon button primary mini" @click="showEditInput(true, 'firstname', 'lastname')">
-                <i class="icon edit"></i>
-              </button>
-            </div>
-
-            <div v-else key="name-input">
-              <div id="firstname" class="ui input mini">
-                <input type="text" placeholder="Prénom" v-model="editable.firstname.content">
-              </div>
-              <div id="lastname" class="ui action input mini">
-                <input type="text" placeholder="Nom" v-model="editable.lastname.content" style="margin-right: 0px">
-              </div>
-              <button class="ui icon button positive" @click="sendToStore('firstname', 'lastname')">
-                <i class="icon check"></i>
-              </button>
-            </div>
-          </transition>
-
           <table class="ui celled striped table">
             <tbody>
-              <tr>
-                <td><i class="folder icon"></i> Adresse email</td>
+              <tr v-for="(data, index) in editable" :key="index">
+                <td><i class="icon" :class="data.icon"></i> {{data.title}}</td>
                 <td class="center aligned">
                   <transition name="fade-right" mode="out-in">
-                    <div v-if="!editable.email.editVisible" key="email-content">{{ getUserData.email }}</div>
+                    <div v-if="!data.editVisible" :key="index + '-content'">{{ getUserData[index] }}</div>
 
-                    <div v-else key="email-input" id="email" class="ui action input mini">
-                      <input type="text" placeholder="Nom" v-model="editable.email.content">
-                      <button class="ui icon button positive" @click="sendToStore('email')"><i class="icon check"></i></button>
+                    <div v-else :key="index + '-input'" :id="index" class="ui input mini editDataInput">
+                      <input type="text" :placeholder="data.title" class="text-center" v-model="data.content">
                     </div>
                   </transition>
                 </td>
                 <td class="center aligned">
-                  <button class="ui icon button primary mini" @click="showEditInput(true, 'email')">
+                  <transition name="fade" mode="out-in">
+                  <button v-if="!data.editVisible" :key="index + '-modify'" class="ui icon button primary mini" @click="showEditInput(true, index)">
                     Modifier <i class="icon edit"></i>
                   </button>
+
+                  <button v-else :key="index + '-validate'" class="ui icon button positive mini" @click="sendToStore(index)">
+                    Valider <i class="icon check"></i>
+                  </button>
+                  </transition>
                 </td>
               </tr>
 
@@ -57,18 +40,23 @@
                 <td><i class="key icon"></i> Mot de passe</td>
                 <td class="center aligned">
                   <transition name="fade-right" mode="out-in">
-                    <div v-if="!editable.password.editVisible" key="password-content">••••••••</div>
+                    <div v-if="!editableSpecial.password.editVisible" key="password-content">••••••••</div>
 
-                    <div v-else key="password-input" id="password" class="ui action input mini">
-                      <input type="text" placeholder="Nom" v-model="editable.password.content">
-                      <button class="ui icon button positive" @click="sendToStore('password')"><i class="icon check"></i></button>
+                    <div v-else key="password-input" id="password" class="ui input mini editDataInput">
+                      <input type="text" placeholder="Ancien mot de passe" v-model="editableSpecial.password.old">
                     </div>
                   </transition>
                 </td>
                 <td class="center aligned">
-                  <button class="ui icon button primary mini" @click="showEditInput(true, 'password')">
+                  <transition name="fade" mode="out-in">
+                  <button v-if="!editableSpecial.password.editVisible" key="password-modify" class="ui icon button primary mini" @click="editableSpecial.password.editVisible = true">
                     Modifier <i class="icon edit"></i>
                   </button>
+
+                  <button v-else key="password-validate" class="ui icon button positive mini" @click="sendToStore('password')">
+                    Valider <i class="icon check"></i>
+                  </button>
+                  </transition>
                 </td>
               </tr>
             </tbody>
@@ -84,6 +72,9 @@
 </template>
 
 <style scoped>
+  .editDataInput {
+    height: 28px;
+  }
   .profileHeader {
     font-weight:700;
     font-size:1.2em;
@@ -110,17 +101,41 @@
 
 <script>
 import Vuex from 'vuex'
-// import { isEmailValid } from '../functions.js'
+// import { isEmailValid } from '../assets/functions.js'
 
 export default {
   name: 'Profile',
   data () {
     return {
       editable: {
-        firstname: { content: '', editVisible: false },
-        lastname: { content: '', editVisible: false },
-        email: { content: '', editVisible: false },
-        password: { content: '', editVisible: false }
+        lastname: {
+          title: 'Nom',
+          icon: 'user',
+          content: '',
+          editVisible: false
+        },
+        firstname: {
+          title: 'Prénom',
+          icon: 'user',
+          content: '',
+          editVisible: false
+        },
+        email: {
+          title: 'Adresse email',
+          icon: 'envelope',
+          content: '',
+          editVisible: false
+        }
+      },
+      editableSpecial: {
+        password: {
+          title: 'Mot de passe',
+          icon: 'key',
+          old: '',
+          new: '',
+          confirm: '',
+          editVisible: false
+        }
       }
     }
   },
@@ -143,7 +158,6 @@ export default {
       console.log(id)
       id.forEach(input => {
         if (activateErr && document.getElementById(input) !== null) {
-          console.log(document.getElementById(input))
           document.getElementById(input).classList.add('error')
           document.getElementById(input).classList.remove('error')
         }
@@ -152,13 +166,11 @@ export default {
     setAllInputError (activateErr) { this.setInputError(activateErr, ...Object.keys(this.editable)) },
     showEditInput (boolShow, ...properties) { properties.forEach(property => { this.editable[property].editVisible = boolShow }) },
     sendToStore (...properties) {
-      /*
-      if (property === 'email' && !isEmailValid(this.editable[property].content)) {
-        this.addNotification({ type: 'error', message: `L'adresse email renseignée est invalide.` })
-        setInputError(true, 'editEmail')
-        return
-      }
-      */
+      // if (property === 'email' && !isEmailValid(this.editable[property].content)) {
+      //   this.addNotification({ type: 'error', message: `L'adresse email renseignée est invalide.` })
+      //   setInputError(true, 'editEmail')
+      //   return
+      // }
       this.setAllInputError(false)
       this.showEditInput(false, ...properties)
       const data = properties.map(property => ({ property, content: this.editable[property].content }))

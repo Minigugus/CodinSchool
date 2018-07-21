@@ -1,7 +1,7 @@
 import {
   notificationTypes,
   debug
-} from './functions.js'
+} from '../assets/functions.js'
 
 const RESET_ALL_DATA = state => {
   debug(`Mutation : RESET_DATA`)
