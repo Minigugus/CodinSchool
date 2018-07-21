@@ -4,6 +4,7 @@ import actions from './actions.js'
 import mutations from './mutations.js'
 
 import {
+  // debug,
   loadFromStorage,
   // stripHtml,
   stripObjHtml
@@ -21,7 +22,8 @@ export default new Vuex.Store({
   getters: {
     getNotifications: state => state.notifications,
     getNotificationsCount: state => state.notifications.length,
-    getUserData: state => stripObjHtml(state.userData)
+    getUserData: state => stripObjHtml(state.userData),
+    isUserLoggedIn: state => Object.keys(state.userData).length > 0
   },
   actions,
   mutations,

@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-    <div class="ui inverted menu main-menu">
-      <div class="ui container">
-        <router-link to="/" class="header item prevent-active">
-          <img class="logo" src="/static/img/favicon.png"> Codinschool
-        </router-link>
-        <router-link to="/" class="item">Accueil</router-link>
-        <router-link to="/login" class="item right">Connexion</router-link>
-        <router-link to="/register" class="item">Inscription</router-link>
-        <router-link to="/profile" class="item right">{{ `${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.` }}</router-link>
-        <a @click.prevent="disconnectUser" class="item">Se déconnecter</a>
-      </div>
+    <div class="ui inverted stackable menu main-menu center aligned">
+      <router-link to="/" class="header item prevent-active">
+        <img class="logo" src="/static/img/favicon.png"> Codinschool
+      </router-link>
+      <router-link to="/" class="item">Accueil</router-link>
+
+      <transition name="fade" mode="out-in">
+        <div v-if="!isUserLoggedIn" key="inviteMenu" class="right menu">
+          <router-link to="/login" class="item">Connexion</router-link>
+          <router-link to="/register" class="item">Inscription</router-link>
+        </div>
+        <div v-else key="profileMenu" class="right menu">
+          <router-link to="/profile" class="item">{{ `${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.` }}</router-link>
+          <a @click.prevent="disconnectUser" class="item">Se déconnecter</a>
+        </div>
+      </transition>
     </div>
 
     <div class="ui container">
@@ -69,6 +74,7 @@ window.addEventListener('storage', e => {
 export default {
   computed: {
     ...Vuex.mapGetters([
+      'isUserLoggedIn',
       'getUserData',
       'getNotifications',
       'getNotificationsCount'
@@ -116,8 +122,6 @@ export default {
   .fade-leave-to {
     opacity: 0 !important;
   }
-
-  /* END Notification container animation*/
 
   /* START Notification container animation*/
 
