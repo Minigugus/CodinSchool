@@ -4,13 +4,9 @@ import actions from './actions.js'
 import mutations from './mutations.js'
 
 import {
-  debug,
-  apiCall,
   loadFromStorage,
-  stripHtml,
-  stripObjHtml,
-  notificationTypes,
-  API_ROUTES
+  // stripHtml,
+  stripObjHtml
 } from './functions.js'
 
 Vue.use(Vuex)

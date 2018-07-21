@@ -8,7 +8,8 @@ const API_PREFIX = `${productionMode ? '/api' : 'http://localhost:3000/api'}`
 const API_ROUTES = {
   register: { path: '/register', method: 'POST' },
   login: { path: '/login', method: 'POST' },
-  logout: { path: '/logout', method: 'POST' }
+  logout: { path: '/logout', method: 'POST' },
+  updateProfile: { path: '/users/@me', method: 'PATCH' }
 }
 const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
   return new Promise((resolve, reject) => {
