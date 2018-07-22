@@ -1,15 +1,21 @@
+import { getTranslation } from './translations'
+
 const productionMode = process.env.NODE_ENV === 'production'
 const debug = (...el) => (!productionMode && console.log(...el))
 
-const isHttpCodeGood = (httpCodesList, httpCode) => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode].ok)
-const getHttpMessage = (httpCodesList, httpCode) => httpCodesList.hasOwnProperty(httpCode) ? httpCodesList[httpCode].message : ''
+const httpCodesList = {
+  200: true,
+  401: false
+}
+const isHttpCodeGood = httpCode => (httpCodesList.hasOwnProperty(httpCode) && httpCodesList[httpCode])
 
 const API_PREFIX = `${productionMode ? '/api' : 'http://localhost:3000/api'}`
 const API_ROUTES = {
   register: { path: '/register', method: 'POST' },
   login: { path: '/login', method: 'POST' },
   logout: { path: '/logout', method: 'POST' },
-  updateProfile: { path: '/users/@me', method: 'PATCH' }
+  updateProfile: { path: '/users/@me', method: 'PATCH' },
+  updatePassword: { path: '/users/@me/password', method: 'PATCH' }
 }
 const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
   return new Promise((resolve, reject) => {
@@ -20,7 +26,11 @@ const apiCall = (apiCallUrl, fetchMethod, fetchArgsObj, fetchHeadersObj) => {
     }
     options.headers['Content-Type'] = 'application/json'
     fetch(API_PREFIX + apiCallUrl, options)
-      .then(res => resolve(res)) // Request sent successfully, check if it worked
+      .then(async res => {
+        const body = await res.json()
+        const message = body.hasOwnProperty('msg') ? getTranslation('fr', body.msg) : getTranslation('fr', '')
+        return resolve({ success: isHttpCodeGood(res.status), body, message, httpCode: res.status })
+      })
       .catch(err => reject(err))
   })
 }
@@ -58,7 +68,6 @@ export {
   debug,
   notificationTypes,
   isHttpCodeGood,
-  getHttpMessage,
   API_ROUTES,
   apiCall,
   clearStorage,
