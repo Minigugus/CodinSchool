@@ -15,5 +15,6 @@ const sequelize = new Sequelize({
 	logging: null
 });
 
-module.exports = sequelize
-module.exports.User = sequelize.import('./models/User.js');
+module.exports = sequelize.import('./models');
+module.exports.sequelize = sequelize;
+module.exports.sync = sequelize.sync.bind(sequelize);
