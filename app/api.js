@@ -4,21 +4,6 @@ const routing = require('./routing');
 
 const { checkSchema, validationResult } = require('express-validator/check');
 
-const db = require('./db');
-
-const send = (res, code, { message, ...body }) => body ? res.status(code, message).json(body) : res.status(code, message).end();
-
-const ok = (res, body) => send(res, body ? 200 : 204, body);
-
-const _reply = (res, { _code, _message, ...body }) => {
-	const bodyEmpty = !body || !Object.keys(body).length;
-	res.status(_code || (bodyEmpty ? 204 : 200), _message);
-	if (bodyEmpty)
-		res.end();
-	else
-		res.json(body);
-};
-
 class APIError {
 	constructor(code, message, body) {
 		this.statusCode = code;
@@ -26,84 +11,6 @@ class APIError {
 		this.body = body;
 	}
 }
-
-const api = config => {
-	(config instanceof Function) && (config = { callback: config });
-	const defaultResponse = (config.success ? (typeof config.success === 'number' ? { _code: config.success } : config.success) : {});
-	const callback = (req, res, next) =>
-		Promise.resolve(config.callback(req, res, next))
-			.then(x => _reply(res, Object.assign(x.toJSON instanceof Function ? x.toJSON() : x, defaultResponse)))
-			.catch(err => ((err instanceof APIError) ?
-				_reply(res, { _code: err.statusCode, _message: err.statusMessage, ...err.body }) :
-				next(err)));
-	const arr = [];
-	if (!config.guest)
-		arr.push((req, res, next) => (('user_id' in req.session) ? next() : _reply(res, { _code: 401, _message: 'Unauthorized' })));
-	if (config.admin)
-		arr.push((req, res, next) => (req.session.admin ? next() : _reply(res, { _code: 403 })));
-	if (config.per_page_max > 0)
-		config.validation = Object.assign(config.validation || {}, {
-			page: {
-				in: [ 'query' ],
-				errorMessage: 'Invalid page number',
-				optional: true,
-				isInt: true,
-				toInt: true,
-				custom: {
-					errorMessage: 'page must be a positive not null integer.',
-					options: value => (value > 0)
-				}
-			},
-			per_page: {
-				in: [ 'query' ],
-				errorMessage: 'Invalid per_page number',
-				optional: true,
-				isInt: true,
-				toInt: true,
-				custom: {
-					errorMessage: `per_page must be in range 0 - ${config.per_page_max}`,
-					options: value => (value > 0 && value <= config.per_page_max)
-				}
-			}
-		});
-	if (config.validation)
-	{
-		arr.push(checkSchema(config.validation));
-		arr.push((req, res, next) => {
-			const errors = validationResult(req);
-			if (errors.isEmpty())
-			{
-				if (config.per_page_max > 0)
-				{
-					req.locals.limit = req.query.per_page;
-					req.locals.offset = (req.query.page - 1) * req.locals.limit;
-				}
-				next();
-			}
-			else
-				_reply(res, { _code: 400, _message: 'Bad Request', errors: errors.array() });
-		});
-	}
-	if (config.callback)
-	{
-		if (config.format)
-			arr.push((req, res, next) => {
-				const format = {};
-				for (let key of config.format)
-					if (key === 'default')
-						format[key] = () => next();
-					else
-						format[key] = () => callback(req, res, next);
-				if (!format.default)
-					format.default = () => _reply(res, { _code: 406, _message: 'Format not supported' });
-				res.format(format);
-			});
-		else
-			arr.push(callback);
-	}
-	// console.log(arr, config);
-	return arr;
-};
 
 const reply = (res, ...args) => {
 	let code, message, body;
@@ -162,18 +69,23 @@ const apiWrapper = (code, message, cb) => (req, res, next) =>
 
 // --- //
 
+const modifiers = [];
+
+// --- //
+
 const levels = {
 	'guest': () => true,
 	'user': req => ('user_id' in req.session),
 	'admin': req => req.session.admin,
 	'logged': req => ('user_id' in req.session)
-	// 'user': req => (('user_id' in req.session) ? next() : _reply(res, { _code: 401, _message: 'Unauthorized' }))
 };
 
 const levelMiddleware = (level = 'user') => (req, res, next) =>
 	Promise.resolve(levels[level] ? levels[level](req) : true)
 		.then(x => (x ? next() : reply(res, 401, 'Unauthorized')))
 		.catch(err => next(err));
+
+modifiers.push(config => ((!config.level || levels[config.level]) && levelMiddleware(config.level)));
 
 // --- //
 
@@ -188,11 +100,38 @@ const levelValidationMiddleware = (level = 'user') => (req, res, next) =>
 
 // --- //
 
-const pageMiddleware = per_page => (req, res, next) => {
-	req.locals.limit = (req.query.per_page || per_page);
-	req.locals.offset = (req.query.per_page || per_page) * ((req.query.page || 1) - 1);
+const pagination = config => (config.validation = Object.assign(config.validation || {}, {
+	page: {
+		in: [ 'query' ],
+		errorMessage: 'Invalid page number',
+		optional: true,
+		isInt: true,
+		toInt: true,
+		custom: {
+			errorMessage: 'page must be a positive not null integer.',
+			options: value => (value > 0)
+		}
+	},
+	per_page: {
+		in: [ 'query' ],
+		errorMessage: 'Invalid per_page number',
+		optional: true,
+		isInt: true,
+		toInt: true,
+		custom: {
+			errorMessage: `per_page must be in range 0 - ${config.pagination.max}`,
+			options: value => (value > 0 && value <= config.pagination.max)
+		}
+	}
+}));
+
+const paginationMiddleware = pagination => (req, res, next) => {
+	req.locals.limit = (req.query.per_page || (pagination.default || pagination.max));
+	req.locals.offset = (req.query.per_page || (pagination.default || pagination.max)) * ((req.query.page || 1) - 1);
 	next();
 };
+
+modifiers.push(config => ((config.pagination > 0) && pagination(config)));
 
 // --- //
 
@@ -206,6 +145,11 @@ const validationMiddleware = schema => [
 			reply(res, 400, { errors: errors.array() });
 	}
 ];
+
+modifiers.push(config => ((config.validation) && validationMiddleware(config.validation)));
+
+modifiers.push(config => ((levelsValidation[config.level]) && levelValidationMiddleware(config.level)));
+modifiers.push(config => (config.pagination > 0) && paginationMiddleware(config.pagination));
 
 // --- //
 
@@ -221,61 +165,22 @@ const formatMiddleware = (format, callback) => (req, res, next) => {
 	res.format(_format);
 };
 
+modifiers.push(config => (config.format ?
+	formatMiddleware(config.format, apiWrapper(config.code, config.message, config.action)) :
+	apiWrapper(config.code, config.message, config.action)
+));
+
 // --- //
 
 const apiRouting = config => {
 	(config instanceof Function) && (config = { action: config });
-	if (!config.action)
-		return [];
-	(config.require && !Array.isArray(config.require)) && (config.require = [ config.require ]);
-	(config.handlers && !Array.isArray(config.handlers)) && (config.handlers = [ config.handlers ]);
-	const arr = [
-		...(config.require ? (Array.isArray(config.require) ? config.require : [ ...config.require ]) : []),
-		...(config.handlers ? (Array.isArray(config.handlers) ? config.handlers : [ ...config.handlers ]) : [])
+	return [
+		...(config.require ? (Array.isArray(config.require) ? config.require : [ config.require ]) : []),
+		...(modifiers.map(x => x(config)).filter(x => (x instanceof Function)))
 	];
-	arr.push(levelMiddleware(config.level));
-	if (config.per_page_max > 0)
-		config.validation = Object.assign(config.validation || {}, {
-			page: {
-				in: [ 'query' ],
-				errorMessage: 'Invalid page number',
-				optional: true,
-				isInt: true,
-				toInt: true,
-				custom: {
-					errorMessage: 'page must be a positive not null integer.',
-					options: value => (value > 0)
-				}
-			},
-			per_page: {
-				in: [ 'query' ],
-				errorMessage: 'Invalid per_page number',
-				optional: true,
-				isInt: true,
-				toInt: true,
-				custom: {
-					errorMessage: `per_page must be in range 0 - ${config.per_page_max}`,
-					options: value => (value > 0 && value <= config.per_page_max)
-				}
-			}
-		});
-	if (config.validation)
-		arr.push(validationMiddleware(config.validation));
-	arr.push(levelValidationMiddleware(config.level));
-	if (config.per_page_max > 0)
-		arr.push(pageMiddleware(config.per_page || config.per_page_max));
-	if (config.action)
-		if (config.format)
-			arr.push(formatMiddleware(config.format, apiWrapper(config.code, config.message, config.action)));
-		else
-			arr.push(apiWrapper(config.code, config.message, config.action));
-	// console.log(arr, config);
-	return arr;
 };
 
 module.exports = {
-	send,
-	ok,
 	APIError,
 	api: routing(apiRouting),
 	apiRouting,

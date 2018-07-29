@@ -11,6 +11,29 @@ const db = require('../../db');
 
 const router = express.Router();
 
+const morgan = (() => {
+	const debug = require('debug');
+	try
+	{
+		const morgan = require('morgan');
+		switch (config.log_requests)
+		{
+			case false:
+				return;
+			case true:
+				return morgan(config.production ? 'combined' : 'dev');
+			default:
+				return morgan(config.log_requests);
+		}
+	}
+	catch (err)
+	{
+		return null;
+	}
+})();
+
+if (morgan) router.use(morgan);
+
 router.use(cors({ origin: '*' }));
 router.use(session({
 	store: new SequelizeStore({
@@ -25,20 +48,7 @@ router.use(session({
 	}
 }));
 
-if (!config.production) {
-	const debug = require('debug');
-	const log_network = debug('codinschool:api:request');
-	router.use((req, res, next) => {
-		const _end = res.end;
-		res.end = (...args) => {
-			log_network(`${req.socket.remoteAddress}:${req.socket.remotePort} - ${req.method} ${req.originalUrl} - ${res.statusCode}${res.statusMessage ? ` ${res.statusMessage}` : ''}`);
-			_end.apply(res, args);
-		};
-		next();
-	});
-}
-
-// Désactivation du cache + Content Security Policy
+// Disable cache + Content Security Policy
 router.use((req, res, next) => {
 	res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
 	res.header('Expires', '-1');
@@ -47,14 +57,6 @@ router.use((req, res, next) => {
 	next();
 });
 
-// router.use('/register', require('./register'));
-// router.use('/login', require('./login'));
-// router.use('/logout', require('./logout'));
-
-// router.use((req, res, next) => ('user_id' in req.session ? next() : send(res, 401, { message: 'You must be authentificated to use this route' })));
-
-// router.use('/users', require('./users'));
-
 router.use(api({
 	"/login": require('./login'),
 	"/logout": require('./logout'),
@@ -62,7 +64,7 @@ router.use(api({
 	"/users": require('./users')
 }));
 
-router.use((req, res) => reply(res, { _code: 404, _message: 'Route not found' }));
+router.use((req, res) => reply(res, 404, 'Route not found'));
 router.use((err, req, res, next) => (!res.headersSent && reply(res, 500, { error: (config.production ? undefined : err.toString()), stack: (config.production ? undefined : err.stack) }), next(err)));
 
 if (!config.production) {
@@ -72,15 +74,3 @@ if (!config.production) {
 }
 
 module.exports = router;
-
-/*
-
-TODO !
-
-module.exports = {
-	"/login": require('./login'),
-	"/register": require('./register'),
-	"/users": require('./users')
-};
-
-*/
