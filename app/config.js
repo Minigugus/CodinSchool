@@ -1,11 +1,16 @@
 'use strict';
 
 const production = (process.env.NODE_ENV === 'production');
+const isNowShHosted = !!process.env.NOW_URL;
 
 module.exports = {
 	production: production,
 
-	origin: process.env.ORIGIN || (production ? '*' : 'localhost'),
+	log_requests: (process.env.LOG_REQUESTS === 'false' ? false : (process.env.LOG_REQUESTS ? process.env.LOG_REQUESTS : true)),
+	serve_static: !(process.env.SERVE_STATIC === 'false' || false),
+
+	root_url: process.env.ROOT_URL || (isNowShHosted ? process.env.NOW_URL : null),
+	origin: process.env.ORIGIN || (isNowShHosted ? process.env.NOW_URL.slice(8) : '*'),
 
 	port: process.env.PORT || (production ? 80 : 3000),
 	root: process.env.ROOT || '/',
@@ -24,8 +29,8 @@ module.exports = {
 	db_user: process.env.DB_USER,
 	db_password: process.env.DB_PASS,
 
-	evaluation: {
-		queue_refresh_time: process.env.EVAL_QUEUE_REFRESH_TIME || 2000,
-		tmp_dir: process.env.EVAL_TMP_DIR || process.env.TMP
-	}
+	// evaluation: {
+	// 	queue_refresh_time: process.env.EVAL_QUEUE_REFRESH_TIME || 2000,
+	// 	tmp_dir: process.env.EVAL_TMP_DIR || process.env.TMP
+	// }
 };

@@ -17,7 +17,7 @@ db
 	if (err)
 		console.error(`Server listen failed : ${err}`);
 	else
-		console.info(`Server listening port ${config.port}. http://localhost:${config.port}${config.root}`);
+		console.info(`Server listening port ${config.port}. ${config.root_url || `http://localhost:${config.port}`}${config.root}`);
 }));
 
 module.exports = app;
