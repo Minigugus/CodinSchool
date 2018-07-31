@@ -13,18 +13,16 @@ const Preference = User.scope('preferences');
 
 module.exports = {
 	level: 'guest',
-	GET: {
-		action: async ({ req, ok, fail }) => {
-			if ('user_id' in req.session)
-			{
-				const user = await LoggedUser.findOne({
-					where: { id: req.session.user_id }
-				});
-				if (user) return ok(user);
-				await new Promise(res => req.session.destroy(err => res()));
-			}
-			fail(401, 'Not logged on');
+	GET: async ({ req, ok, fail }) => {
+		if ('user_id' in req.session)
+		{
+			const user = await LoggedUser.findOne({
+				where: { id: req.session.user_id }
+			});
+			if (user) return ok(user);
+			await new Promise(res => req.session.destroy(err => res()));
 		}
+		fail(401, 'Not logged on');
 	},
 	POST: {
 		validation: {

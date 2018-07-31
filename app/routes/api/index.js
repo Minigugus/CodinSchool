@@ -58,6 +58,16 @@ router.use((req, res, next) => {
 });
 
 router.use(api({
+	rateLimit: {
+		windowMs: 15 * 60 * 1000,
+		headers: true,
+		handler: function(req, res) {
+			if (this.headers)
+				res.setHeader('Retry-After', Math.ceil(options.windowMs / 1000));
+			res.status(this.statusCode).end();
+		}
+	},
+
 	"/login": require('./login'),
 	"/logout": require('./logout'),
 	"/register": require('./register'),

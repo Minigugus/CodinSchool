@@ -1,5 +1,8 @@
 'use strict';
 
+const RateLimit = require('express-rate-limit');
+
+const serverConfig = require('./config');
 const routing = require('./routing');
 
 const { checkSchema, validationResult } = require('express-validator/check');
@@ -70,6 +73,12 @@ const apiWrapper = (code, message, cb) => (req, res, next) =>
 // --- //
 
 const modifiers = [];
+
+// --- //
+
+const rateLimitMiddleware = config => (config.handler && config.handler = config.handler.bind(config), new RateLimit(config));
+
+modifiers.push(config => (serverConfig.use_rate_limiter && config.rateLimit && rateLimitMiddleware(config.rateLimit)));
 
 // --- //
 

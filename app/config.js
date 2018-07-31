@@ -15,6 +15,8 @@ module.exports = {
 	port: process.env.PORT || (production ? 80 : 3000),
 	root: process.env.ROOT || '/',
 
+	use_rate_limiter: (process.env.USE_RATE_LIMITER === 'true') || production;
+
 	bcrypt_rounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 10, // Don't change this if users are already registered !
 
 	session_cookie_secure: ('SESSION_COOKIE_SECURE' in process.env ? process.env.SESSION_COOKIE_SECURE : production),
