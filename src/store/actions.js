@@ -32,6 +32,30 @@ const closeAllNotifications = function ({commit}) {
   saveToStorage('notifications', this.state.notifications)
 }
 
+const loginUser = function ({ commit }, data) {
+  return new Promise((resolve, reject) => {
+    const httpArgs = {}
+    data.forEach(x => { httpArgs[x.property] = x.content })
+    const api = API_ROUTES.login
+    apiCall(api.path, api.method, httpArgs)
+      .then(res => {
+        debug(res)
+        if (res.success) {
+          commit('SET_USER_DATA', data)
+          saveToStorage('userData', this.state.userData)
+        }
+        commit('ADD_NOTIFICATION', { type: res.success ? 'success' : 'error', message: res.message })
+        saveToStorage('notifications', this.state.notifications)
+        resolve(res.success)
+      })
+      .catch(err => {
+        debug(err)
+        commit('ADD_NOTIFICATION', { type: 'error', message: getUnknownMessage('fr') })
+        reject(err)
+      })
+  })
+}
+
 const setUserData = function ({commit}, data) {
   commit('SET_USER_DATA', data)
   saveToStorage('userData', this.state.userData)
@@ -105,5 +129,6 @@ export default {
   setUserData,
   updateUserData,
   updateUserPassword,
-  disconnectUser
+  disconnectUser,
+  loginUser
 }
