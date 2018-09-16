@@ -1,66 +1,197 @@
 'use strict';
 
-const log_error = require('debug')('codinschool:api:error');
+const RateLimit = require('express-rate-limit');
 
-const bodyParser = require('body-parser');
+const serverConfig = require('./config');
+const routing = require('./routing');
 
-const config = require('./config.js');
-const session = require('./session.js');
+const { checkSchema, validationResult } = require('express-validator/check');
 
-const api_errors = {
-//  CODE_ERREUR: [ CODE_HTTP, MESSAGE ]
-	  0: [ 200, undefined ],
-
-	  1: [ 400, 'Bad request' ],
-	  2: [ 404, 'Not found' ],
-
-	 10: [ 401, 'You must be authentificated to use this operation' ],
-	 11: [ 403, 'Invalid username or password' ],
-	 12: [ 403, 'Wrong old password' ],
-	 13: [ 403, 'Access denied' ],
-	 14: [ 403, 'Username already registered' ],
-
-	 20: [ 404, 'Exercice not found' ],
-
-	255: [ 505, 'Internal server error' ]
-}, api_codes = Object.keys(api_errors);
-
-const reply = (res, code, data) => {
-	code = `${code}`;
-	if (api_codes.indexOf(code) === -1)
-		error(res, `Unregistered API code`, new Error(`Code ${code} not found.`));
-	else
-	{
-		const message = api_errors[code];
-		res.status(message[0]).json({ code: code, message: message[1], data: data });
+class APIError {
+	constructor(code, message, body) {
+		this.statusCode = code;
+		this.statusMessage = message;
+		this.body = body;
 	}
-};
-const error = (res, msg, err) => {
-	log_error(`${msg} : ${err}`);
-	reply(res, 255, config.production ? undefined : ({ message: msg, error: err }));
+}
+
+const reply = (res, ...args) => {
+	let code, message, body;
+	switch (args.length)
+	{
+		case 0:
+			code = 204;
+			break;
+		case 1:
+			if (typeof args[0] === 'number')
+				code = args[0];
+			else
+				body = args[0];
+			break;
+		case 2:
+			if (typeof args[0] === 'number')
+			{
+				code = args[0];
+				if (typeof args[1] === 'string')
+					message = args[1];
+				else
+					body = args[1];
+			}
+			else if (typeof args[0] === 'string')
+			{
+				message = args[0];
+				body = args[1];
+			}
+			else
+				body = args[1];
+			break;
+		default:
+			code = args[0];
+			message = args[1];
+			body = args[2];
+			break;
+	}
+	res.status(code || ((!body || !Object.keys(body).length) ? 204 : 200), message);
+	body ? res.json(body) : res.end();
 };
 
-const check = (req, res, next) => {
-	if (!session.isValid(req))
-		reply(res, 10);
-	else
-		next();
+// --- //
+
+const apiWrapper = (code, message, cb) => (req, res, next) =>
+	Promise.resolve(cb({
+			req,
+			res,
+			next,
+			ok: reply.bind(null, res, code, message),
+			fail: reply.bind(null, res)
+		}))
+		.then(x => (!res.headersSent && reply(res, code, message, ((x && x.toJSON instanceof Function) ? x.toJSON() : x))))
+		.catch(err => ((!res.headersSent && err instanceof APIError) ?
+			reply(res, err.statusCode, err.statusMessage, err.body) :
+			next(err)));
+
+// --- //
+
+const modifiers = [];
+
+// --- //
+
+const rateLimitMiddleware = config => (config.handler && config.handler = config.handler.bind(config), new RateLimit(config));
+
+modifiers.push(config => (serverConfig.use_rate_limiter && config.rateLimit && rateLimitMiddleware(config.rateLimit)));
+
+// --- //
+
+const levels = {
+	'guest': () => true,
+	'user': req => ('user_id' in req.session),
+	'admin': req => req.session.admin,
+	'logged': req => ('user_id' in req.session)
 };
-const validate = (parent, ...fields) => (req, res, next) => {
-	if (!req[parent] || !fields.every(x => !!req[parent][x]))
-		reply(res, 1);
-	else
-		next();
+
+const levelMiddleware = (level = 'user') => (req, res, next) =>
+	Promise.resolve(levels[level] ? levels[level](req) : true)
+		.then(x => (x ? next() : reply(res, 401, 'Unauthorized')))
+		.catch(err => next(err));
+
+modifiers.push(config => ((!config.level || levels[config.level]) && levelMiddleware(config.level)));
+
+// --- //
+
+const levelsValidation = {
+	'logged': req => req.session.user_id === req.params.id
+};
+
+const levelValidationMiddleware = (level = 'user') => (req, res, next) =>
+	Promise.resolve(levelsValidation[level] ? levelsValidation[level](req) : true)
+		.then(x => (x ? next() : reply(res, 401, 'Unauthorized')))
+		.catch(err => next(err));
+
+// --- //
+
+const pagination = config => (config.validation = Object.assign(config.validation || {}, {
+	page: {
+		in: [ 'query' ],
+		errorMessage: 'Invalid page number',
+		optional: true,
+		isInt: true,
+		toInt: true,
+		custom: {
+			errorMessage: 'page must be a positive not null integer.',
+			options: value => (value > 0)
+		}
+	},
+	per_page: {
+		in: [ 'query' ],
+		errorMessage: 'Invalid per_page number',
+		optional: true,
+		isInt: true,
+		toInt: true,
+		custom: {
+			errorMessage: `per_page must be in range 0 - ${config.pagination.max}`,
+			options: value => (value > 0 && value <= config.pagination.max)
+		}
+	}
+}));
+
+const paginationMiddleware = pagination => (req, res, next) => {
+	req.locals.limit = (req.query.per_page || (pagination.default || pagination.max));
+	req.locals.offset = (req.query.per_page || (pagination.default || pagination.max)) * ((req.query.page || 1) - 1);
+	next();
+};
+
+modifiers.push(config => ((config.pagination > 0) && pagination(config)));
+
+// --- //
+
+const validationMiddleware = schema => [
+	checkSchema(schema),
+	(req, res, next) => {
+		const errors = validationResult(req);
+		if (errors.isEmpty())
+			next();
+		else
+			reply(res, 400, { errors: errors.array() });
+	}
+];
+
+modifiers.push(config => ((config.validation) && validationMiddleware(config.validation)));
+
+modifiers.push(config => ((levelsValidation[config.level]) && levelValidationMiddleware(config.level)));
+modifiers.push(config => (config.pagination > 0) && paginationMiddleware(config.pagination));
+
+// --- //
+
+const formatMiddleware = (format, callback) => (req, res, next) => {
+	const _format = {};
+	for (let key of format)
+		if (key === 'default')
+			_format[key] = () => next();
+		else
+			_format[key] = () => callback(req, res, next);
+	if (!_format.default)
+		_format.default = () => reply(res, 406, 'Format not supported');
+	res.format(_format);
+};
+
+modifiers.push(config => (config.format ?
+	formatMiddleware(config.format, apiWrapper(config.code, config.message, config.action)) :
+	apiWrapper(config.code, config.message, config.action)
+));
+
+// --- //
+
+const apiRouting = config => {
+	(config instanceof Function) && (config = { action: config });
+	return [
+		...(config.require ? (Array.isArray(config.require) ? config.require : [ config.require ]) : []),
+		...(modifiers.map(x => x(config)).filter(x => (x instanceof Function)))
+	];
 };
 
 module.exports = {
-	reply: reply,
-	error: error,
-	check: check,
-	validate: validate,
-
-	parsers: {
-		json: bodyParser.json(),
-		url: bodyParser.urlencoded({ extended: false })
-	}
+	APIError,
+	api: routing(apiRouting),
+	apiRouting,
+	reply,
 };

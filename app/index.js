@@ -1,27 +1,23 @@
 'use strict';
 
-const log_info = require('debug')('codinschool:info');
-const log_error = require('debug')('codinschool:error');
+const express = require('express');
 
-const path = require("path");
-const express = require("express");
-const compression = require("compression");
-
-const config = require('./config.js');
-const session = require('./session.js');
-const routes = require('./routes');
+const db = require('./db');
+const config = require('./config');
 
 const app = express();
 
 app.set('trust proxy', 1);
 
-app.use(compression());
+app.use(config.root, require('./routes'));
 
-app.use(config.root, routes);
-
-app.listen(config.port, (err) => {
+db
+.sync()
+.then(() => app.listen(config.port, (err) => {
 	if (err)
-		log_error(`Server listen failed : ${err}`);
+		console.error(`Server listen failed : ${err}`);
 	else
-		log_info(`Server listening port ${config.port}. http://localhost:${config.port}${config.root}`);
-});
+		console.info(`Server listening port ${config.port}. ${config.root_url || `http://localhost:${config.port}`}${config.root}`);
+}));
+
+module.exports = app;
