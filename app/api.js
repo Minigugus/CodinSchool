@@ -76,7 +76,11 @@ const modifiers = [];
 
 // --- //
 
-const rateLimitMiddleware = config => (config.handler && config.handler = config.handler.bind(config), new RateLimit(config));
+const rateLimitMiddleware = config => {
+	if (config.handler)
+		config.handler = config.handler.bind(config)
+	new RateLimit(config)
+};
 
 modifiers.push(config => (serverConfig.use_rate_limiter && config.rateLimit && rateLimitMiddleware(config.rateLimit)));
 
