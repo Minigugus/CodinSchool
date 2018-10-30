@@ -15,7 +15,7 @@ module.exports = {
 	port: process.env.PORT || (production ? 80 : 3000),
 	root: process.env.ROOT || '/',
 
-	use_rate_limiter: (process.env.LOG_REQUESTS ? (process.env.LOG_REQUESTS === 'true') : production);
+	use_rate_limiter: (process.env.LOG_REQUESTS ? (process.env.LOG_REQUESTS === 'true') : production),
 
 	bcrypt_rounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 10, // Don't change this if users are already registered !
 
