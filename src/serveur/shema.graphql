@@ -1,0 +1,208 @@
+directive @acces(
+	requis: TypeRole = ETUDIANT;
+) on OBJECT | FIELD_DEFINITION;
+
+enum TypeRole {
+	INVITE,
+	ETUDIANT,
+	ADMINISTRATEUR
+}
+
+"""
+Représente le profile d'un Utilisateur de CodinSchool.
+"""
+type Profile {
+	id: Int!,
+	incrit_depuis: String!,
+
+	roles: [Role!]!,
+
+	nom: String,
+	prenom: String,
+	date_naissance: Int,
+	adresse: String,
+	code_postal: Int,
+
+	email_primaire: String,
+	email_secondaire: String,
+
+	telephone_primaire: String,
+	telephone_secondaire: String,
+
+	diplome: String,
+	annee_diplome: Int,
+
+	site_web: String,
+
+	avatar: String
+}
+
+"""
+Représente un Utilisateur connecté sur son compte.
+"""
+type Utilisateur {
+	jeton: String!,
+	pseudo: String!,
+	profile: Profile!,
+	permissions: Permissions!
+}
+
+"""
+Représente le Role d'un Utilisateur.
+"""
+type Role {
+	id: Int!,
+	nom: String!,
+
+	nb_membre: Int!,
+	membres: [Profile!]!,
+
+	permissions: Permissions!
+}
+
+"""
+Représente les permissions gérées par CodinSchool.
+"""
+type Permissions {
+	faire_exercice: Boolean!,
+	voir_correction: Boolean!,
+	creer_exercice: Boolean!,
+	editer_niveau: Boolean!,
+	editer_utilisateur: Boolean!,
+	editer_tout: Boolean!,
+	sauvegarder: Boolean!,
+	restaurer: Boolean!
+}
+
+"""
+Décrit ce que peut demander un Utilisateur.
+"""
+type Requete {
+	moi: Utilisateur!,
+
+	utilisateur(id: Int!): Profile,
+	utilisateurs: [Profile!]!,
+
+	role(id: Int!): Role,
+	roles: [Role!]!
+}
+
+"""
+Représente une demande d'inscription d'un Utilisateur.
+"""
+input Inscription {
+	email: String!,
+	pseudo: String!,
+	mot_de_passe: String!,
+
+	nom: String!,
+	prenom: String!,
+	date_naissance: Int!
+}
+
+"""
+Paramètres demandés lors de l'édition d'un Utilisateur.
+"""
+input EditionUtilisateur {
+	# mot_de_passe_actuel: String!,
+	mot_de_passe: String,
+
+	nom: String,
+	prenom: String,
+	date_naissance: Int,
+	adresse: String,
+	code_postal: Int,
+
+	email_primaire: String,
+	email_secondaire: String,
+	email_visible: Boolean,
+
+	telephone_primaire: String,
+	telephone_secondaire: String,
+	telephone_visible: Boolean,
+
+	diplome: String,
+	annee_diplome: Int,
+
+	site_web: String,
+
+	avatar: String
+}
+
+"""
+Paramètres demandés lors de la création d'un Role.
+"""
+input CreationRole {
+	nom: String!,
+
+	permissions: CreationPermissions!
+}
+
+"""
+Paramètres sur les permissions demandés lors de la création d'un Role.
+"""
+input CreationPermissions {
+	faire_exercice: Boolean! = false,
+	voir_correction: Boolean! = false,
+	creer_exercice: Boolean! = false,
+	editer_niveau: Boolean! = false,
+	editer_utilisateur: Boolean! = false,
+	editer_tout: Boolean! = false,
+	sauvegarder: Boolean! = false,
+	restaurer: Boolean! = false
+}
+
+"""
+Paramètres demandés lors de l'édition d'un Role.
+"""
+input EditionRole {
+	nom: String,
+
+	permissions: EditionPermissions
+}
+
+"""
+Version éditatible des permissions d'un Role.
+"""
+input EditionPermissions {
+	faire_exercice: Boolean,
+	voir_correction: Boolean,
+	creer_exercice: Boolean,
+	editer_niveau: Boolean,
+	editer_utilisateur: Boolean,
+	editer_tout: Boolean,
+	sauvegarder: Boolean,
+	restaurer: Boolean
+}
+
+"""
+Décrit ce que peut effectuer un Utilisateur.
+"""
+type Mutation @acces(requis: ADMINISTRATEUR) {
+	inscription(inscription: Inscription!): Requete!
+	@acces(requis: INVITE),
+	connexion(email: String!, mot_de_passe: String!): Requete!
+	@acces(requis: INVITE),
+
+	editer(modifications: EditionUtilisateur): Requete!,
+	@acces(requis: ETUDIANT),
+
+	creer_utilisateur(utilisateur: Inscription): Profile!,
+	editer_utilisateur(id: Int!, utilisateur: EditionUtilisateur): Profile!,
+	supprimer_utilisateur(id: Int!): Utilisateur,
+
+	ajouter_roles(id_utilisateur: Int!, id_roles: [Int!]!): Profile!,
+	ajouter_utilisateurs(id_role: Int!, id_utilisateurs: [Int!]!): Role!,
+
+	supprimer_roles(id_utilisateur: Int!, id_roles: [Int!]!): Profile!,
+	supprimer_utilisateurs(id_role: Int!, id_utilisateurs: [Int!]!): Role!,
+
+	creer_role(role: CreationRole): Role!,
+	editer_role(id: Int!, role: EditionRole): Role!,
+	supprimer_role(id: Int!): Role!
+}
+
+schema {
+	query: Requete,
+	mutation: Mutation
+}
