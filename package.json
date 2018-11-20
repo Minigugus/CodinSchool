@@ -1,0 +1,20 @@
+{
+  "name": "experimentations-graphql",
+  "version": "1.0.0",
+  "description": "Projet de test de GraphQL pour CodinSchool.",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Prenom Magniez",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-graphql": "^0.7.1",
+    "express-jwt": "^5.3.1",
+    "graphql": "^14.0.2",
+    "graphql-tools": "^4.0.3",
+    "jsonwebtoken": "^8.4.0"
+  }
+}
