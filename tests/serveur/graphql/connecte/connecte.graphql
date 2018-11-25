@@ -1,0 +1,15 @@
+query Connecte {
+  moi {
+    pseudo
+    permissions
+    profile {
+      id
+      nom
+      prenom
+      roles {
+        nom
+        nb_membre
+      }
+    }
+  }
+}

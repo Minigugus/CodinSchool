@@ -1,0 +1,15 @@
+mutation Inscription($inscription: Inscription!) {
+  inscription(inscription: $inscription) {
+    moi {
+      jeton
+      profile {
+        id
+        nom
+        prenom
+        roles {
+          nom
+        }
+      }
+    }
+  }
+}
