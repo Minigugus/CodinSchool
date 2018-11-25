@@ -4,17 +4,18 @@
 
 'use strict';
 
+const cors = require('cors');
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
-const auth = require('./authentification.js');
+const { MODE_DEVELOPPEMENT, PORT } = require('./config.js');
 
 const schema = require('./shema.js');
 
 const app = express();
 
-const PORT = process.env.PORT || (MODE_DEVELOPPEMENT ? 3000 : 80);
+app.use(cors());
 
-app.use('/graphql', auth, graphqlHTTP({
+app.use('/graphql', graphqlHTTP({
   schema,
   graphiql: MODE_DEVELOPPEMENT
 }));

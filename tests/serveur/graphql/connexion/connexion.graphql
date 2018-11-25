@@ -1,0 +1,15 @@
+mutation Connexion($email: String!, $mdp: String!) {
+  connexion(email: $email, mot_de_passe: $mdp) {
+    moi {
+      jeton
+      profile {
+        id
+        nom
+        prenom
+        roles {
+          nom
+        }
+      }
+    }
+  }
+}

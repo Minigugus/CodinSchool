@@ -1,0 +1,9 @@
+mutation AjoutUtilisateurs($id_role: Int!, $id_utilisateurs: [Int!]!) {
+  ajouter_utilisateurs(id_role: $id_role, id_utilisateurs: $id_utilisateurs) {
+    nom
+    membres {
+      nom
+      prenom
+    }
+  }
+}
