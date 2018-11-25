@@ -33,9 +33,9 @@ module.exports = {
 			.value();
 	},
 	creer_utilisateur(donnees_creation) {
-		if (bdd.has('utilisateurs').find({ pseudo: donnees_creation.pseudo }).value())
+		if (bdd.get('utilisateurs').find({ pseudo: donnees_creation.pseudo }).value())
 			throw new Error('Pseudo déjà utilisé.');
-		if (bdd.has('utilisateurs').find({ email: donnees_creation.email }).value())
+		if (bdd.get('utilisateurs').find({ email: donnees_creation.email }).value())
 			throw new Error('Adresse email déjà utilisée.');
 		const utilisateur = {
 			id: utilisateurs_id++,
@@ -65,7 +65,7 @@ module.exports = {
 			.value();
 	},
 	editer_utilisateur(id, nouvelles_donnees) {
-		if (!bdd.has('utilisateurs').find({ id }).value())
+		if (!bdd.get('utilisateurs').find({ id }).value())
 			throw new Error('Utilisateur introuvable.');
 		return bdd
 			.get('utilisateurs')
@@ -74,7 +74,7 @@ module.exports = {
 			.write();
 	},
 	supprimer_utilisateur(id) {
-		if (!bdd.has('utilisateurs').find({ id }).value())
+		if (!bdd.get('utilisateurs').find({ id }).value())
 			throw new Error('Utilisateur introuvable.');
 		return bdd
 			.get('utilisateurs')
@@ -105,7 +105,7 @@ module.exports = {
 		return role;
 	},
 	editer_role(id, nouvelles_donnees) {
-		if (!bdd.has('roles').find({ id }).value())
+		if (!bdd.get('roles').find({ id }).value())
 			throw new Error('Rôle introuvable.');
 		return bdd
 			.get('roles')
@@ -114,7 +114,7 @@ module.exports = {
 			.write();
 	},
 	supprimer_role(id) {
-		if (!bdd.has('roles').find({ id }).value())
+		if (!bdd.get('roles').find({ id }).value())
 			throw new Error('Rôle introuvable.');
 		return bdd
 			.get('roles')
