@@ -71,12 +71,10 @@ class DirectiveAcces extends SchemaDirectiveVisitor {
 								try
 								{
 									utilisateur = await jwt.verify(authentization.slice(7), SECRET_JWT);
-									console.error(utilisateur);
 									utilisateur.permissions = bdd.recuperer_permissions(utilisateur);
 								}
 								catch (err)
 								{
-									console.error(err);
 									throw new Error('Jeton de connexion invalide.');
 								}
 							}
