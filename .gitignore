@@ -1,10 +1,6 @@
-bdd.json
-
-*~
-
 .DS_Store
 node_modules
-app/public
+/dist
 
 # local env files
 .env.local
@@ -23,3 +19,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+/live/
