@@ -1,7 +1,0 @@
-mutation CreationRole($role: CreationRole!) {
-  creer_role(role: $role) {
-    id
-    nom
-    permissions
-  }
-}

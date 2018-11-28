@@ -1,18 +1,29 @@
-# [WIP] CodinSchool
+# CodinSchool
 
-## Installation
-
+## Project setup
 ```
-npm i
-```
-
-## Lancement
-
-```
-node src/server/index.js
+npm install
 ```
 
-## Tests
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-* Dossier [`tests`](./tests/serveur/graphql)
-* [GraphBin](https://graphqlbin.com/v2/RO6QsG)
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Run your tests
+```
+npm run test
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).

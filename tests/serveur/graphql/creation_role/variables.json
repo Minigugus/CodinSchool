@@ -1,8 +1,0 @@
-{
-  "role": {
-    "nom": "Étudiant",
-    "permissions": [
-    	"FAIRE_EXERCICE"
-    ]
-  }
-}
