@@ -2,7 +2,7 @@ import bdd from './utils/bdd'
 import auth from './utils/auth'
 
 export default {
-  Requete: {
+  Query: {
     moi(_, args, { utilisateur }) {
       return bdd.recupererUtilisateur(utilisateur.id)
     },
