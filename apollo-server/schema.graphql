@@ -11,7 +11,7 @@ enum Permission {
 
 	GERER_ROLE,
 
-	GERER_UTILISATEUR
+	GERER_UTILISATEUR,
 
 	SAUVEGARDER,
 	RESTAURER
@@ -22,26 +22,26 @@ Représente le profile d'un Utilisateur de CodinSchool.
 """
 type Profile {
 	id: Int!,
-	incrit_depuis: String!,
+	incritDepuis: String!,
 
 	roles: [Role!]!,
 
 	nom: String,
 	prenom: String,
-	date_naissance: Int,
+	dateNaissance: Int,
 	adresse: String,
-	code_postal: Int,
+	codePostal: Int,
 
-	email_primaire: String,
-	email_secondaire: String,
+	emailPrimaire: String,
+	emailSecondaire: String,
 
-	telephone_primaire: String,
-	telephone_secondaire: String,
+	telephonePrimaire: String,
+	telephoneSecondaire: String,
 
 	diplome: String,
-	annee_diplome: Int,
+	anneeDiplome: Int,
 
-	site_web: String,
+	siteWeb: String,
 
 	avatar: String
 }
@@ -63,7 +63,7 @@ type Role {
 	id: Int!,
 	nom: String!,
 
-	nb_membre: Int!,
+	nbMembre: Int!,
 	membres: [Profile!]!,
 
 	permissions: [Permission!]!
@@ -88,38 +88,38 @@ Représente une demande d'inscription d'un Utilisateur.
 input Inscription {
 	email: String!,
 	pseudo: String!,
-	mot_de_passe: String!,
+	motDePasse: String!,
 
 	nom: String!,
 	prenom: String!,
-	date_naissance: Int!
+	dateNaissance: Int!
 }
 
 """
 Paramètres demandés lors de l'édition d'un Utilisateur.
 """
 input EditionUtilisateur {
-	# mot_de_passe_actuel: String!,
-	mot_de_passe: String,
+	# motDePasseActuel: String!,
+	motDePasse: String,
 
 	nom: String,
 	prenom: String,
-	date_naissance: Int,
+	dateNaissance: Int,
 	adresse: String,
-	code_postal: Int,
+	codePostal: Int,
 
-	email_primaire: String,
-	email_secondaire: String,
-	email_visible: Boolean,
+	emailPrimaire: String,
+	emailSecondaire: String,
+	emailVisible: Boolean,
 
-	telephone_primaire: String,
-	telephone_secondaire: String,
-	telephone_visible: Boolean,
+	telephonePrimaire: String,
+	telephoneSecondaire: String,
+	telephoneVisible: Boolean,
 
 	diplome: String,
-	annee_diplome: Int,
+	anneeDiplome: Int,
 
-	site_web: String,
+	siteWeb: String,
 
 	avatar: String
 }
@@ -147,32 +147,32 @@ Décrit ce que peut effectuer un Utilisateur.
 """
 type Mutation {
 	inscription(inscription: Inscription!): Requete!,
-	connexion(email: String!, mot_de_passe: String!): Requete!,
+	connexion(email: String!, motDePasse: String!): Requete!,
 
 	editer(modifications: EditionUtilisateur): Requete! @acces,
 
-	creer_utilisateur(utilisateur: Inscription): Profile!
+	creerUtilisateur(utilisateur: Inscription): Profile!
 	@acces(requis: [ GERER_UTILISATEUR ]),
-	editer_utilisateur(id: Int!, utilisateur: EditionUtilisateur): Profile!
+	editerUtilisateur(id: Int!, utilisateur: EditionUtilisateur): Profile!
 	@acces(requis: [ GERER_UTILISATEUR ]),
-	supprimer_utilisateur(id: Int!): Utilisateur
+	supprimerUtilisateur(id: Int!): Utilisateur
 	@acces(requis: [ GERER_UTILISATEUR ]),
 
-	ajouter_roles(id_utilisateur: Int!, id_roles: [Int!]!): Profile!
+	ajouterRoles(idUtilisateur: Int!, idRoles: [Int!]!): Profile!
 	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ]),
-	ajouter_utilisateurs(id_role: Int!, id_utilisateurs: [Int!]!): Role!
-	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ]),
-
-	supprimer_roles(id_utilisateur: Int!, id_roles: [Int!]!): Profile!
-	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ]),
-	supprimer_utilisateurs(id_role: Int!, id_utilisateurs: [Int!]!): Role!
+	ajouterUtilisateurs(idRole: Int!, idUtilisateurs: [Int!]!): Role!
 	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ]),
 
-	creer_role(role: CreationRole): Role!
+	supprimerRoles(idUtilisateur: Int!, idRoles: [Int!]!): Profile!
+	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ]),
+	supprimerUtilisateurs(idRole: Int!, idUtilisateurs: [Int!]!): Role!
+	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ]),
+
+	creerRole(role: CreationRole): Role!
 	@acces(requis: [ GERER_ROLE ]),
-	editer_role(id: Int!, role: EditionRole): Role!
+	editerRole(id: Int!, role: EditionRole): Role!
 	@acces(requis: [ GERER_ROLE ]),
-	supprimer_role(id: Int!): Role!
+	supprimerRole(id: Int!): Role!
 	@acces(requis: [ GERER_ROLE ])
 }
 
