@@ -10,8 +10,8 @@ const bdd = low(adapteur)
 
 bdd.defaults({ utilisateurs: [], roles: [] }).write()
 
-let utilisateurs_id = 0,
-  roles_id = 0
+let utilisateursId = 0,
+  rolesId = 0
 
 export default {
   utilisateurs() {
@@ -21,46 +21,46 @@ export default {
     return bdd.get('roles').value()
   },
 
-  recuperer_utilisateur(id) {
+  recupererUtilisateur(id) {
     return bdd
       .get('utilisateurs')
       .find({ id })
       .value()
   },
-  creer_utilisateur(donnees_creation) {
+  creerUtilisateur(donneesCreation) {
     if (
       bdd
         .get('utilisateurs')
-        .find({ pseudo: donnees_creation.pseudo })
+        .find({ pseudo: donneesCreation.pseudo })
         .value()
     )
       throw new Error('Pseudo déjà utilisé.')
     if (
       bdd
         .get('utilisateurs')
-        .find({ email: donnees_creation.email })
+        .find({ email: donneesCreation.email })
         .value()
     )
       throw new Error('Adresse email déjà utilisée.')
     const utilisateur = {
-      id: utilisateurs_id++,
-      pseudo: donnees_creation.pseudo,
-      mot_de_passe: donnees_creation.mot_de_passe,
-      incrit_depuis: Date.now(),
-      nom: donnees_creation.nom,
-      prenom: donnees_creation.prenom,
-      date_naissance: donnees_creation.date_naissance,
+      id: utilisateursId++,
+      pseudo: donneesCreation.pseudo,
+      motDePasse: donneesCreation.motDePasse,
+      incritDepuis: Date.now(),
+      nom: donneesCreation.nom,
+      prenom: donneesCreation.prenom,
+      dateNaissance: donneesCreation.dateNaissance,
       adresse: null,
-      code_postal: null,
-      email_primaire: donnees_creation.email,
-      email_secondaire: null,
-      email_visible: false,
-      telephone_primaire: null,
-      telephone_secondaire: null,
-      telephone_visible: false,
+      codePostal: null,
+      emailPrimaire: donneesCreation.email,
+      emailSecondaire: null,
+      emailVisible: false,
+      telephonePrimaire: null,
+      telephoneSecondaire: null,
+      telephoneVisible: false,
       diplome: null,
-      annee_diplome: null,
-      site_web: null,
+      anneeDiplome: null,
+      siteWeb: null,
       avatar: null
     }
     bdd
@@ -72,7 +72,7 @@ export default {
       .find({ id: utilisateur.id })
       .value()
   },
-  editer_utilisateur(id, nouvelles_donnees) {
+  editerUtilisateur(id, nouvellesDonnees) {
     if (
       !bdd
         .get('utilisateurs')
@@ -83,10 +83,10 @@ export default {
     return bdd
       .get('utilisateurs')
       .find({ id })
-      .assign(nouvelles_donnees)
+      .assign(nouvellesDonnees)
       .write()
   },
-  supprimer_utilisateur(id) {
+  supprimerUtilisateur(id) {
     if (
       !bdd
         .get('utilisateurs')
@@ -100,26 +100,27 @@ export default {
       .write()
   },
 
-  authentifier(email, mot_de_passe) {
+  authentifier(email, motDePasse) {
     const utilisateur = bdd
       .get('utilisateurs')
-      .find({ email_primaire: email })
+      .find({ emailPrimaire: email })
       .value()
-    if (!utilisateur || utilisateur.mot_de_passe !== mot_de_passe) throw new Error('Email ou mot de passe incorrect.')
+    if (!utilisateur || utilisateur.motDePasse !== motDePasse)
+      throw new Error('Email ou mot de passe incorrect.')
     return utilisateur
   },
 
-  recuperer_role(id) {
+  recupererRole(id) {
     return bdd
       .get('roles')
       .find({ id })
       .value()
   },
-  creer_role(donnees_creation) {
+  creerRole(donneesCreation) {
     const role = {
-      id: roles_id++,
+      id: rolesId++,
       membres: [],
-      ...donnees_creation
+      ...donneesCreation
     }
     bdd
       .get('roles')
@@ -127,7 +128,7 @@ export default {
       .write()
     return role
   },
-  editer_role(id, nouvelles_donnees) {
+  editerRole(id, nouvellesDonnees) {
     if (
       !bdd
         .get('roles')
@@ -138,10 +139,10 @@ export default {
     return bdd
       .get('roles')
       .find({ id })
-      .assign(nouvelles_donnees)
+      .assign(nouvellesDonnees)
       .write()
   },
-  supprimer_role(id) {
+  supprimerRole(id) {
     if (
       !bdd
         .get('roles')
@@ -155,48 +156,48 @@ export default {
       .write()
   },
 
-  recuperer_roles_utilisateur(utilisateur) {
+  recupererRolesUtilisateur(utilisateur) {
     const roles = bdd
       .get('roles')
       .filter(r => r.membres.includes(utilisateur.id))
       .value()
     return roles
   },
-  recuperer_utilisateurs_role(role) {
-    role = this.recuperer_role(role.id)
+  recupererUtilisateursRole(role) {
+    role = this.recupererRole(role.id)
     return bdd
       .get('utilisateurs')
       .filter(u => role.membres.includes(u.id))
       .value()
   },
 
-  recuperer_permissions(utilisateur) {
-    const roles = utilisateur.roles || this.recuperer_roles_utilisateur(utilisateur)
+  recupererPermissions(utilisateur) {
+    const roles = utilisateur.roles || this.recupererRolesUtilisateur(utilisateur)
     return roles.reduce((permissions, role) => {
       for (let p of role.permissions) permissions.add(p)
       return permissions
     }, new Set())
   },
 
-  ajouter_role(id_utilisateur, id_role) {
+  ajouterRole(idUtilisateur, idRole) {
     if (
       !bdd
         .get('roles')
-        .find({ id: id_role })
+        .find({ id: idRole })
         .value()
     )
-      throw new Error(`Rôle ${id_role} introuvable.`)
+      throw new Error(`Rôle ${idRole} introuvable.`)
     if (
       !bdd
         .get('utilisateurs')
-        .find({ id: id_utilisateur })
+        .find({ id: idUtilisateur })
         .value()
     )
-      throw new Error(`Utilisateur ${id_utilisateur} introuvable.`)
+      throw new Error(`Utilisateur ${idUtilisateur} introuvable.`)
     return bdd
       .get('roles')
-      .find({ id: id_role })
-      .tap(r => r.membres.push(id_utilisateur))
+      .find({ id: idRole })
+      .tap(r => r.membres.push(idUtilisateur))
       .write()
   }
 }

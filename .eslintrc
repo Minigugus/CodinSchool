@@ -31,7 +31,7 @@
     //
     // The following rules point out areas where you might have made mistakes.
     //
-    "comma-dangle": 2, // disallow or enforce trailing commas
+    "comma-dangle": 1, // disallow or enforce trailing commas
     "no-cond-assign": 2, // disallow assignment in conditional expressions
     "no-constant-condition": 2, // disallow use of constant expressions in conditions
     "no-control-regex": 2, // disallow control characters in regular expressions

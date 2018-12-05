@@ -19,7 +19,14 @@ const jwt = {
 const TYPE_REQUIS = Symbol()
 const DEJA_PROTEGE = Symbol()
 
-const ROLES = ['FAIRE_EXERCICE', 'GERER_EXERCICE', 'GERER_ROLE', 'GERER_UTILISATEUR', 'SAUVEGARDER', 'RESTAURER']
+const ROLES = [
+  'FAIRE_EXERCICE',
+  'GERER_EXERCICE',
+  'GERER_ROLE',
+  'GERER_UTILISATEUR',
+  'SAUVEGARDER',
+  'RESTAURER'
+]
 
 export default class DirectiveAcces extends SchemaDirectiveVisitor {
   static creerJeton(utilisateur) {
@@ -62,7 +69,8 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
             else throw new Error('Cette requête requière une authentification.')
             args[2].utilisateur = utilisateur
           }
-          if (permissionsRequises.every(x => utilisateur.permissions.has(x))) return resoudre.apply(this, args)
+          if (permissionsRequises.every(x => utilisateur.permissions.has(x)))
+            return resoudre.apply(this, args)
           throw new Error('Droits d\'accès insuffisants.')
         }
       })

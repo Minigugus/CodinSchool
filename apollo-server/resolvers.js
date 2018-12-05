@@ -4,19 +4,19 @@ import auth from './utils/auth'
 export default {
   Requete: {
     moi(_, args, { utilisateur }) {
-      return bdd.recuperer_utilisateur(utilisateur.id)
+      return bdd.recupererUtilisateur(utilisateur.id)
     },
 
     utilisateur(_, { id }) {
-      return bdd.recuperer_utilisateur(id)
+      return bdd.recupererUtilisateur(id)
     },
 
-    utilisateurs(_, args) {
+    utilisateurs(_, __) {
       return bdd.utilisateurs
     },
 
     role(_, { id }) {
-      return bdd.recuperer_role(id)
+      return bdd.recupererRole(id)
     },
 
     roles() {
@@ -25,12 +25,12 @@ export default {
   },
 
   Role: {
-    nb_membre({ membres }) {
+    nbMembre({ membres }) {
       return membres.length
     },
 
     membres(role) {
-      return bdd.recuperer_utilisateurs_role(role)
+      return bdd.recupererUtilisateursRole(role)
     }
   },
 
@@ -49,37 +49,37 @@ export default {
   },
   Mutation: {
     inscription(_, { inscription }, req) {
-      const utilisateur = bdd.creer_utilisateur(inscription)
+      const utilisateur = bdd.creerUtilisateur(inscription)
       req.utilisateur = utilisateur
       return utilisateur
     },
 
-    connexion(_, { email, mot_de_passe }, req) {
-      const utilisateur = bdd.authentifier(email, mot_de_passe)
+    connexion(_, { email, motDePasse }, req) {
+      const utilisateur = bdd.authentifier(email, motDePasse)
       req.utilisateur = utilisateur
       return utilisateur
     },
 
-    ajouter_roles(_, { id_utilisateur, id_roles }) {
-      id_roles.forEach(r => bdd.ajouter_role(id_utilisateur, r))
-      return bdd.recuperer_utilisateur(id_utilisateur)
+    ajouterRoles(_, { idUtilisateur, idRoles }) {
+      idRoles.forEach(r => bdd.ajouterRole(idUtilisateur, r))
+      return bdd.recupererUtilisateur(idUtilisateur)
     },
 
-    ajouter_utilisateurs(_, { id_role, id_utilisateurs }) {
-      id_utilisateurs.forEach(u => bdd.ajouter_role(u, id_role))
-      return bdd.recuperer_role(id_role)
+    ajouterUtilisateurs(_, { idRole, idUtilisateurs }) {
+      idUtilisateurs.forEach(u => bdd.ajouterRole(u, idRole))
+      return bdd.recupererRole(idRole)
     },
 
-    creer_role(_, { role }) {
-      return bdd.creer_role(role)
+    creerRole(_, { role }) {
+      return bdd.creerRole(role)
     },
 
-    editer_role(_, { id, role }) {
-      return bdd.editer_role(id, role)
+    editerRole(_, { id, role }) {
+      return bdd.editerRole(id, role)
     },
 
-    supprimer_role(_, { id }) {
-      return bdd.supprimer_role(id)
+    supprimerRole(_, { id }) {
+      return bdd.supprimerRole(id)
     }
   }
 }
