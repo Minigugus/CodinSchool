@@ -50,12 +50,14 @@ export default {
   Mutation: {
     inscription(_, { inscription }, req) {
       const utilisateur = bdd.creerUtilisateur(inscription)
+      utilisateur.permissions = bdd.recupererPermissions(utilisateur)
       req.utilisateur = utilisateur
       return utilisateur
     },
 
     connexion(_, { email, motDePasse }, req) {
       const utilisateur = bdd.authentifier(email, motDePasse)
+      utilisateur.permissions = bdd.recupererPermissions(utilisateur)
       req.utilisateur = utilisateur
       return utilisateur
     },

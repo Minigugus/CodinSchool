@@ -21,7 +21,7 @@ enum Permission {
 Représente le profile d'un Utilisateur de CodinSchool.
 """
 type Profile {
-	id: Int!
+	id: ID!
 	incritDepuis: String!
 
 	roles: [Role!]!
@@ -60,7 +60,7 @@ type Utilisateur {
 Représente le Role d'un Utilisateur.
 """
 type Role {
-	id: Int!
+	id: ID!
 	nom: String!
 
 	nbMembre: Int!
@@ -75,10 +75,10 @@ Décrit ce que peut demander un Utilisateur.
 type Query @acces {
 	moi: Utilisateur!
 
-	utilisateur(id: Int!): Profile
+	utilisateur(id: ID!): Profile
 	utilisateurs: [Profile!]!
 
-	role(id: Int!): Role
+	role(id: ID!): Role
 	roles: [Role!]!
 }
 
@@ -153,25 +153,25 @@ type Mutation {
 
 	creerUtilisateur(utilisateur: Inscription): Profile!
 	@acces(requis: [ GERER_UTILISATEUR ])
-	editerUtilisateur(id: Int!, utilisateur: EditionUtilisateur): Profile!
+	editerUtilisateur(id: ID!, utilisateur: EditionUtilisateur): Profile!
 	@acces(requis: [ GERER_UTILISATEUR ])
-	supprimerUtilisateur(id: Int!): Utilisateur
+	supprimerUtilisateur(id: ID!): Utilisateur
 	@acces(requis: [ GERER_UTILISATEUR ])
 
-	ajouterRoles(idUtilisateur: Int!, idRoles: [Int!]!): Profile!
+	ajouterRoles(idUtilisateur: ID!, idRoles: [ID!]!): Profile!
 	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ])
-	ajouterUtilisateurs(idRole: Int!, idUtilisateurs: [Int!]!): Role!
+	ajouterUtilisateurs(idRole: ID!, idUtilisateurs: [ID!]!): Role!
 	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ])
 
-	supprimerRoles(idUtilisateur: Int!, idRoles: [Int!]!): Profile!
+	supprimerRoles(idUtilisateur: ID!, idRoles: [ID!]!): Profile!
 	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ])
-	supprimerUtilisateurs(idRole: Int!, idUtilisateurs: [Int!]!): Role!
+	supprimerUtilisateurs(idRole: ID!, idUtilisateurs: [ID!]!): Role!
 	@acces(requis: [ GERER_UTILISATEUR, GERER_ROLE ])
 
 	creerRole(role: CreationRole): Role!
 	@acces(requis: [ GERER_ROLE ])
-	editerRole(id: Int!, role: EditionRole): Role!
+	editerRole(id: ID!, role: EditionRole): Role!
 	@acces(requis: [ GERER_ROLE ])
-	supprimerRole(id: Int!): Role!
+	supprimerRole(id: ID!): Role!
 	@acces(requis: [ GERER_ROLE ])
 }
