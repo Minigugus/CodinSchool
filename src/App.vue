@@ -1,31 +1,73 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="ui inverted stackable menu main-menu center aligned">
+      <router-link to="/" class="header item prevent-active">
+        <img class="logo" src="/static/img/favicon.png"> Codinschool
+      </router-link>
+      <router-link to="/" class="item">Accueil</router-link>
+
+      <transition name="fade" mode="out-in">
+        <div v-if="/*!isUserLoggedIn*/true" key="inviteMenu" class="right menu">
+          <router-link to="/connexion" class="item">Connexion</router-link>
+          <router-link to="/inscription" class="item">Inscription</router-link>
+        </div>
+        <div v-else key="profileMenu" class="right menu">
+          <router-link to="/profil" class="item">{{ /*`${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.`*/ }}</router-link>
+          <a @click.prevent="/*disconnectUser*/" class="item">Se déconnecter</a>
+        </div>
+      </transition>
     </div>
-    <router-view/>
+
+    <div class="ui container">
+      <transition name="fade" mode="out-in">
+        <router-view></router-view>
+      </transition>
+    </div>
   </div>
 </template>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
+  .text-left {
+    text-align: left !important;
+  }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  .text-center {
+    text-align: center !important;
+  }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
+  .text-right {
+    text-align: right !important;
+  }
+
+  #notification {
+    position: fixed !important;
+    margin-top: 30px !important;
+    right: 30px !important;
+    bottom: 20px !important;
+    z-index: 999;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all .2s !important;
+  }
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0 !important;
+  }
+
+  .prevent-active {
+    background: 0 0 !important;
+    color: rgba(255, 255, 255, .9) !important;
+  }
+
+  #app {
+    text-align: left;
+    font-family: Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .main-menu {
+    border-radius: 0 !important;
+  }
 </style>
