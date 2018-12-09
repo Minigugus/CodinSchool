@@ -172,7 +172,7 @@ export default {
   },
 
   recupererPermissions(utilisateur) {
-    const roles = utilisateur.roles || this.recupererRolesUtilisateur(utilisateur)
+    const roles = (utilisateur.roles = (utilisateur.roles || this.recupererRolesUtilisateur(utilisateur)))
     return roles.reduce((permissions, role) => {
       for (let p of role.permissions) permissions.add(p)
       return permissions

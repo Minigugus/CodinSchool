@@ -60,7 +60,8 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
             if (authentization && /^Bearer /.test(authentization)) {
               try {
                 utilisateur = await jwt.verify(authentization.slice(7), SECRET_JWT)
-                utilisateur.permissions = bdd.recuperer_permissions(utilisateur)
+                utilisateur = bdd.recupererUtilisateur(utilisateur.id)
+                utilisateur.permissions = bdd.recupererPermissions(utilisateur)
               }
               catch (err) {
                 throw new Error('Jeton de connexion invalide.')
