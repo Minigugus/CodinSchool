@@ -1,4 +1,26 @@
 {
-  "utilisateurs": [],
+  "utilisateurs": [
+    {
+      "id": 0,
+      "pseudo": "Webmaster",
+      "motDePasse": "aucun",
+      "incritDepuis": 1544366086509,
+      "nom": "Web",
+      "prenom": "Master",
+      "dateNaissance": -1,
+      "adresse": null,
+      "codePostal": null,
+      "emailPrimaire": "webmaster@codinschool.fr",
+      "emailSecondaire": null,
+      "emailVisible": false,
+      "telephonePrimaire": null,
+      "telephoneSecondaire": null,
+      "telephoneVisible": false,
+      "diplome": null,
+      "anneeDiplome": null,
+      "siteWeb": null,
+      "avatar": null
+    }
+  ],
   "roles": []
 }
