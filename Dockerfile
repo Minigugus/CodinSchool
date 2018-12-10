@@ -2,11 +2,11 @@ FROM node:8-alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-RUN npm i -D
-
 COPY . .
 
-EXPOSE 8080
+RUN npm i -D && \
+	npm run build
 
-CMD [ "npm", "run", "apollo" ]
+EXPOSE 4000
+
+CMD [ "npm", "run", "apollo:run" ]

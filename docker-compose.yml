@@ -3,8 +3,9 @@ services:
   web:
     build: .
     ports:
-      - "8080:8080"
       - "4000:4000"
+    environment:
+      SECRET_JWT: "modeDeveloppement"
   #   links:
   #     - postgres
   # postgres:
@@ -13,5 +14,5 @@ services:
   #     - postgres:/var/lib/postgresql/data
   #   environment:
   #     POSTGRES_USER: codinschool
-volumes:
-  postgres: {}
+# volumes:
+  # postgres: {}
