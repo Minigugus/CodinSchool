@@ -12,7 +12,7 @@
           <router-link to="/inscription" class="item">Inscription</router-link>
         </div>
         <div v-else key="profileMenu" class="right menu">
-          <router-link to="/profil" class="item">{{ /*`${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.`*/ }}</router-link>
+          <router-link to="/profil" class="item">{{ /*`${getUserData.firstname} ${getUserData.lastname ? getUserData.lastname.charAt(0) : ''}.`*/true }}</router-link>
           <a @click.prevent="/*disconnectUser*/" class="item">Se déconnecter</a>
         </div>
       </transition>
