@@ -1,0 +1,27 @@
+mutation Inscription($nouvelUtilisateur: Inscription!) {
+  inscription(inscription: $nouvelUtilisateur) {
+    moi {
+      jeton
+      pseudo
+      permissions
+      profile {
+        id
+        incritDepuis
+        roles {nom}
+        nom
+        prenom
+        dateNaissance
+        adresse
+        codePostal
+        emailPrimaire
+        emailSecondaire
+        telephonePrimaire
+        telephoneSecondaire
+        diplome
+        anneeDiplome
+        siteWeb
+        avatar
+      }
+    }
+  }
+}
