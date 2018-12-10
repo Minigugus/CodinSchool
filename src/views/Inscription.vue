@@ -1,149 +1,162 @@
 <template>
-  <div class="apollo-example">
-    <ApolloQuery
-      :query="require('../graphql/RecupererProfil.gql')"
-    >
-      <template slot-scope="{ result: { loading, error, data } }">
-        <div v-if="loading" class="loading apollo">Loading...</div>
-
-        <div v-else-if="error" class="error apollo">An error occured</div>
-
-        <div v-else-if="data" class="result apollo">{{ data }}</div>
-
-        <!-- No result -->
-        <div v-else class="no-result apollo">No result :(</div>
-      </template>
-    </ApolloQuery>
-
-    <h1>MUTATION SA MERE</h1>
+  <div class="ui raised very padded text container segment">
+    <h2 class="ui center aligned header">
+      <i class="settings icon" style="display: inline;position: absolute;margin-left: -44px;margin-top: 7px;"></i>
+      <div class="content" style="display: inline-block;">
+        Codinschool
+        <div class="sub header">Inscription</div>
+      </div>
+    </h2>
 
     <ApolloMutation
       :mutation="require('../graphql/Inscription.gql')"
       :variables="{
         nouvelUtilisateur: {
-          email,
-          pseudo,
-          motDePasse,
-          nom,
-          prenom,
-          dateNaissance
+          email: formulaire.email,
+          pseudo: formulaire.pseudo,
+          motDePasse: formulaire.motDePasse,
+          nom: formulaire.nom,
+          prenom: formulaire.prenom,
+          dateNaissance: formulaire.dateNaissance
         }
       }"
       class="form"
-      @done="injecterJeton"
+      @error="chargerErreur"
+      @done="rediriger"
     >
-      <template slot-scope="{ mutate, loading, error }">
-        <form v-on:submit.prevent="formValid && mutate()">
-          <!-- Loading -->
-          <div v-if="loading" class="loading apollo">Loading...</div>
-
-          <!-- Error -->
-          <div v-else-if="error" class="error apollo">An error occured</div>
-
-
-          <label for="field-pseudo">pseudo</label>
-          <input
-            id="field-pseudo"
-            v-model="pseudo"
-            placeholder="pseudo"
-            class="input"
-          >
-          <input type="submit" value="Valider">
+      <template slot-scope="{ mutate, loading }">
+        <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading: loading }" class="ui form">
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" v-model="formulaire.nom" placeholder="Nom">
+              </div>
+              <div class="field">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" v-model="formulaire.prenom" placeholder="Prénom">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="pseudo">Pseudo</label>
+            <input type="text" id="pseudo" v-model="formulaire.pseudo" placeholder="Pseudo" />
+          </div>
+          <div class="field">
+            <label for="email">Adresse email</label>
+            <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />
+          </div>
+          <div class="field">
+            <label for="motDePasse">Mot de passe</label>
+            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" />
+          </div>
+          <div class="field">
+            <label for="motDePasse2">Confirmation du mot de passe</label>
+            <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" />
+          </div>
+          <button class="ui button" type="submit">S'inscrire</button>
         </form>
+
+        <Alerte v-if="erreurFormulaire && erreurFormulaire.length > 0"
+          typeAlerte="Erreur"
+          :synchro="true"
+          v-bind:messages="erreurFormulaire"
+          v-on:vider="erreurFormulaire = []"
+        />
       </template>
     </ApolloMutation>
   </div>
 </template>
 
 <script>
-import { onLogin } from '../vue-apollo'
-import { RECUPERER_PROFIL } from '../graphql/RecupererProfil.gql'
+import Alerte from '../components/Alerte.vue'
 
 export default {
   name: 'inscription',
+  components: {
+    Alerte
+  },
   data() {
     return {
-      email: 'contact@asauvage.fr',
-      pseudo: 'rigwzzzzild2z',
-      motDePasse:	'rigwild',
-      nom: 'Sauvage',
-      prenom: 'Antoine',
-      dateNaissance: 2018
-    }
-  },
-
-  computed: {
-    formValid() {
-      return true
+      formulaire: {
+        nom: 'Sauvage',
+        prenom: 'Antoine',
+        pseudo: 'rigwild',
+        email: 'contact@asauvage.fr',
+        motDePasse:	'rigwild',
+        motDePasse2:	'rigwild',
+        dateNaissance: 2018
+      },
+      erreurFormulaire: []
     }
   },
 
   methods: {
-    // Injecter le jeton de connexion dans Apollo et mettre en cache le profil
-    async injecterJeton(result) {
-      const apolloClient = this.$apollo.provider.defaultClient
+    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
+    chargerErreur(errorObject) {
+      let e = errorObject.message
+      if (e.includes('GraphQL error: '))
+        this.erreurFormulaire.push(e.replace('GraphQL error: ', ''))
+    },
 
-      // Mettre le jeton à jour et recharger le cache
-      const jeton = 'Bearer ' + result.data.inscription.moi.jeton
-      await onLogin(apolloClient, jeton)
+    // Mettre un fond rouge sur un élément de formulaire
+    setErreurInput(activerErreur, ...id) {
+      id.forEach(input => activerErreur
+        ? document.getElementById(input).parentElement.classList.add('error')
+        : document.getElementById(input).parentElement.classList.remove('error'))
+    },
 
-      // Mise à jour du cache
-      apolloClient.writeQuery({
-        query: RECUPERER_PROFIL,
-        data: {
-          userCurrent: result.data.moi
+    // Vérifier que tous les champs du formulaire sont remplis
+    verifierTousChampsRemplis() {
+      let allInputCompleted = true
+      Object.keys(this.formulaire).forEach(input => {
+        if (!this.formulaire[input]) {
+          this.setErreurInput(true, input)
+          allInputCompleted = false
         }
       })
+      if (!allInputCompleted)
+        this.erreurFormulaire.push('Tous les champs sont obligatoires.')
+      return allInputCompleted
+    },
+
+    // Vérifier que l'adresse email entrée est valide
+    verifierEmail() {
+      const isEmailValid = email => /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email)
+
+      if (!isEmailValid(this.formulaire.email)) {
+        this.erreurFormulaire.push('L\'adresse email renseignée est invalide.')
+        this.setErreurInput(true, 'email')
+        return false
+      }
+      return true
+    },
+
+    // Vérifier que la confirmation de mot de passe est identique
+    verifierConfirmationMotDePasse() {
+      if (this.formulaire.motDePasse !== this.formulaire.motDePasse2) {
+        this.erreurFormulaire.push('Les mots de passe ne correspondent pas.')
+        this.setErreurInput(true, 'motDePasse')
+        this.setErreurInput(true, 'motDePasse2')
+        return false
+      }
+      return true
+    },
+
+    // Vérifier le formulaire avant envoi
+    verifierFormulaire(aa, bb, cc) {
+      this.erreurFormulaire = []
+      let envoyerFormulaire = true
+      if (!this.verifierTousChampsRemplis()) envoyerFormulaire = false
+      if (!this.verifierEmail()) envoyerFormulaire = false
+      if (!this.verifierConfirmationMotDePasse()) envoyerFormulaire = false
+      return envoyerFormulaire
+    },
+
+    // Formulaire validé, redirection de la page
+    rediriger() {
+      console.log('form validé, demande de redirection')
     }
   }
 }
 </script>
-
-<style scoped>
-.form,
-.input,
-.apollo,
-.message {
-  padding: 12px;
-}
-
-label {
-  display: block;
-  margin-bottom: 6px;
-}
-
-.input {
-  font-family: inherit;
-  font-size: inherit;
-  border: solid 2px #ccc;
-  border-radius: 3px;
-}
-
-.error {
-  color: red;
-}
-
-.images {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  grid-auto-rows: 300px;
-  grid-gap: 10px;
-}
-
-.image-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ccc;
-  border-radius: 8px;
-}
-
-.image {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.image-input {
-  margin: 20px;
-}
-</style>

@@ -6,11 +6,10 @@
       <template slot-scope="{ result: { loading, error, data } }">
         <div v-if="loading" class="loading apollo">Chargement ...</div>
 
-        <Alerte v-else-if="error" v-bind:typeAlerte="'Erreur'" v-bind:messages="error.graphQLErrors.map(x => x.message)" />
+        <Alerte v-else-if="error" typeAlerte="Erreur" :messages="error.graphQLErrors.map(x => x.message)" />
 
         <div v-else-if="data" class="result apollo">{{ data }}</div>
 
-        <!-- No result -->
         <div v-else class="no-result apollo">No result :(</div>
       </template>
     </ApolloQuery>
