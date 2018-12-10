@@ -1,13 +1,15 @@
 <template>
-  <div v-if="visible" class="ui message" :class="choixCouleur">
-    <i @click="visible = false" class="close icon"></i>
+  <transition name="fade">
+    <div v-if="visible && messages && messages.length > 0" class="ui message" :class="choixCouleur">
+      <i @click="synchro ? $emit('vider') : visible = false" class="close icon"></i>
 
-    <div class="header">{{ choixTitre }}</div>
+      <div class="header">{{ choixTitre }}</div>
 
-    <ul class="list">
-      <li v-for="(aMessage, index) in messages" :key="'alerte' + index">{{aMessage}}</li>
-    </ul>
-  </div>
+      <ul class="list">
+        <li v-for="(aMessage, index) in messages" :key="'alerte' + index">{{aMessage}}</li>
+      </ul>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -21,6 +23,7 @@ const typesAlertes = [
 
 export default {
   name: 'Alerte',
+
   data() {
     return {
       visible: true
@@ -28,8 +31,20 @@ export default {
   },
 
   props: {
-    typeAlerte: String,
-    messages: Array
+    typeAlerte: {
+      type: String,
+      required: true
+    },
+    messages: {
+      type: Array,
+      required: true
+    },
+    // Configurer si l'alerte doit être synchronisée avec son parent
+    // true = synchro, rien/false = non synchro
+    synchro: {
+      type: Boolean,
+      required: false
+    }
   },
 
   methods: {
