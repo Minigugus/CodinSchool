@@ -8,7 +8,7 @@
 
     <ApolloMutation
       v-if="!inscriptionFin"
-      :mutation="require('../graphql/Inscription.gql')"
+      :mutation="require('@/graphql/Inscription.gql')"
       :variables="{
         nouvelUtilisateur: {
           email: formulaire.email,
@@ -47,11 +47,11 @@
           </div>
           <div class="field">
             <label for="motDePasse">Mot de passe</label>
-            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" />
+            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="new-password "/>
           </div>
           <div class="field">
             <label for="motDePasse2">Confirmation du mot de passe</label>
-            <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" />
+            <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
           </div>
           <div class="field">
             <label for="dateNaissance">Date de naissance</label>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import Alerte from '../components/Alerte.vue'
+import Alerte from '@/components/Alerte.vue'
 
 export default {
   name: 'inscription',
@@ -95,7 +95,7 @@ export default {
         motDePasse2:	'rigwild',
         dateNaissance: 2018
       },
-      inscriptionFin: true
+      inscriptionFin: false
     }
   },
 
