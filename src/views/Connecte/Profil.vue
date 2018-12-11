@@ -1,7 +1,7 @@
 <template>
   <div class="apollo-example">
     <ApolloQuery
-      :query="require('../graphql/RecupererProfil.gql')"
+      :query="require('@/graphql/RecupererProfil.gql')"
     >
       <template slot-scope="{ result: { loading, error, data } }">
         <div v-if="loading" class="loading apollo">Chargement ...</div>
@@ -18,7 +18,7 @@
 
 <script>
 
-import Alerte from '../components/Alerte.vue'
+import Alerte from '@/components/Alerte.vue'
 
 export default {
   name: 'profil',

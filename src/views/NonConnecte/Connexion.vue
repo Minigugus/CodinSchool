@@ -1,5 +1,5 @@
 <template>
-  <div class="ui container">
+  <div class="ui container segment stripe">
     <h2 class="ui center aligned header">
       <div class="content">
         Connexion
@@ -7,7 +7,7 @@
     </h2>
 
     <ApolloMutation
-      :mutation="require('../graphql/Connexion.gql')"
+      :mutation="require('@/graphql/Connexion.gql')"
       :variables="{
         email: formulaire.email,
         motDePasse: formulaire.motDePasse
@@ -24,7 +24,7 @@
           </div>
           <div class="field">
             <label for="motDePasse">Mot de passe</label>
-            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" />
+            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="current-password"/>
           </div>
           <button class="ui button" type="submit">Se connecter</button>
         </form>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import Alerte from '../components/Alerte.vue'
+import Alerte from '@/components/Alerte.vue'
 
 export default {
   name: 'connexion',
