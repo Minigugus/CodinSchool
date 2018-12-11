@@ -1,0 +1,12 @@
+#import "./FragmentUtilisateur.gql"
+
+mutation Connexion($email: String!, $motDePasse: String!) {
+  connexion(email: $email, motDePasse: $motDePasse) {
+    moi {
+      jeton
+      profile {
+        ...utilisateur
+      }
+    }
+  }
+}
