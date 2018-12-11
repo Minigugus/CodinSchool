@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div v-if="visible && messages && messages.length > 0" class="ui message" :class="choixCouleur">
-      <i @click="synchro ? $emit('vider') : visible = false" class="close icon"></i>
+      <i @click="messages = []" class="close icon"></i>
 
       <div class="header">{{ choixTitre }}</div>
 
@@ -26,7 +26,7 @@ export default {
 
   data() {
     return {
-      visible: true
+      messages: []
     }
   },
 
@@ -34,26 +34,29 @@ export default {
     typeAlerte: {
       type: String,
       required: true
-    },
-    messages: {
-      type: Array,
-      required: true
-    },
-    // Configurer si l'alerte doit être synchronisée avec son parent
-    // true = synchro, rien/false = non synchro
-    synchro: {
-      type: Boolean,
-      required: false
     }
   },
 
   methods: {
-    getAlerteTypeConfig(){
+    getAlerteTypeConfig() {
       return typesAlertes.find(x => x.titre === this.typeAlerte)
+    },
+
+    ajouterAlerte(...str) {
+      const notifNonPresent = str.filter(x => !this.messages.includes(x))
+      this.messages.push(...notifNonPresent)
+    },
+
+    viderAlerte() {
+      this.messages = []
     }
   },
 
   computed: {
+    visible() {
+      return this.messages.length > 0
+    },
+
     choixTitre() {
       const config = this.getAlerteTypeConfig()
       return config ? config.titre : ''
