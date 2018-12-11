@@ -25,7 +25,7 @@
       @done="rediriger"
     >
       <template slot-scope="{ mutate, loading }">
-        <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading: loading }" class="ui form">
+        <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
           <div class="field">
             <div class="two fields">
               <div class="field">
@@ -54,15 +54,14 @@
             <label for="motDePasse2">Confirmation du mot de passe</label>
             <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" />
           </div>
+          <div class="field">
+            <label for="dateNaissance">Date de naissance</label>
+            <input type="number" id="dateNaissance" v-model="formulaire.dateNaissance" placeholder="Date de naissance" />
+          </div>
           <button class="ui button" type="submit">S'inscrire</button>
         </form>
 
-        <Alerte v-if="erreurFormulaire && erreurFormulaire.length > 0"
-          typeAlerte="Erreur"
-          :synchro="true"
-          v-bind:messages="erreurFormulaire"
-          v-on:vider="erreurFormulaire = []"
-        />
+        <Alerte ref="erreurs" typeAlerte="Erreur" />
       </template>
     </ApolloMutation>
   </div>
@@ -86,8 +85,7 @@ export default {
         motDePasse:	'pseudo',
         motDePasse2:	'pseudo',
         dateNaissance: 2018
-      },
-      erreurFormulaire: []
+      }
     }
   },
 
@@ -96,7 +94,12 @@ export default {
     chargerErreur(errorObject) {
       let e = errorObject.message
       if (e.includes('GraphQL error: '))
-        this.erreurFormulaire.push(e.replace('GraphQL error: ', ''))
+        this.ajouterErreur(e.replace('GraphQL error: ', ''))
+    },
+
+    // Ajouter une erreur dans la liste des erreurs
+    ajouterErreur(...str) {
+      this.$refs.erreurs.ajouterAlerte(...str)
     },
 
     // Mettre un fond rouge sur un élément de formulaire
@@ -116,7 +119,7 @@ export default {
         }
       })
       if (!allInputCompleted)
-        this.erreurFormulaire.push('Tous les champs sont obligatoires.')
+        this.ajouterErreur('Tous les champs sont obligatoires.')
       return allInputCompleted
     },
 
@@ -125,7 +128,7 @@ export default {
       const isEmailValid = email => /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email)
 
       if (!isEmailValid(this.formulaire.email)) {
-        this.erreurFormulaire.push('L\'adresse email renseignée est invalide.')
+        this.ajouterErreur('L\'adresse email renseignée est invalide.')
         this.setErreurInput(true, 'email')
         return false
       }
@@ -133,9 +136,14 @@ export default {
     },
 
     // Vérifier que la confirmation de mot de passe est identique
-    verifierConfirmationMotDePasse() {
-      if (this.formulaire.motDePasse !== this.formulaire.motDePasse2) {
-        this.erreurFormulaire.push('Les mots de passe ne correspondent pas.')
+    verifierMotDePasse() {
+      if (!this.formulaire.motDePasse.length > 4) {
+        this.setErreurInput(true, 'motDePasse')
+        this.setErreurInput(false, 'motDePasse2')
+        return false
+      }
+      else if (this.formulaire.motDePasse !== this.formulaire.motDePasse2) {
+        this.ajouterErreur('Les mots de passe ne correspondent pas.')
         this.setErreurInput(true, 'motDePasse')
         this.setErreurInput(true, 'motDePasse2')
         return false
@@ -143,13 +151,19 @@ export default {
       return true
     },
 
+    // Vider les alertes d'erreurs et les couleurs des input
+    resetErreurs() {
+      this.setErreurInput(false, ...Object.keys(this.formulaire))
+      this.$refs.erreurs.viderAlerte()
+    },
+
     // Vérifier le formulaire avant envoi
-    verifierFormulaire(aa, bb, cc) {
-      this.erreurFormulaire = []
+    verifierFormulaire() {
+      this.resetErreurs()
       let envoyerFormulaire = true
       if (!this.verifierTousChampsRemplis()) envoyerFormulaire = false
       if (!this.verifierEmail()) envoyerFormulaire = false
-      if (!this.verifierConfirmationMotDePasse()) envoyerFormulaire = false
+      if (!this.verifierMotDePasse()) envoyerFormulaire = false
       return envoyerFormulaire
     },
 

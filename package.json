@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "NODE_ENV=production vue-cli-service build",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "apollo": "vue-cli-service apollo:watch --run \"vue-cli-service serve\"",
-    "apollo:run": "NODE_ENV=production vue-cli-service apollo:run"
+    "apollo:run": "vue-cli-service apollo:run",
+    "apollo:run_prod": "cross-env NODE_ENV=production vue-cli-service apollo:run"
   },
   "dependencies": {
     "graphql-type-json": "^0.2.1",
@@ -25,6 +26,7 @@
     "@vue/cli-service": "^3.2.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "cross-env": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-graphql": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0-0",
