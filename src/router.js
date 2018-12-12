@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+import Accueil from './views/NonConnecte/Accueil.vue'
 
 Vue.use(Router)
 
@@ -8,26 +8,33 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      name: 'accueil',
+      component: Accueil
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      path: '/apropos',
+      name: 'apropos',
+      component: () => import('./views/NonConnecte/Apropos.vue')
+    },
+    {
+      path: '/langagec',
+      name: 'langagec',
+      component: () => import('./views/NonConnecte/LangageC.vue')
     },
     {
       path: '/inscription',
       name: 'inscription',
-      component: () => import('./views/Inscription.vue')
+      component: () => import('./views/NonConnecte/Inscription.vue')
+    },
+    {
+      path: '/connexion',
+      name: 'connexion',
+      component: () => import('./views/NonConnecte/Connexion.vue')
     },
     {
       path: '/profil',
       name: 'profil',
-      component: () => import('./views/Profil.vue')
+      component: () => import('./views/Connecte/Profil.vue')
     }
   ]
 })
