@@ -1,13 +1,38 @@
 <template>
   <div class="ui vertical stripe segment">
     <div class="ui text container">
-      <h3 class="ui header">Page "Aide langage C"</h3>
+      <h1 class="ui center aligned header">Aide sur le langage C</h1>
+      <h2 class="ui header">Programmer en C à la Maison</h2>
       <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo officia omnis asperiores praesentium debitis recusandae quasi tenetur voluptates! Error minus consequuntur aliquam aspernatur earum vero non fugit porro illum iusto?
+        Ce document est un tutoriel d'installation des outils nécessaires à la programmation en C.<br>
+        Ce guide explique comment installer Code::Blocks et comment l'utiliser pour programmer en C.
       </p>
-      <h4 class="ui horizontal header divider">
-        <a href="#"></a>
-      </h4>
+      <p>
+      </p>
+
+      <h3 class="ui header">1. Télécharger Code::Blocks</h3>
+      <p>
+        La première étape conciste à télécharger l'installateur de Code::Blocks.
+      </p>
+      <p>
+        Ce logiciel vous permet d'écrire du code source, de gérer vos fichiers et de simplifier la compilation du code source, c'est-à-dire le passage du code source lisible à un code binaire éxécutable par votre machine.
+      </p>
+      <p>
+        Cependant, la compilation n'est pas effectuée par ce logiciel. Il dépend donc d'outils externes pour pouvoir compiler votre code. <em>Il est donc recommandé de <strong>télécharger la version incluant MinGW</strong>, un compilateur très connu</em>.
+      </p>
+      <p>
+        Vous pouvez <strong>télécharger Code::Blocks</strong> ici : <a href="http://www.codeblocks.org/downloads/26" target="_blank" rel="noopener noreferrer">http://www.codeblocks.org/downloads/26</a>
+      </p>
+      <p>
+        Le fichier à télécharger est sous la forme <strong>codeblocks-<small>[VERSION]</small>  mingw-setup.exe</strong>, où <small>[VERSION]</small> est le numéro de version de Code::Blocks (s'apparente à la date de sortie du logiciel). Choisissez simplement le fichier avec le numéro de version le plus élevé.
+      </p>
+
+      <h3 class="ui header">2. Installer Code::Blocks</h3>
+      <p>
+        Exécutez le fichier téléchargé précédement et suivez toutes les étapes indiquées.
+      </p>
+
+      <h3 class="ui header">3. Utiliser Code::Bocks</h3>
     </div>
   </div>
 </template>

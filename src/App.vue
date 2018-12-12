@@ -33,8 +33,8 @@
               <router-link to="/langagec" exact-active-class="active" class="item">Langage C</router-link>
               <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
               <div class="right item">
-                <router-link to="/connexion" class="ui inverted button b-space">Connexion</router-link>
-                <router-link to="/inscription" class="ui inverted button">Inscription</router-link>
+                <router-link to="/connexion" exact-active-class="active" class="ui inverted button b-space">Connexion</router-link>
+                <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
               </div>
             </template>
           </div>
