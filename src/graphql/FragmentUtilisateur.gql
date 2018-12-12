@@ -1,0 +1,6 @@
+fragment utilisateur on Profile {
+  id
+  nom
+  prenom
+  emailPrimaire
+}

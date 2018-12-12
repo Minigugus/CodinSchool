@@ -1,15 +1,14 @@
 <template>
-  <div class="ui raised very padded text container segment">
+  <div class="ui container segment stripe">
     <h2 class="ui center aligned header">
-      <i class="settings icon" style="display: inline;position: absolute;margin-left: -44px;margin-top: 7px;"></i>
-      <div class="content" style="display: inline-block;">
-        Codinschool
-        <div class="sub header">Inscription</div>
+      <div class="content">
+        Inscription
       </div>
     </h2>
 
     <ApolloMutation
-      :mutation="require('../graphql/Inscription.gql')"
+      v-if="!inscriptionFin"
+      :mutation="require('@/graphql/Inscription.gql')"
       :variables="{
         nouvelUtilisateur: {
           email: formulaire.email,
@@ -22,7 +21,7 @@
       }"
       class="form"
       @error="chargerErreur"
-      @done="rediriger"
+      @done="validerEmail"
     >
       <template slot-scope="{ mutate, loading }">
         <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
@@ -48,11 +47,11 @@
           </div>
           <div class="field">
             <label for="motDePasse">Mot de passe</label>
-            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" />
+            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="new-password "/>
           </div>
           <div class="field">
             <label for="motDePasse2">Confirmation du mot de passe</label>
-            <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" />
+            <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
           </div>
           <div class="field">
             <label for="dateNaissance">Date de naissance</label>
@@ -64,11 +63,21 @@
         <Alerte ref="erreurs" typeAlerte="Erreur" />
       </template>
     </ApolloMutation>
+
+    <div v-else>
+      <h2 class="ui center aligned icon header">
+        <i class="circular envelope icon"></i>
+        Inscription enregistrée !
+      </h2>
+      <h3 class="ui center aligned icon header">
+        Vous avez reçu un email contenant un lien d'activation de votre compte.
+      </h3>
+    </div>
   </div>
 </template>
 
 <script>
-import Alerte from '../components/Alerte.vue'
+import Alerte from '@/components/Alerte.vue'
 
 export default {
   name: 'inscription',
@@ -85,7 +94,8 @@ export default {
         motDePasse:	'pseudo',
         motDePasse2:	'pseudo',
         dateNaissance: 2018
-      }
+      },
+      inscriptionFin: false
     }
   },
 
@@ -137,7 +147,10 @@ export default {
 
     // Vérifier que la confirmation de mot de passe est identique
     verifierMotDePasse() {
-      if (!this.formulaire.motDePasse.length > 4) {
+      if (this.formulaire.motDePasse.length === 0)
+        return
+      if (this.formulaire.motDePasse.length < 4) {
+        this.ajouterErreur('Le mot de passe doit avoir une taille de 4 caractères mininum.')
         this.setErreurInput(true, 'motDePasse')
         this.setErreurInput(false, 'motDePasse2')
         return false
@@ -167,9 +180,9 @@ export default {
       return envoyerFormulaire
     },
 
-    // Formulaire validé, redirection de la page
-    rediriger() {
-      console.log('form validé, demande de redirection')
+    // Formulaire validé, affichage du message "Confirmez votre compte"
+    validerEmail() {
+      this.inscriptionFin = true
     }
   }
 }
