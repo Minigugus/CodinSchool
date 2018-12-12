@@ -14,7 +14,7 @@
       }"
       class="form"
       @error="chargerErreur"
-      @done="rediriger"
+      @done="connexionOk"
     >
       <template slot-scope="{ mutate, loading }">
         <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { onLogin } from '@/vue-apollo'
+import RECUPERER_PROFIL from '../../graphql/RecupererProfil.gql'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
@@ -100,10 +102,23 @@ export default {
       return envoyerFormulaire
     },
 
-    // Formulaire validé redirection vers l'application
-    rediriger() {
+    // Formulaire validé, injection des données et redirection vers l'application
+    async connexionOk({ data }) {
       console.log('connecté')
-      console.log(arguments)
+      console.log(data)
+      const apolloClient = this.$apollo.provider.defaultClient
+
+      // Mettre le jeton à jour et recharger le cache
+      const jeton = 'Bearer ' + data.connexion.moi.jeton
+      await onLogin(apolloClient, jeton)
+
+      // Mise à jour du cache
+      apolloClient.writeQuery({
+        query: RECUPERER_PROFIL,
+        data: {
+          ...data.connexion
+        }
+      })
     }
   }
 }

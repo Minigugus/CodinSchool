@@ -1,6 +1,25 @@
-fragment utilisateur on Profile {
-  id
-  nom
-  prenom
-  emailPrimaire
+fragment utilisateur on Utilisateur {
+  pseudo
+  permissions
+  jeton
+  profile {
+    id
+    nom
+    prenom
+    emailPrimaire
+    incritDepuis
+    roles {
+      nom
+    }
+    dateNaissance
+    adresse
+    codePostal
+    emailSecondaire
+    telephonePrimaire
+    telephoneSecondaire
+    diplome
+    anneeDiplome
+    siteWeb
+    avatar
+  }
 }
