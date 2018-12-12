@@ -3,41 +3,40 @@ services:
 
   # DEVELOPPEMENT
 
-  web:
-    image: node:8-alpine
-    working_dir: '/usr/src/app'
-    command: [ 'npm', 'run', 'apollo' ]
-    restart: unless-stopped
-    ports:
-      - "4000"
-      - "8080"
-    networks:
-      - frontend
-    volumes:
-      - type: bind
-        source: .
-        target: /usr/src/app
-
+  # web:
+  #   image: node:8-alpine
+  #   working_dir: '/usr/src/app'
+  #   command: [ 'npm', 'run', 'apollo' ]
+  #   restart: unless-stopped
+  #   ports:
+  #     - "4000"
+  #     - "8080"
+  #   networks:
+  #     - frontend
+  #   volumes:
+  #     - type: bind
+  #       source: .
+  #       target: /usr/src/app
 
   # PRODUCTION
 
-  # web:
-  #   build: .
-  #   ports:
-  #     - target: 80
-  #       published: 80
-  #       protocol: tcp
-  #       mode: ingress
-  #     restart: on-failure
-  #   networks:
-  #     - frontend
-  #   environment:
-  #     NODE_ENV: "production"
-  #     SECRET_JWT: "${SECRET_JWT:?Vous devez spécifier la variable d'environnement SECRET_JWT en mode production.}"
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 200M
+  web:
+    build: .
+    ports:
+      - target: 80
+        published: ${PORT:-80}
+        protocol: tcp
+        mode: ingress
+    restart: on-failure
+    networks:
+      - frontend
+    environment:
+      NODE_ENV: "production"
+      SECRET_JWT: "${SECRET_JWT:?Vous devez spécifier la variable d'environnement SECRET_JWT en mode production.}"
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
   #   links:
   #     - postgres
