@@ -3,22 +3,23 @@
   "version": "4.0.0",
   "private": true,
   "scripts": {
+    "serve:production": "node -r esm ./index.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "apollo": "vue-cli-service apollo:watch --run \"vue-cli-service serve\"",
-    "apollo:run": "vue-cli-service apollo:run",
-    "apollo:run_prod": "cross-env NODE_ENV=production vue-cli-service apollo:run"
+    "apollo:run": "vue-cli-service apollo:run"
   },
   "dependencies": {
+    "apollo-server-express": "^2.2.6",
     "graphql-type-json": "^0.2.1",
+    "jsonwebtoken": "^8.4.0",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",
     "vue": "^2.5.17",
     "vue-apollo": "^3.0.0-beta.11",
     "vue-router": "^3.0.1",
-    "vuex": "^3.0.1",
-    "jsonwebtoken": "^8.4.0"
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
