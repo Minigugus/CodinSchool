@@ -1,0 +1,36 @@
+# Version « Production » du fichier de configuration de « docker-compose ».
+
+version: '3.2'
+services:
+  web:
+    build: .
+    ports:
+      - target: 80
+        published: ${PORT:-80}
+        protocol: tcp
+        mode: ingress
+    restart: on-failure
+    networks:
+      - frontend
+    environment:
+      NODE_ENV: "production"
+      SECRET_JWT: "${SECRET_JWT:?Vous devez spécifier la variable d'environnement SECRET_JWT en mode production.}"
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+  #   links:
+  #     - postgres
+
+  # postgres:
+  #   image: postgres:10-alpine
+  #   volumes:
+  #     - postgres:/var/lib/postgresql/data
+  #   environment:
+  #     POSTGRES_USER: codinschool
+
+# volumes:
+#   postgres: {}
+
+# networks:
+#   frontend:

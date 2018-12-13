@@ -1,0 +1,17 @@
+# Version « Développement » du fichier de configuration de « docker-compose ».
+
+version: '3.2'
+services:
+  web:
+    image: node:8-alpine
+    working_dir: '/usr/src/app'
+    command: [ 'npm', 'run', 'apollo' ]
+    restart: unless-stopped
+    ports:
+      - 4000:4000
+      - 8080:8080
+    volumes:
+      - type: bind
+        source: .
+        target: /usr/src/app
+        # propagation: rprivate
