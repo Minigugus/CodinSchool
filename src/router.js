@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Accueil from './views/NonConnecte/Accueil.vue'
+import Accueil from '@/views/Accueil.vue'
 
 Vue.use(Router)
 
@@ -14,27 +14,32 @@ export default new Router({
     {
       path: '/apropos',
       name: 'apropos',
-      component: () => import('./views/NonConnecte/Apropos.vue')
+      component: () => import('@/views/Apropos.vue')
     },
     {
       path: '/langagec',
       name: 'langagec',
-      component: () => import('./views/NonConnecte/LangageC.vue')
+      component: () => import('@/views/LangageC.vue')
     },
     {
       path: '/inscription',
       name: 'inscription',
-      component: () => import('./views/NonConnecte/Inscription.vue')
+      component: () => import('@/views/NonConnecte/Inscription.vue')
     },
     {
       path: '/connexion',
       name: 'connexion',
-      component: () => import('./views/NonConnecte/Connexion.vue')
+      component: () => import('@/views/NonConnecte/Connexion.vue')
     },
     {
       path: '/profil',
       name: 'profil',
-      component: () => import('./views/Connecte/Profil.vue')
+      component: () => import('@/views/Connecte/Profil.vue')
+    },
+    {
+      path: '/niveau/gerer',
+      name: 'gererniveau',
+      component: () => import('@/views/Connecte/Niveau/GererNiveau.vue')
     }
   ]
 })
