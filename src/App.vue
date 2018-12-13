@@ -9,6 +9,8 @@
         <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
         <router-link to="/connexion" exact-active-class="active" class="item">Connexion</router-link>
         <router-link to="/inscription" exact-active-class="active" class="item">Inscription</router-link>
+        <router-link to="/profil" exact-active-class="active" class="item">(test) Profil</router-link>
+        <router-link to="/niveau/gerer" exact-active-class="active" class="item">(test) Gérer niveaux</router-link>
       </div>
     </transition>
 
@@ -93,26 +95,26 @@ export default {
 </script>
 
 <style>
-  .text-left {
-    text-align: left !important;
-  }
+.text-left {
+  text-align: left !important;
+}
 
-  .text-center {
-    text-align: center !important;
-  }
+.text-center {
+  text-align: center !important;
+}
 
-  .text-right {
-    text-align: right !important;
-  }
+.text-right {
+  text-align: right !important;
+}
 
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: all .2s !important;
-  }
-  .fade-enter,
-  .fade-leave-to {
-    opacity: 0 !important;
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition: all .2s !important;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0 !important;
+}
 </style>
 
 <style scoped>
