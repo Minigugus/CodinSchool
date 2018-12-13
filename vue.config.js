@@ -1,7 +1,7 @@
 module.exports = {
   pluginOptions: {
     apollo: {
-      enableMocks: true,
+      enableMocks: (process.env.NODE_ENV !== 'production'),
       enableEngine: false
     }
   }
