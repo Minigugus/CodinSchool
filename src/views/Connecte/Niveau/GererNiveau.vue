@@ -129,11 +129,15 @@ export default {
       this.niveau.liste[niveau].editionEnCours = true
     },
 
+    // Validation des modifications d'un niveau
     validerNiveau(idNiveau) {
       const niveau = this.trouverNiveau(idNiveau)
       if (isNaN(niveau)) return
-      this.niveau.sontDraggable = true
+
       this.niveau.liste[niveau].editionEnCours = false
+      // On vérifie que tous les niveaux sont validés avant d'autoriser le drag
+      if (!this.niveau.liste.find(x => x.editionEnCours === true))
+        this.niveau.sontDraggable = true
     }
   }
 }
