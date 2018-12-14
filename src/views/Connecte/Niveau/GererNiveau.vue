@@ -7,21 +7,18 @@
       :list="niveau.liste"
       :options="{animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost'}"
       element="div"
-      class="liste-niveau"
       >
-        <transition-group name="flip-list" class="ui divided items">
-          <div v-for="aNiveau in niveau.liste" :key="aNiveau.id" class="item">
-            <div class="content">
-              <div class="editer">
-                <button v-if="!aNiveau.editionEnCours" @click="editerNiveau(aNiveau.id)" class="ui button primary">Editer</button>
-                <button v-else @click="validerNiveau(aNiveau.id)" class="ui button positive">Valider</button>
-              </div>
-              <div class="header">
-                {{ aNiveau.nom }}
-              </div>
-              <div class="meta">
-                <span>{{ aNiveau.description }}</span>
-              </div>
+        <transition-group name="flip-list" class="liste-niveau">
+          <div v-for="aNiveau in niveau.liste" :key="aNiveau.id" class="niveau">
+            <div class="editer">
+              <button v-if="!aNiveau.editionEnCours" @click="editerNiveau(aNiveau.id)" class="ui button primary">Editer</button>
+              <button v-else @click="validerNiveau(aNiveau.id)" class="ui button positive">Valider</button>
+            </div>
+            <div class="titre-niveau">
+              {{ aNiveau.nom }}
+            </div>
+            <div class="description-niveau">
+              <span>{{ aNiveau.description }}</span>
             </div>
             <transition name="smooth">
               <div v-if="aNiveau.editionEnCours" class="ui">
@@ -152,9 +149,39 @@ export default {
 }
 .liste-niveau {
   background-color: #f3f3f3 !important;
+  display: block;
+  border-radius: 12px;
 }
-.item {
-  display: block !important;
+.niveau {
+  display: block;
+  border-bottom: 1px solid #cfcfcf;
+  background-color: #f3f3f3;
+  padding: 20px;
+}
+.niveau:first-child {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.niveau:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.niveau:last-of-type {
+  border-bottom: none;
+}
+.titre-niveau {
+  font-size: 1.3em;
+  display: inline-block;
+  margin: 0;
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  font-weight: 700;
+  color: rgba(0,0,0,.85);
+}
+.description-niveau {
+  margin: .5em 0 .5em;
+  font-size: 1em;
+  line-height: 1em;
+  color: rgba(0,0,0,.6);
 }
 .editer {
   position: relative;
@@ -162,7 +189,10 @@ export default {
 .editer button {
   position: absolute;
   right: 0;
+  margin-top: 15px;
 }
+
+
 .ui.divided.items>.item {
   border-top: 1px solid rgba(34,36,38,.15);
   background-color: #f3f3f3;
@@ -176,14 +206,15 @@ export default {
   padding: 25px !important;
 }
 
+/* Animation d'ouverture des niveaux */
 .smooth-enter-to, .smooth-leave {
-  height: 170px;
+  max-height: 300px;
 }
 .smooth-enter-active, .smooth-leave-active {
-  transition: height .5s;
+  transition: max-height .8s;
   overflow: hidden;
 }
 .smooth-enter, .smooth-leave-to {
-  height: 0;
+  max-height: 0;
 }
 </style>
