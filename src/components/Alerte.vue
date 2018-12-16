@@ -6,7 +6,7 @@
       <div class="header">{{ choixTitre }}</div>
 
       <ul class="list">
-        <li v-for="(aMessage, index) in messages" :key="'alerte' + index">{{aMessage}}</li>
+        <li v-for="(aMessage, index) in messages" :key="'alerte' + index">{{ aMessage }}</li>
       </ul>
     </div>
   </transition>
