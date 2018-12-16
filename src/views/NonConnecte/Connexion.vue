@@ -37,7 +37,7 @@
 
 <script>
 import { onLogin } from '@/vue-apollo'
-import RECUPERER_PROFIL from '../../graphql/RecupererProfil.gql'
+import RECUPERER_PROFIL from '@/graphql/RecupererProfil.gql'
 import Alerte from '@/components/Alerte.vue'
 
 export default {

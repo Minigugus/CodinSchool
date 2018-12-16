@@ -38,8 +38,8 @@ export default new Router({
     },
     {
       path: '/niveau/gerer',
-      name: 'gererniveau',
-      component: () => import('@/views/Connecte/Niveau/GererNiveau.vue')
+      name: 'gestioncontenu',
+      component: () => import('@/views/Connecte/Niveau/GestionContenu.vue')
     }
   ]
 })

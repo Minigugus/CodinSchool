@@ -1,50 +1,37 @@
 <template>
   <div class="ui vertical stripe segment">
-    <div class="ui text container">
-      <h1 class="ui center aligned header">Gestion des niveaux</h1>
+    <GererNiveau ref="niveau" />
 
+<!--
+  <transition name="smooth">
+    <div v-if="aNiveau.editionEnCours" class="ui">
       <draggable
-      :list="niveau.liste"
-      :options="{animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost'}"
+      :list="aNiveau.exercice"
+      :options="{animation: 0, group: 'exercice-' + aNiveau.id , disabled: !aNiveau.editionEnCours, ghostClass: 'ghost'}"
       element="div"
       >
-        <transition-group name="flip-list" class="liste-niveau">
-          <div v-for="aNiveau in niveau.liste" :key="aNiveau.id" class="niveau">
-            <div class="editer">
-              <button v-if="!aNiveau.editionEnCours" @click="editerNiveau(aNiveau.id)" class="ui button primary">Editer</button>
-              <button v-else @click="validerNiveau(aNiveau.id)" class="ui button positive">Valider</button>
-            </div>
-            <div class="titre-niveau">
-              {{ aNiveau.nom }}
-            </div>
-            <div class="description-niveau">
-              <span>{{ aNiveau.description }}</span>
-            </div>
-            <transition name="smooth">
-              <div v-if="aNiveau.editionEnCours" class="ui">
-                <transition-group name="flip-list" class="ui divided items">
-                  <div v-for="aExercice in aNiveau.exercice" :key="aExercice.id" class="item">
-                    {{ aExercice }}
-                  </div>
-                </transition-group>
-              </div>
-            </transition>
+        <transition-group name="flip-list" class="ui divided items">
+          <div v-for="aExercice in aNiveau.exercice" :key="aNiveau.id + '-' + aExercice.id" class="item">
+            {{ aExercice.id }} - {{ aExercice.nom }} - {{ aExercice.description }}
+            <button class="ui button">test</button>
           </div>
         </transition-group>
       </draggable>
-
     </div>
+  </transition>
+-->
+
   </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable'
+import GererNiveau from '@/components/GererNiveau.vue'
 
 export default {
   data() {
     return {
       niveau: {
-        sontDraggable: true,
+        sontDraggable: false,
         liste: [
           {
             id: 1,
@@ -64,8 +51,8 @@ export default {
               },
               {
                 id: 5,
-                nom: 'Exercice 1.2',
-                description: 'Description exercice 1.2'
+                nom: 'Exercice 1.3',
+                description: 'Description exercice 1.3'
               }
             ]
           },
@@ -109,11 +96,21 @@ export default {
       }
     }
   },
-  name: 'gererniveau',
+  name: 'gestioncontenu',
   components: {
-    draggable
+    GererNiveau
   },
+
+  mounted() {
+    // TODO: Chargement des niveaux depuis Apollo
+    this.$refs.niveau.ajouterNiveau(...this.niveau.liste)
+  },
+
   methods: {
+    validerReorganisationNiveau() {
+      this.niveau.sontDraggable = false
+    },
+
     // Retrouver le niveau dans la liste des niveaux
     trouverNiveau(idNiveau) {
       const niveau = this.niveau.liste.findIndex(x => x.id === idNiveau)
@@ -135,8 +132,9 @@ export default {
       if (isNaN(niveau)) return
 
       this.niveau.liste[niveau].editionEnCours = false
+
       // On vérifie que tous les niveaux sont validés avant d'autoriser le drag
-      if (!this.niveau.liste.find(x => x.editionEnCours === true))
+      if (!this.niveau.liste.find(x => x.editionEnCours))
         this.niveau.sontDraggable = true
     }
   }
@@ -173,6 +171,20 @@ export default {
 .niveau:last-of-type {
   border-bottom: none;
 }
+.reorganiser-niveau {
+  text-align: center;
+  padding-bottom: 10px;
+}
+.drag-icon {
+  line-height: 60px;
+  position: absolute;
+  padding-right: 20px;
+  cursor: move;
+}
+.contenu {
+  padding-left: 2.2em;
+}
+
 .titre-niveau {
   font-size: 1.3em;
   display: inline-block;
@@ -191,9 +203,9 @@ export default {
   position: relative;
 }
 .editer button {
-  position: absolute;
-  right: 0;
-  margin-top: 15px;
+  position: absolute !important;
+  right: 0 !important;
+  margin-top: 15px !important;
 }
 
 

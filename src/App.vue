@@ -115,6 +115,29 @@ export default {
 .fade-leave-to {
   opacity: 0 !important;
 }
+
+.fade-slow-enter-active,
+.fade-slow-leave-active {
+  transition: all .7s !important;
+}
+.fade-slow-enter,
+.fade-slow-leave-to {
+  opacity: 0 !important;
+}
+
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all .3s !important;
+}
+
+.slide-left-enter {
+  transform: translateX(30px) !important;
+  opacity: 0 !important;
+}
+.slide-left-leave-to {
+  transform: translateX(-30px) !important;
+  opacity: 0 !important;
+}
 </style>
 
 <style scoped>
