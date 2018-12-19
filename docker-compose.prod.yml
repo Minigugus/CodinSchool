@@ -1,36 +1,42 @@
 # Version « Production » du fichier de configuration de « docker-compose ».
 
+# Configure Docker pour qu'il :
+
 version: '3.2'
 services:
   web:
+
+    # ¹ Crée une image du projet avec le Dockerfile (plus d'informations dans ce fichier).
     build: .
+
+    # ² Expose le port 80 à l'intérieur du container sur le port 80 de l'hôte ou
+    #   sur le port PORT si cette variable d'environnement est spécifiée.
     ports:
       - target: 80
         published: ${PORT:-80}
         protocol: tcp
         mode: ingress
+
+    # ³ Relance le container si celui-ci « plante » (code de sortie du programme différent de 0).
     restart: on-failure
-    networks:
+
+    # ⁴ Connecte le container au réseau virtuel de Docker « frontend » (il est créé s'il n'existe pas).
+    #   NOTE : Doit apparaitre dans la partie « networks » au même niveau que « services » (voir ci-après).
+    networks: # ³
       - frontend
+
+    # ⁵ Expose les variables d'environnement NODE_ENV et SECRET_JWT au container.
+    #   NOTE : Ces variables d'environnement sont lues lors de CRÉATION du container, ce qui signifie
+    #          qu'il n'est pas nécessaire de les préciser à chaque lancement de ce container.
     environment:
       NODE_ENV: "production"
       SECRET_JWT: "${SECRET_JWT:?Vous devez spécifier la variable d'environnement SECRET_JWT en mode production.}"
+
+    # ⁶ Déploie le service suivant certains critères (ici : maximum 200M de RAM autorisé pour le container).
     deploy:
       resources:
         limits:
           memory: 200M
-  #   links:
-  #     - postgres
-
-  # postgres:
-  #   image: postgres:10-alpine
-  #   volumes:
-  #     - postgres:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_USER: codinschool
-
-# volumes:
-#   postgres: {}
 
 networks:
   frontend:
