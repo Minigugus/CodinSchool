@@ -1,11 +1,18 @@
 # Version « Développement » du fichier de configuration de « docker-compose ».
 
+# Lance le serveur de développement dans le dossier courant EN LE PARTAGEANT AVEC LE CONTAINER,
+# c'est-à-dire que le container ET l'hôte voient les mêmes fichiers en même temps.
+# Une modification sur l'un est donc répercutée sur l'autre.
+
+# Si vous cherchez la documentation de ces fichiers Docker Compose,
+# référez-vous au fichier « docker-compose.prod.yml ».
+
 version: '3.2'
 services:
   web:
     image: node:8-alpine
     working_dir: '/usr/src/app'
-    command: [ 'npm', 'run', 'apollo' ]
+    command: [ 'sh', '-c', 'npm i -D && npm run apollo' ]
     restart: unless-stopped
     ports:
       - 4000:4000
@@ -14,4 +21,3 @@ services:
       - type: bind
         source: .
         target: /usr/src/app
-        # propagation: rprivate
