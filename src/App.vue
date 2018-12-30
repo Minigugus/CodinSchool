@@ -7,10 +7,18 @@
         <router-link to="/" exact-active-class="active" class="item">Accueil</router-link>
         <router-link to="/langagec" exact-active-class="active" class="item">Langage C</router-link>
         <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
-        <router-link to="/connexion" exact-active-class="active" class="item">Connexion</router-link>
-        <router-link to="/inscription" exact-active-class="active" class="item">Inscription</router-link>
-        <router-link to="/profil" exact-active-class="active" class="item">(test) Profil</router-link>
-        <router-link to="/niveau/gerer" exact-active-class="active" class="item">(test) Gérer niveaux</router-link>
+
+        <transition name="fade" mode="out-in">
+          <div v-if="!moi" key="menuNonConnecteMobile">
+            <router-link to="/connexion" exact-active-class="active" class="item">Connexion</router-link>
+            <router-link to="/inscription" exact-active-class="active" class="item">Inscription</router-link>
+          </div>
+          <div v-else key="menuConnecteMobile">
+            <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
+            <router-link to="/niveau/gerer" exact-active-class="active" class="item">Gérer niveaux</router-link>
+            <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
+          </div>
+        </transition>
       </div>
     </transition>
 
@@ -41,7 +49,9 @@
                   <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
                 </div>
                 <div v-else key="menuConnecte" class="right item">
-                  <a @click="deconnexion" exact-active-class="active" class="ui inverted button b-space">Se déconnecter</a>
+                  <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
+                  <router-link to="/niveau/gerer" exact-active-class="active" class="item">Gérer niveaux</router-link>
+                  <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
                 </div>
               </transition>
             </template>
