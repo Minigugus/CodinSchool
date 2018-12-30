@@ -37,7 +37,7 @@
 
 <script>
 import { onLogin } from '@/vue-apollo'
-import RECUPERER_PROFIL from '@/graphql/RecupererProfil.gql'
+import UTILISATEUR from '@/graphql/Utilisateur.gql'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
@@ -104,8 +104,6 @@ export default {
 
     // Formulaire validé, injection des données et redirection vers l'application
     async connexionOk({ data }) {
-      console.log('connecté')
-      console.log(data)
       const apolloClient = this.$apollo.provider.defaultClient
 
       // Mettre le jeton à jour et recharger le cache
@@ -114,11 +112,15 @@ export default {
 
       // Mise à jour du cache
       apolloClient.writeQuery({
-        query: RECUPERER_PROFIL,
+        query: UTILISATEUR,
         data: {
           ...data.connexion
         }
       })
+
+      // On redirige le client vers la page de profil
+      // TODO: Choisir la page où rediriger
+      this.$router.replace({ name: 'profil' })
     }
   }
 }
