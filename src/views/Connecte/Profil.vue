@@ -1,7 +1,7 @@
 <template>
   <div class="apollo-example">
     <ApolloQuery
-      :query="require('@/graphql/RecupererProfil.gql')"
+      :query="require('@/graphql/Utilisateur.gql')"
     >
       <template slot-scope="{ result: { loading, error, data } }">
         <div v-if="loading" class="loading apollo">Chargement ...</div>

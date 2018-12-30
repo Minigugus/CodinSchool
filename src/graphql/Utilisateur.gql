@@ -1,6 +1,6 @@
 #import "./FragmentUtilisateur.gql"
 
-query RecupererProfil {
+query Utilisateur {
   moi {
     ...utilisateur
   }

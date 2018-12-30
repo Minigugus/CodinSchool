@@ -34,10 +34,16 @@
               <router-link to="/" exact-active-class="active" class="item">Accueil</router-link>
               <router-link to="/langagec" exact-active-class="active" class="item">Langage C</router-link>
               <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
-              <div class="right item">
-                <router-link to="/connexion" exact-active-class="active" class="ui inverted button b-space">Connexion</router-link>
-                <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
-              </div>
+
+              <transition name="fade" mode="out-in">
+                <div v-if="!moi" key="menuNonConnecte" class="right item">
+                  <router-link to="/connexion" exact-active-class="active" class="ui inverted button b-space">Connexion</router-link>
+                  <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
+                </div>
+                <div v-else key="menuConnecte" class="right item">
+                  <a @click="deconnexion" exact-active-class="active" class="ui inverted button b-space">Se déconnecter</a>
+                </div>
+              </transition>
             </template>
           </div>
         </div>
@@ -68,6 +74,11 @@
 </template>
 
 <script>
+import Utilisateur from '@/mixins/Utilisateur'
+import { onLogout } from '@/vue-apollo'
+
+// import DECONNEXION from '@/graphql/Deconnexion.gql'
+
 export default {
   data() {
     return {
@@ -75,6 +86,7 @@ export default {
       tailleEcran: null
     }
   },
+  mixins: [Utilisateur],
   mounted() {
     this.tailleEcran = window.innerWidth
     window.addEventListener('resize', () => this.tailleEcran = window.innerWidth)
@@ -89,6 +101,22 @@ export default {
     cacherSideBar() {
       if (document.querySelector('.pusher').classList.contains('dimmed'))
         this.menuSideBarVisible = false
+    },
+
+    // Déconnecter l'utilisateur
+    async deconnexion() {
+      // On se déconnecte côté serveur
+      /* TODO: deconnexion
+      await this.$apollo.mutate({
+        mutation: DECONNEXION
+      })
+      */
+      // On vide le cache d'Apollo
+      const apolloClient = this.$apollo.provider.defaultClient
+      await onLogout(apolloClient)
+
+      // On redirige le client vers la page d'accueil
+      this.$router.replace({ name: 'accueil' })
     }
   }
 }
