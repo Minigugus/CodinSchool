@@ -26,6 +26,7 @@
 
 <script>
 import GererNiveau from '@/components/GererNiveau.vue'
+import Utilisateur from '@/mixins/Utilisateur'
 
 export default {
   data() {
@@ -100,6 +101,7 @@ export default {
   components: {
     GererNiveau
   },
+  mixins: [Utilisateur],
 
   mounted() {
     // TODO: Chargement des niveaux depuis Apollo

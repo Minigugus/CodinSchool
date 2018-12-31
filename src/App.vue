@@ -27,9 +27,9 @@
     <div class="pusher" :class="{ dimmed: menuSideBarVisible }" @click="cacherSideBar(false)">
       <div class="ui inverted vertical masthead center aligned segment">
         <div class="titre-site">
-          <router-link to="/" class="item">
-            <h1 class="ui inverted header">CodinSchool</h1>
-          </router-link>
+          <h1 class="ui inverted header">
+            <router-link to="/" class="item">CodinSchool</router-link>
+          </h1>
         </div>
         <div class="ui container">
           <div class="ui large secondary inverted pointing menu">
@@ -44,11 +44,11 @@
               <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
 
               <transition name="fade" mode="out-in">
-                <div v-if="!moi" key="menuNonConnecte" class="right item">
+                <div v-if="!moi" key="menuNonConnecte" class="right menu">
                   <router-link to="/connexion" exact-active-class="active" class="ui inverted button b-space">Connexion</router-link>
                   <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
                 </div>
-                <div v-else key="menuConnecte" class="right item">
+                <div v-else key="menuConnecte" class="right menu">
                   <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
                   <router-link to="/niveau/gerer" exact-active-class="active" class="item">Gérer niveaux</router-link>
                   <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
@@ -87,8 +87,6 @@
 import Utilisateur from '@/mixins/Utilisateur'
 import { onLogout } from '@/vue-apollo'
 
-// import DECONNEXION from '@/graphql/Deconnexion.gql'
-
 export default {
   data() {
     return {
@@ -115,12 +113,6 @@ export default {
 
     // Déconnecter l'utilisateur
     async deconnexion() {
-      // On se déconnecte côté serveur
-      /* TODO: deconnexion
-      await this.$apollo.mutate({
-        mutation: DECONNEXION
-      })
-      */
       // On vide le cache d'Apollo
       const apolloClient = this.$apollo.provider.defaultClient
       await onLogout(apolloClient)
@@ -185,6 +177,12 @@ export default {
   width: 100%;
   z-index: 0;
   top: 25px;
+}
+.titre-site a {
+  color:white;
+}
+.right.menu a {
+  z-index: 999;
 }
 .pushable {
   overflow-x: initial;
