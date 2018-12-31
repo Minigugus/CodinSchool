@@ -1,24 +1,14 @@
 <template>
-  <div class="apollo-example">
-    <ApolloQuery
-      :query="require('@/graphql/Utilisateur.gql')"
-    >
-      <template slot-scope="{ result: { loading, error, data } }">
-        <div v-if="loading" class="loading apollo">Chargement ...</div>
-
-        <Alerte v-else-if="error" typeAlerte="Erreur" :messages="error.graphQLErrors.map(x => x.message)" />
-
-        <div v-else-if="data" class="result apollo">{{ data }}</div>
-
-        <div v-else class="no-result apollo">No result :(</div>
-      </template>
-    </ApolloQuery>
+  <div>
+    <pre>{{ JSON.stringify(this.moi, null, 2) }}</pre>
+    <Alerte typeAlerte="Erreur" :messages="[]" />
   </div>
 </template>
 
 <script>
-
+import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
+
 
 export default {
   name: 'profil',
@@ -33,12 +23,7 @@ export default {
       dateNaissance: 2018
     }
   },
-
-  computed: {
-    formValid() {
-      return true
-    }
-  },
+  mixins: [Utilisateur],
 
   methods: {}
 }

@@ -92,11 +92,7 @@ export function createProvider(options = {}, { router }) {
         const res = besoinConnexion.some(x => router.currentRoute.name === x)
 
         // Rediriger à la page de connexion si page en cours a besoin de connexion
-        if (res) {
-          router.replace({
-            name: 'connexion'
-          })
-        }
+        if (res) router.replace({ name: 'connexion' })
       }
       else {
         console.log(
