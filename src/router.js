@@ -39,7 +39,7 @@ export default new Router({
     {
       path: '/niveau/gerer',
       name: 'gestioncontenu',
-      component: () => import('@/views/Connecte/Niveau/GestionContenu.vue')
+      component: () => import('@/views/Connecte/GestionContenu.vue')
     }
   ]
 })

@@ -8,7 +8,7 @@
           <i class="right bars icon"></i>
           Réorganiser
         </button>
-        <button v-else key="valider" @click="validerReorganisationNiveau" class="ui button positive right labeled icon">
+        <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
           <i class="right check icon"></i>
           Valider
         </button>
@@ -17,7 +17,7 @@
 
     <draggable
     :list="niveau.liste"
-    :options="{animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost'}"
+    :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
     element="div"
     >
       <transition-group name="flip-list" class="liste-niveau">
@@ -53,6 +53,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import { fakeListeNiveau } from '@/functions'
 
 export default {
   data() {
@@ -63,44 +64,26 @@ export default {
       }
     }
   },
-  name: 'gererniveau',
+  name: 'organiserniveaux',
   components: {
     draggable
   },
+
+  mounted() {
+    // TODO: Chargement des niveaux depuis Apollo quand schéma GraphQL sera prêt
+    this.niveau.liste = fakeListeNiveau.map(({id, nom, description}) => ({id, nom, description}))
+  },
+
   methods: {
-    ajouterNiveau(...niveau) {
-      this.niveau.liste.push(...niveau)
-    },
-
-    validerReorganisationNiveau() {
+    // TODO: Application des modifications via mutation Apollo
+    validerReorganisation() {
       this.niveau.sontDraggable = false
     },
 
-    // Retrouver le niveau dans la liste des niveaux
-    trouverNiveau(idNiveau) {
-      const niveau = this.niveau.liste.findIndex(x => x.id === idNiveau)
-      return niveau !== -1 ? niveau : null
-    },
-
-    // Edition d'un niveau. Bloque la propriété de draggage des niveaux et affiche les exercices
+    // Lance l'édition d'un niveau en émettant un évènement
+    // "editerNiveau" avec l'id du niveau à éditer
     editerNiveau(idNiveau) {
-      const niveau = this.trouverNiveau(idNiveau)
-      if (isNaN(niveau)) return
-
-      this.niveau.sontDraggable = false
-      this.niveau.liste[niveau].editionEnCours = true
-    },
-
-    // Validation des modifications d'un niveau
-    validerNiveau(idNiveau) {
-      const niveau = this.trouverNiveau(idNiveau)
-      if (isNaN(niveau)) return
-
-      this.niveau.liste[niveau].editionEnCours = false
-
-      // On vérifie que tous les niveaux sont validés avant d'autoriser le drag
-      if (!this.niveau.liste.find(x => x.editionEnCours))
-        this.niveau.sontDraggable = true
+      this.$emit('editerNiveau', idNiveau)
     }
   }
 }
@@ -173,7 +156,6 @@ export default {
   margin-top: 15px !important;
 }
 
-
 .ui.divided.items>.item {
   border-top: 1px solid rgba(34,36,38,.15);
   background-color: #f3f3f3;
@@ -185,17 +167,5 @@ export default {
 .ui.divided.items>.item:first-child, .ui.divided.items>.item:last-child {
   margin: 0 !important;
   padding: 25px !important;
-}
-
-/* Animation d'ouverture des niveaux */
-.smooth-enter-to, .smooth-leave {
-  max-height: 300px;
-}
-.smooth-enter-active, .smooth-leave-active {
-  transition: max-height .8s;
-  overflow: hidden;
-}
-.smooth-enter, .smooth-leave-to {
-  max-height: 0;
 }
 </style>
