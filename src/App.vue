@@ -137,6 +137,7 @@ export default {
   text-align: right !important;
 }
 
+/* Début animation de fondu */
 .fade-enter-active,
 .fade-leave-active {
   transition: all .2s !important;
@@ -145,7 +146,9 @@ export default {
 .fade-leave-to {
   opacity: 0 !important;
 }
+/* Fin animation de fondu */
 
+/* Début animation de fondu lent */
 .fade-slow-enter-active,
 .fade-slow-leave-active {
   transition: all .7s !important;
@@ -154,12 +157,13 @@ export default {
 .fade-slow-leave-to {
   opacity: 0 !important;
 }
+/* Fin animation de fondu lent */
 
+/* Début animation de glissement vers la gauche */
 .slide-left-enter-active,
 .slide-left-leave-active {
   transition: all .3s !important;
 }
-
 .slide-left-enter {
   transform: translateX(30px) !important;
   opacity: 0 !important;
@@ -168,6 +172,22 @@ export default {
   transform: translateX(-30px) !important;
   opacity: 0 !important;
 }
+/* Fin animation de glissement vers la gauche */
+
+/* Début animation de glissement vers la gauche de loin */
+.slide-left-far-enter-active,
+.slide-left-far-leave-active {
+  transition: all .3s !important;
+}
+.slide-left-far-enter {
+  transform: translateX(80%) !important;
+  opacity: 0 !important;
+}
+.slide-left-far-leave-to {
+  transform: translateX(-80%) !important;
+  opacity: 0 !important;
+}
+/* Fin animation de glissement vers la gauche de loin*/
 </style>
 
 <style scoped>
