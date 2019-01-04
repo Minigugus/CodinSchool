@@ -15,3 +15,6 @@ export const PORT = process.env.PORT || (MODE_DEVELOPPEMENT ? 4000 : 80)
 // Jeton de session JWT
 export const SECRET_JWT = process.env.SECRET_JWT || 'modeDeveloppement'
 export const DUREE_VALIDITE_JETON = '1d'
+
+// Base de Données
+export const BDD_URI = process.env.BDD_URI || 'postgres://codinschool:codinschool@bdd/codinschool'
