@@ -7,7 +7,7 @@ import { sign, verify } from 'jsonwebtoken'
 import { defaultFieldResolver } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
-import bdd from './bdd.js'
+import bdd from '../bdd'
 
 import { SECRET_JWT, DUREE_VALIDITE_JETON } from '../composants/config'
 
@@ -18,15 +18,6 @@ const jwt = {
 
 const TYPE_REQUIS = Symbol()
 const DEJA_PROTEGE = Symbol()
-
-const ROLES = [
-  'FAIRE_EXERCICE',
-  'GERER_EXERCICE',
-  'GERER_ROLE',
-  'GERER_UTILISATEUR',
-  'SAUVEGARDER',
-  'RESTAURER'
-]
 
 export default class DirectiveAcces extends SchemaDirectiveVisitor {
   static creerJeton(utilisateur) {
@@ -78,7 +69,3 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
     }
   }
 }
-
-export const INVITE = ROLES.INVITE
-export const ETUDIANT = ROLES.ETUDIANT
-export const ADMINISTRATEUR = ROLES.ADMINISTRATEUR

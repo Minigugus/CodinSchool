@@ -2,7 +2,7 @@ import express from 'express'
 
 import serveur from './apollo-server'
 import configServer from './apollo-server/server.js'
-import { PORT } from './apollo-server/utils/config.js'
+import { PORT } from './apollo-server/composants/config'
 
 const app = express()
 

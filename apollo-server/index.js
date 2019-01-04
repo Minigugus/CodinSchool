@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express'
 
-import { MODE_DEVELOPPEMENT } from './utils/config.js'
+import { MODE_DEVELOPPEMENT } from './composants/config'
 
 import context from './context.js'
 import dataSources from './data-sources.js'
