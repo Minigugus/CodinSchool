@@ -18,3 +18,14 @@ export const DUREE_VALIDITE_JETON = '1d'
 
 // Base de Données
 export const BDD_URI = process.env.BDD_URI || 'postgres://codinschool:codinschool@bdd/codinschool'
+
+// SMTP pour les envois de mail
+export const SMTP = {
+  host: process.env.mailSmtpHost,
+  port: 587,
+  secure: false,
+  auth: { user: process.env.mailSmtpLogin, pass: process.env.mailSmtpPass }
+}
+
+// Expéditeur par défaut des mails
+export const expediteurDefaut = { nom: 'CodinSchool', mail: 'no-reply@codinschool.fr' }

@@ -1,7 +1,7 @@
 /*
 Données modifiables :
-  - nom_utilisateur: Pseudo de l'utilisateur
-  - lien_reset: Lien de réinitialisation de mot de passe
+  - nomUtilisateur: Pseudo de l'utilisateur
+  - lienReset: Lien de réinitialisation de mot de passe
 */
 
 export default `
@@ -18,13 +18,13 @@ export default `
   <h1>CodinSchool</h1>
   <h2>Réinitialisation du mot de passe</h2>
   <p>
-    Bonjour %nom_utilisateur%. Vous avez demandé la réinitialisation votre mot de passe de compte CodinSchool.
+    Bonjour %nomUtilisateur%. Vous avez demandé la réinitialisation votre mot de passe de compte CodinSchool.
   </p>
   <p>
     Naviguer vers le lien suivant afin de réinitialiser le mot de passe de votre compte.
   </p>
   <p>
-    <a href="%lien_reset%" target="_blank" rel="noopener noreferrer">%lien_reset%</a>
+    <a href="%lienReset%" target="_blank" rel="noopener noreferrer">%lienReset%</a>
   </p>
 
   <p>Merci et à bientôt sur notre plateforme.</p>
