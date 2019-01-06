@@ -1,5 +1,7 @@
 import _Profile from './Profile'
-import _Utilisateur from './Utilisateur'
 
 export const Profile = _Profile
-export const Utilisateur = _Utilisateur
+
+export const recupererParID = id => Profile.findByPk(id)
+export const recupererParEmail = email =>
+  Profile.findOne({ where: { emailPrimaire: { in: [email] } } })

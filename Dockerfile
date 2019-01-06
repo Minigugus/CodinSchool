@@ -14,9 +14,9 @@
 # L'image retournée par la dernière ligne est la nouvelle image créée.
 
 # On indique que l'image que l'on est en train de construire reprend les
-# fichiers et la configuration de l'image « node:8-alpine ».
+# fichiers et la configuration de l'image « node:10-alpine ».
 # NOTE : Il s'agit d'une version allégée d'un système d'exploitation Linux.
-FROM node:8-alpine
+FROM node:10-alpine
 
 # On se déplace dans le dosiser « /usr/src/app » de l'image.
 WORKDIR /usr/src/app
@@ -27,6 +27,9 @@ COPY . .
 # On éxécute les commande suivantes dans un terminal (/bin/sh par défaut) dans le container.
 RUN npm i -D && NODE_ENV=production npm run build
 
+# Active le mode production
+ENV NODE_ENV=production
+
 # On indique quelle commande devra être lancée lorsque l'on lancera un container avec cette image.
 # NOTE : Il est possible d'utiliser une autre commande au moment de la création du container.
-CMD [ "npm", "run", "serve:production" ]
+CMD [ "npm", "run", "servir" ]
