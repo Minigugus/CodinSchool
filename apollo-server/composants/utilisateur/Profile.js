@@ -1,30 +1,38 @@
 import Sequelize from 'sequelize'
 import bdd from '../bdd'
 
-import { recupererRole, Roles } from '../role'
+import roles from '../role'
 
 const Profile = bdd.define('utilisateur', {
   id: {
+    primaryKey: true,
     allowNull: false,
     type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV4
+    defaultValue: Sequelize.UUIDV4,
   },
 
   role: {
     allowNull: false,
     type: Sequelize.ENUM,
-    values: Roles,
-    get() {
-      return recupererRole(this.getDataValue('role'))
-    },
-    set(valeur) {
-      this.setDataValue('role', valeur.nom)
-    }
+    defaultValue: roles[0],
+    values: roles
+  },
+
+  inscriptionValidee: {
+    allowNull: true,
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV4
   },
 
   motDePasse: {
+    allowNull: false,
+    type: Sequelize.STRING
+  },
+
+  emailPrimaire: {
+    allowNull: false,
     type: Sequelize.STRING,
-    allowNull: false
+    unique: true
   },
 
   nom: { type: Sequelize.STRING, allowNull: false },
@@ -33,8 +41,6 @@ const Profile = bdd.define('utilisateur', {
 
   adresse: Sequelize.STRING,
   codePostal: Sequelize.STRING,
-
-  emailPrimaire: Sequelize.STRING,
   emailSecondaire: Sequelize.STRING,
 
   telephonePrimaire: Sequelize.STRING,
@@ -51,16 +57,6 @@ const Profile = bdd.define('utilisateur', {
 
   createdAt: 'dateInscription',
   updatedAt: false
-})
-
-Profile.recupererParID = id => Profile.findById(id)
-
-Profile.inscription = ({ email, motDePasse, nom, prenom, dateNaissance }) => Profile.create({
-  email,
-  motDePasse,
-  nom,
-  prenom,
-  dateNaissance
 })
 
 export default Profile

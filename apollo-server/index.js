@@ -9,6 +9,7 @@ import mocks from './mocks.js'
 import resolvers from './resolvers.js'
 import server from './server.js'
 import typeDefs from './type-defs.js'
+import formatError from './erreurs.js'
 
 export default new ApolloServer({
   subscriptions: false,
@@ -21,5 +22,7 @@ export default new ApolloServer({
   mocks: MODE_DEVELOPPEMENT ? mocks : false,
   resolvers,
   server,
-  typeDefs
+  typeDefs,
+
+  formatError
 })
