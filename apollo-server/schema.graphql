@@ -116,6 +116,8 @@ type Mutation {
 
 	editer(modifications: EditionUtilisateur): Query! @acces
 
+	activer(email: String!, code: String!): Profile!
+
 	creerUtilisateur(utilisateur: Inscription): Profile!
 	@acces(interdit: [ Etudiant, Redacteur ])
 	editerUtilisateur(id: ID!, utilisateur: EditionUtilisateur): Profile!
