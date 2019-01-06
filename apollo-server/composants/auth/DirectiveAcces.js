@@ -5,7 +5,7 @@
 import { defaultFieldResolver } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
-import { AuthentificationRequiseError, AccesInterditError } from './erreurs';
+import { AuthentificationRequiseError, AccesInterditError } from './erreurs'
 
 const TYPE_REQUIS = Symbol()
 const DEJA_PROTEGE = Symbol()
@@ -30,13 +30,11 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
         const resoudre = champ.resolve || defaultFieldResolver
         const rolesInterdits = (champ[TYPE_REQUIS] || []).concat(type[TYPE_REQUIS] || [])
         champ.resolve = async function (...args) {
-          if (champ[TYPE_REQUIS] || type[TYPE_REQUIS])
-          {
+          if (champ[TYPE_REQUIS] || type[TYPE_REQUIS]) {
             const utilisateur = args[2].utilisateur
-            if (!utilisateur)
-              throw new AuthentificationRequiseError();
+            if (!utilisateur) throw new AuthentificationRequiseError()
             else if (rolesInterdits.includes(utilisateur.role))
-              throw new AccesInterditError(utilisateur.role, rolesInterdits);
+              throw new AccesInterditError(utilisateur.role, rolesInterdits)
           }
           return resoudre.apply(this, args)
         }

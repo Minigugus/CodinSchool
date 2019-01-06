@@ -1,15 +1,15 @@
-import { creerJeton, inscrire, authentifier } from './composants/auth';
-import { recupererParID } from './composants/utilisateur';
+import { creerJeton, inscrire, authentifier } from './composants/auth'
+import { recupererParID } from './composants/utilisateur'
 
 export default {
   Query: {
     moi(_, __, { utilisateur }) {
-      return utilisateur;
+      return utilisateur
     },
 
     utilisateur(_, { id }) {
-      return recupererParID(id);
-    },
+      return recupererParID(id)
+    }
 
     // utilisateurs(_, __) {
     //   return bdd.utilisateurs
@@ -18,27 +18,27 @@ export default {
 
   Mutation: {
     inscription(_, { inscription }) {
-      return inscrire(inscription);
+      return inscrire(inscription)
     },
 
     connexion(_, { email, motDePasse }) {
-      return authentifier(email, motDePasse);
+      return authentifier(email, motDePasse)
     }
   },
 
   Authentifie: {
     jeton(utilisateur) {
-      return creerJeton(utilisateur);
+      return creerJeton(utilisateur)
     },
 
     moi(utilisateur) {
-      return utilisateur;
+      return utilisateur
     }
   },
 
   Inscrit: {
     email(utilisateur) {
-      return utilisateur.emailPrimaire;
+      return utilisateur.emailPrimaire
     }
   }
 }
