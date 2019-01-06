@@ -38,5 +38,23 @@ services:
         limits:
           memory: 200M
 
+    # ⁷ Autorise l'accès au container « bdd ».
+    links:
+      - bdd
+
+  bdd:
+    image: postgres:10-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: codinschool
+      POSTGRES_PASSWORD: codinschool
+      POSTGRES_DATABASE: codinschool
+    networks:
+      - frontend
+
+volumes:
+  postgres: {}
+
 networks:
   frontend:
