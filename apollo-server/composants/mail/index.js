@@ -9,8 +9,8 @@ import { SERVEUR_URL } from '../config'
 import activationCompteModele from './modeles/activationCompte'
 import resetMdpModele from './modeles/resetMdp'
 
-const lienActivation = code => `${SERVEUR_URL}/#activation/${code}`
-const lienReset = code => `${SERVEUR_URL}/#reset/${code}`
+const lienActivation = code => `${SERVEUR_URL}/#/activation/${code}`
+const lienReset = code => `${SERVEUR_URL}/#/reset/${code}`
 
 /**
  * Envoyer un mail en utilisant le modèle `activationCompte.js`
