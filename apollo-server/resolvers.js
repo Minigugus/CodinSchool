@@ -1,4 +1,4 @@
-import { creerJeton, inscrire, authentifier } from './composants/auth'
+import { creerJeton, authentifier, inscrire, activerCompte } from './composants/auth'
 import { recupererParID } from './composants/utilisateur'
 
 export default {
@@ -23,6 +23,10 @@ export default {
 
     connexion(_, { email, motDePasse }) {
       return authentifier(email, motDePasse)
+    },
+
+    activer(_, { email, code }) {
+      return activerCompte(email, code)
     }
   },
 
