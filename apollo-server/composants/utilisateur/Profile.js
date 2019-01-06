@@ -20,7 +20,7 @@ const Profile = bdd.define(
       values: roles
     },
 
-    inscriptionValidee: {
+    validationInscription: {
       allowNull: true,
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4
