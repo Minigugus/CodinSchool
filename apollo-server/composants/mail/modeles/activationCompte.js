@@ -1,10 +1,10 @@
 /*
 Données modifiables :
   - nomUtilisateur: Pseudo de l'utilisateur
-  - lienReset: Lien de réinitialisation de mot de passe
+  - lienActivation: Lien d'activation de mot de passe
 */
 
-export default (nomUtilisateur, lienReset) => `
+export default (nomUtilisateur, lienActivation) => `
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,15 +15,15 @@ export default (nomUtilisateur, lienReset) => `
 </head>
 <body>
   <h1>CodinSchool</h1>
-  <h2>Réinitialisation du mot de passe</h2>
+  <h2>Activation de votre Compte</h2>
   <p>
-    Bonjour ${nomUtilisateur}. Vous avez demandé la réinitialisation votre mot de passe de compte CodinSchool.
+    Bonjour ${nomUtilisateur}. Vous venez de vous créer un compte sur CodinSchool.
   </p>
   <p>
-    Naviguer vers le lien suivant afin de réinitialiser le mot de passe de votre compte.
+    Naviguer vers le lien suivant activer votre compte.
   </p>
   <p>
-    <a href="${lienReset}" target="_blank" rel="noopener noreferrer">${lienReset}</a>
+    <a href="${lienActivation}" target="_blank" rel="noopener noreferrer">${lienActivation}</a>
   </p>
 
   <p>Merci et à bientôt sur notre plateforme.</p>

@@ -1,10 +1,18 @@
 import _DirectiveAcces from './DirectiveAcces'
 import { Profile, recupererParID } from '../utilisateur'
 import { hasher as _hasher, comparer as _comparer } from './motdepasse'
-import { JetonInvalideError, IdentifiantsNonReconnusError, EmailDejaUtiliseError } from './erreurs'
 import { validerJeton, creerJeton as _creerJeton } from './jwt'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
-import { recupererParEmail } from '../utilisateur/index'
+import { activationCompte as mailActivationCompte } from '../mail'
+import { recupererParEmail } from '../utilisateur'
+
+import {
+  JetonInvalideError,
+  IdentifiantsNonReconnusError,
+  EmailDejaUtiliseError,
+  EmailOuCodeInvalideError,
+  CompteNonActiveError
+} from './erreurs'
 
 export const DirectiveAcces = _DirectiveAcces
 export const creerJeton = _creerJeton
@@ -12,24 +20,46 @@ export const creerJeton = _creerJeton
 export const hasher = _hasher
 export const comparer = _comparer
 
+// TODO : Répartir les fonctions suivantes dans leur fichiers respectifs.
+
 export const authentifier = async (email, motDePasse) => {
   const utilisateur = await recupererParEmail(email)
-  if (utilisateur && (await comparer(motDePasse, utilisateur.motDePasse))) return utilisateur
+  if (
+    utilisateur &&
+    (await comparer(motDePasse, utilisateur.motDePasse))
+  )
+    if (!utilisateur.validationInscription)
+      return utilisateur
+    else
+      throw new CompteNonActiveError(utilisateur.id)
   throw new IdentifiantsNonReconnusError(email)
 }
 
 export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }) => {
   try {
-    return await Profile.create({
+    const utilisateur = await Profile.create({
       emailPrimaire: email.toLowerCase(),
       motDePasse: await hasher(motDePasse),
       nom,
       prenom,
       dateNaissance
     })
+    try {
+      await mailActivationCompte(
+        utilisateur.emailPrimaire,
+        `${utilisateur.prenom} ${utilisateur.nom}`,
+        utilisateur.validationInscription
+      )
+    }
+    catch (err) {
+      // TODO : Supprimer le compte pour libérer l'adresse email.
+      throw new ErreurInattendueError('AUTH_INSCRIRE_MAIL_ACTIVATION', { err })
+    }
   }
   catch (err) {
-    if (
+    if (err instanceof CodinSchoolError)
+      throw err
+    else if (
       err.name === 'SequelizeUniqueConstraintError' &&
       err.errors.length === 1 &&
       err.errors[0].type === 'unique violation' &&
@@ -38,6 +68,16 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
       throw new EmailDejaUtiliseError(email)
     throw new ErreurInattendueError('AUTH_INSCRIRE', { err })
   }
+}
+
+export const activerCompte = async (email, code) => {
+  const utilisateur = await recupererParEmail(email)
+  if (utilisateur && utilisateur.validationInscription === code) {
+    utilisateur.validationInscription = null
+    await utilisateur.save()
+    return utilisateur
+  }
+  throw new EmailOuCodeInvalideError(email, code, utilisateur && utilisateur.validationInscription)
 }
 
 export default async jeton => {

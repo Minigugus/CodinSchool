@@ -50,3 +50,21 @@ export class EmailDejaUtiliseError extends CodinSchoolError {
     )
   }
 }
+
+export class EmailOuCodeInvalideError extends CodinSchoolError {
+  constructor(email, code, attendu) {
+    super('EMAIL_CODE_ACTIVATION_INVALIDE', 'Adresse email ou code d\'activation incorrect.', {
+      email,
+      code,
+      attendu
+    })
+  }
+}
+
+export class CompteNonActiveError extends CodinSchoolError {
+  constructor(id) {
+    super('COMPTE_NON_ACTIVE', 'Ce compte n\'a pas encore été activé.', {
+      id
+    })
+  }
+}
