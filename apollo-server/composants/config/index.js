@@ -18,3 +18,9 @@ export const DUREE_VALIDITE_JETON = '1d'
 
 // Base de Données
 export const BDD_URI = process.env.BDD_URI || 'postgres://codinschool:codinschool@bdd/codinschool'
+
+// BCrypt (mots de passe)
+export const BCRYPT_ROUND = process.env.BCRYPT_ROUND || 10
+
+// Fichiers statiques
+export const SERVIR_FICHIERS_STATIQUES = process.env.SERVIR_FICHIERS_STATIQUES || !MODE_DEVELOPPEMENT

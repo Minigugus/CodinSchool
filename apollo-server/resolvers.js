@@ -1,61 +1,44 @@
-import bdd from './utils/bdd'
-import auth from './utils/auth'
+import { creerJeton, inscrire, authentifier } from './composants/auth'
+import { recupererParID } from './composants/utilisateur'
 
 export default {
   Query: {
-    moi(_, args, { utilisateur }) {
-      return bdd.recupererUtilisateur(utilisateur.id)
+    moi(_, __, { utilisateur }) {
+      return utilisateur
     },
 
     utilisateur(_, { id }) {
-      return bdd.recupererUtilisateur(id)
-    },
-
-    utilisateurs(_, __) {
-      return bdd.utilisateurs
-    },
-
-    role(_, { id }) {
-      return bdd.recupererRole(id)
-    },
-
-    roles() {
-      return bdd.roles
+      return recupererParID(id)
     }
+
+    // utilisateurs(_, __) {
+    //   return bdd.utilisateurs
+    // }
   },
 
-  Role: {
-    nbMembre({ membres }) {
-      return membres.length
-    },
-
-    membres(role) {
-      return bdd.recupererUtilisateursRole(role)
-    }
-  },
-
-  Utilisateur: {
-    jeton(_, args, { utilisateur }) {
-      return auth.creerJeton({ id: utilisateur.id })
-    },
-
-    profile(_utilisateur, args, { utilisateur }) {
-      return utilisateur
-    }
-  },
   Mutation: {
-    inscription(_, { inscription }, req) {
-      const utilisateur = bdd.creerUtilisateur(inscription)
-      utilisateur.permissions = bdd.recupererPermissions(utilisateur)
-      req.utilisateur = utilisateur
-      return utilisateur
+    inscription(_, { inscription }) {
+      return inscrire(inscription)
     },
 
-    connexion(_, { email, motDePasse }, req) {
-      const utilisateur = bdd.authentifier(email, motDePasse)
-      utilisateur.permissions = bdd.recupererPermissions(utilisateur)
-      req.utilisateur = utilisateur
+    connexion(_, { email, motDePasse }) {
+      return authentifier(email, motDePasse)
+    }
+  },
+
+  Authentifie: {
+    jeton(utilisateur) {
+      return creerJeton(utilisateur)
+    },
+
+    moi(utilisateur) {
       return utilisateur
+    }
+  },
+
+  Inscrit: {
+    email(utilisateur) {
+      return utilisateur.emailPrimaire
     }
   }
 }

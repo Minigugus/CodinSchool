@@ -1,4 +1,4 @@
-import DirectiveAcces from './utils/auth'
+import { DirectiveAcces } from './composants/auth'
 
 export default {
   acces: DirectiveAcces

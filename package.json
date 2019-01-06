@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "private": true,
   "scripts": {
-    "serve:production": "node -r esm ./index.js",
+    "servir": "node -r esm ./index.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "apollo-server-express": "^2.3.1",
+    "bcrypt": "^3.0.3",
     "graphql-type-json": "^0.2.1",
     "jsonwebtoken": "^8.4.0",
     "lowdb": "^1.0.0",

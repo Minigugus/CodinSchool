@@ -1,6 +1,15 @@
 directive @acces(
-	requis: Role = Etudiant
+	interdit: [Role!] = []
 ) on OBJECT | FIELD_DEFINITION
+
+"""
+Représente le Role d'un Utilisateur.
+"""
+enum Role {
+	Etudiant
+	Redacteur
+	Administrateur
+}
 
 """
 Représente le profile d'un Utilisateur de CodinSchool.
@@ -32,30 +41,29 @@ type Profile {
 }
 
 """
-Représente un Utilisateur connecté sur son compte.
+Décrit ce que permet une authentification réussie.
 """
-type Utilisateur {
+type Authentifie {
 	jeton: String!
-	profile: Profile!
+
+	moi: Profile!
 }
 
 """
-Représente le Role d'un Utilisateur.
+Décrit ce qui est retourné lors d'une inscription.
 """
-enum Role {
-	Etudiant
-	Redacteur
-	Administrateur
+type Inscrit {
+	email: String!
 }
 
 """
 Décrit ce que peut demander un Utilisateur.
 """
 type Query @acces {
-	moi: Utilisateur!
+	moi: Profile!
 
 	utilisateur(id: ID!): Profile
-	utilisateurs: [Profile!]!
+	# utilisateurs: [Profile!]!
 }
 
 """
@@ -103,15 +111,15 @@ input EditionUtilisateur {
 Décrit ce que peut effectuer un Utilisateur.
 """
 type Mutation {
-	inscription(inscription: Inscription!): Query!
-	connexion(email: String!, motDePasse: String!): Query!
+	inscription(inscription: Inscription!): Inscrit!
+	connexion(email: String!, motDePasse: String!): Authentifie!
 
 	editer(modifications: EditionUtilisateur): Query! @acces
 
 	creerUtilisateur(utilisateur: Inscription): Profile!
-	@acces(requis: Administrateur)
+	@acces(interdit: [ Etudiant, Redacteur ])
 	editerUtilisateur(id: ID!, utilisateur: EditionUtilisateur): Profile!
-	@acces(requis: Administrateur)
-	supprimerUtilisateur(id: ID!): Utilisateur
-	@acces(requis: Administrateur)
+	@acces(interdit: [ Etudiant, Redacteur ])
+	supprimerUtilisateur(id: ID!): Profile!
+	@acces(interdit: [ Etudiant, Redacteur ])
 }

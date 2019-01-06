@@ -1,7 +1,5 @@
 mutation Inscription($nouvelUtilisateur: Inscription!) {
   inscription(inscription: $nouvelUtilisateur) {
-    moi {
-      pseudo
-    }
+    email
   }
 }
