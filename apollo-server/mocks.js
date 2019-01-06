@@ -4,4 +4,4 @@
 // export default {
 //   // Mock resolvers here
 // }
-export default false
+export default {}
