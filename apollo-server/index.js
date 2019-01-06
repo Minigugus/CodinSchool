@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server-express'
 
-import { MODE_DEVELOPPEMENT } from './composants/config'
+import { MODE_DEVELOPPEMENT, ACTIVER_MOCKS } from './composants/config'
 
 import context from './context.js'
 import dataSources from './data-sources.js'
@@ -19,7 +19,7 @@ export default new ApolloServer({
   context,
   dataSources,
   schemaDirectives: directives,
-  mocks: MODE_DEVELOPPEMENT ? mocks : false,
+  mocks: (MODE_DEVELOPPEMENT && ACTIVER_MOCKS ? mocks : false),
   resolvers,
   server,
   typeDefs,

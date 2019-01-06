@@ -2,7 +2,7 @@
 
 mutation Connexion($email: String!, $motDePasse: String!) {
   connexion(email: $email, motDePasse: $motDePasse) {
-  	jeton
+    jeton
     moi {
       ...utilisateur
     }
