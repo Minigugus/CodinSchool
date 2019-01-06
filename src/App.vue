@@ -203,11 +203,39 @@ export default {
 }
 .right.menu a {
   z-index: 999;
+  padding: 1em 2em;
 }
+
 .pushable {
   overflow-x: initial;
 }
 .b-space {
   margin-right: 8px !important;
+}
+
+.ui.vertical.segment {
+  border: none !important;
+}
+
+.pusher {
+  min-height: 100vh !important;
+  overflow: hidden !important;
+  display: block !important;
+  position: relative !important;
+  padding-bottom: 100px  !important;
+}
+
+.footer {
+  position: absolute  !important;
+  bottom: 0 !important;
+  width: 100% !important;
+}
+
+
+.ui.secondary.pointing.menu{
+  border: none !important;
+}
+.ui.inverted.segment{
+  background-color: #568EA3 !important;
 }
 </style>
