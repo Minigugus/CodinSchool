@@ -13,7 +13,7 @@ services:
     #   sur le port PORT si cette variable d'environnement est spécifiée.
     ports:
       - target: 80
-        published: ${PORT:-80}
+        published: 80
         protocol: tcp
         mode: ingress
 
@@ -29,8 +29,13 @@ services:
     #   NOTE : Ces variables d'environnement sont lues lors de CRÉATION du container, ce qui signifie
     #          qu'il n'est pas nécessaire de les préciser à chaque lancement de ce container.
     environment:
-      NODE_ENV: "production"
-      SECRET_JWT: "${SECRET_JWT:?Vous devez spécifier la variable d'environnement SECRET_JWT en mode production.}"
+      NODE_ENV: production
+      SECRET_JWT: $SECRET_JWT
+      SERVEUR_URL: $SERVEUR_URL
+      SMTP_HOTE: $SMTP_HOTE
+
+    # env_file:
+    #   - codinschool.env
 
     # ⁶ Déploie le service suivant certains critères (ici : maximum 200M de RAM autorisé pour le container).
     deploy:
