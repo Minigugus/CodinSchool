@@ -9,7 +9,7 @@ if (!MODE_DEVELOPPEMENT && !process.env.SECRET_JWT) {
     'SECRET_JWT',
     'SERVEUR_URL',
     'SMTP_HOTE'
-  ].filter(variable => !(variable in process.env))
+  ].filter(variable => (variable in process.env))
   if (requises.length)
     throw new Error(
       'En mode production, vous devez spécifier les variables suivantes :\n - ' +

@@ -25,12 +25,10 @@ WORKDIR /usr/src/app
 COPY . .
 
 # On éxécute les commande suivantes dans un terminal (/bin/sh par défaut) dans le container.
-RUN apk add --update alpine-sdk && \
-	npm i -D && \
-	NODE_ENV=production npm run build
+RUN apk add --update g++ make python && \
+	npm i -D
 
-# Active le mode production
-ENV NODE_ENV=production
+RUN npm run build
 
 # On indique quelle commande devra être lancée lorsque l'on lancera un container avec cette image.
 # NOTE : Il est possible d'utiliser une autre commande au moment de la création du container.
