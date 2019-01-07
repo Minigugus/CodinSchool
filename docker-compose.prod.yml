@@ -13,7 +13,7 @@ services:
     #   sur le port PORT si cette variable d'environnement est spécifiée.
     ports:
       - target: 80
-        published: 80
+        published: $PORT
         protocol: tcp
         mode: ingress
 
