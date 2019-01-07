@@ -25,7 +25,9 @@ WORKDIR /usr/src/app
 COPY . .
 
 # On éxécute les commande suivantes dans un terminal (/bin/sh par défaut) dans le container.
-RUN npm i -D && NODE_ENV=production npm run build
+RUN apk add --update alpine-sdk && \
+	npm i -D && \
+	NODE_ENV=production npm run build
 
 # Active le mode production
 ENV NODE_ENV=production
