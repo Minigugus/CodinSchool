@@ -1,8 +1,9 @@
 import nodemailer from 'nodemailer'
-import { logAttention } from '../log'
+import { logInfo, logAttention } from '../log'
 import { ErreurInattendueError } from '../erreur'
 
 import {
+  MODE_DEVELOPPEMENT,
   SMTP_ACTIF,
   SMTP_HOTE,
   SMTP_PORT,
@@ -48,5 +49,8 @@ export default (destinataire, objet, contenu) => {
       .catch(err => {
         throw new ErreurInattendueError('ENVOYER_MAIL', { destinataire, objet, err })
       })
-  logAttention(`Impossible d'envoyer un mail à '${destinataire}' : le SMTP est désactivé !`)
+  if (MODE_DEVELOPPEMENT)
+    logInfo(contenu)
+  else
+    logAttention(`Impossible d'envoyer un mail à '${destinataire}' : le SMTP est désactivé !`)
 }
