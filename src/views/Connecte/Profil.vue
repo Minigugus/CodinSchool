@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       email: 'mail@example.com',
-      pseudo: 'rigwzzzzild2z',
+      // pseudo: 'rigwzzzzild2z',
       motDePasse:	'pseudo',
       nom: 'Sauvage',
       prenom: 'Prenom',

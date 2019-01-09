@@ -107,7 +107,7 @@ export default {
       const apolloClient = this.$apollo.provider.defaultClient
 
       // Mettre le jeton à jour et recharger le cache
-      const jeton = 'Bearer ' + data.connexion.moi.jeton
+      const jeton = 'Bearer ' + data.connexion.jeton
       await onLogin(apolloClient, jeton)
 
       // Mise à jour du cache
