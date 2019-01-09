@@ -12,7 +12,7 @@
       :variables="{
         nouvelUtilisateur: {
           email: formulaire.email,
-          pseudo: formulaire.pseudo,
+          // pseudo: formulaire.pseudo,
           motDePasse: formulaire.motDePasse,
           nom: formulaire.nom,
           prenom: formulaire.prenom,
@@ -37,10 +37,10 @@
               </div>
             </div>
           </div>
-          <div class="field">
+          <!-- <div class="field">
             <label for="pseudo">Pseudo</label>
             <input type="text" id="pseudo" v-model="formulaire.pseudo" placeholder="Pseudo" />
-          </div>
+          </div> -->
           <div class="field">
             <label for="email">Adresse email</label>
             <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />
@@ -89,7 +89,7 @@ export default {
       formulaire: {
         nom: 'Sauvage',
         prenom: 'Antoine',
-        pseudo: 'rigwild',
+        // pseudo: 'rigwild',
         email: 'contact@asauvage.fr',
         motDePasse:	'rigwild',
         motDePasse2:	'rigwild',
