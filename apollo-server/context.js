@@ -1,8 +1,10 @@
 import authentifier from './composants/auth'
 
 const auth = req => {
-  const autorisation = req.headers.authorization
-  if (autorisation) return authentifier(autorisation)
+  if (req) {
+    const autorisation = req.headers.authorization
+    if (autorisation) return authentifier(autorisation)
+  }
   return null
 }
 
