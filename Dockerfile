@@ -16,20 +16,16 @@
 # On indique que l'image que l'on est en train de construire reprend les
 # fichiers et la configuration de l'image « node:10-alpine ».
 # NOTE : Il s'agit d'une version allégée d'un système d'exploitation Linux.
-FROM node:10-alpine
+FROM node:10-alpine AS codinschool_node
 
-# On se déplace dans le dosiser « /usr/src/app » de l'image.
+RUN apk add --update g++ make python
+
+FROM codinschool_node
+
 WORKDIR /usr/src/app
 
-# On copie le contenu du répertoire courant DE L'HÔTE dans le répertoire courant DE L'IMAGE.
 COPY . .
 
-# On éxécute les commande suivantes dans un terminal (/bin/sh par défaut) dans le container.
-RUN apk add --update g++ make python && \
-	npm i -D
+RUN npm i -D && npm run build
 
-RUN npm run build
-
-# On indique quelle commande devra être lancée lorsque l'on lancera un container avec cette image.
-# NOTE : Il est possible d'utiliser une autre commande au moment de la création du container.
 CMD [ "npm", "run", "servir" ]

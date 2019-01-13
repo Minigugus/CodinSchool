@@ -50,6 +50,7 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
         `${utilisateur.prenom} ${utilisateur.nom}`,
         utilisateur.validationInscription
       )
+      return utilisateur
     }
     catch (err) {
       // TODO : Supprimer le compte pour libérer l'adresse email.
