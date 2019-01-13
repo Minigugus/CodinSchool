@@ -1,6 +1,17 @@
 <template>
   <div class="ui vertical stripe segment">
     <div class="ui text container">
+      <h1>Liens pour Arthur</h1>
+      <ul>
+        <li>
+          <router-link to="/resetMdp">Mot de passe oublié</router-link>
+        </li>
+        <li>
+          <router-link to="/exercice/creer">Créer un exercice</router-link>
+        </li>
+      </ul>
+      <hr>
+
       <h1 class="ui center aligned header">Aide sur le langage C</h1>
       <h2 class="ui header">Programmer en C à la Maison</h2>
       <p>
