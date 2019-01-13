@@ -9,18 +9,19 @@
 
 version: '3.2'
 services:
+
   web:
-    image: node:10-alpine
-    working_dir: '/usr/src/app'
-    command: [ 'sh', '-c', 'npm run servir' ]
-    # restart: unless-stopped
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    image: codinschool:dev
     ports:
       - 4000:4000
       - 8080:8080
     volumes:
-      - type: bind
-        source: .
-        target: /usr/src/app
+      - .:/usr/src/app
+    environment:
+      VUE_APP_GRAPHQL_HOST: '0.0.0.0'
     links:
       - bdd
 
@@ -28,11 +29,7 @@ services:
     image: postgres:10-alpine
     ports:
       - 5432:5432
-    # volumes:
-    #   - postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: codinschool
       POSTGRES_PASSWORD: codinschool
       POSTGRES_DATABASE: codinschool
-# volumes:
-#   postgres: {}
