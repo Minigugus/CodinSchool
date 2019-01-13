@@ -36,8 +36,9 @@ export const BDD_URI = process.env.BDD_URI || 'postgres://codinschool:codinschoo
 export const BCRYPT_ROUND = process.env.BCRYPT_ROUND || 10
 
 // FICHIERS STATIQUES //
-export const SERVIR_FICHIERS_STATIQUES =
-  !!process.env.SERVIR_FICHIERS_STATIQUES || !MODE_DEVELOPPEMENT
+export const SERVIR_FICHIERS_STATIQUES = process.env.SERVIR_FICHIERS_STATIQUES
+  ? (process.env.SERVIR_FICHIERS_STATIQUES === 'oui') :
+  !MODE_DEVELOPPEMENT
 
 // SERVEUR //
 export const SERVEUR_URL = process.env.SERVEUR_URL || `http://localhost:${PORT}`
