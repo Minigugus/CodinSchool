@@ -22,7 +22,7 @@ if (!MODE_DEVELOPPEMENT && !process.env.SECRET_JWT) {
 export const ACTIVER_MOCKS = (process.env.ACTIVER_MOCKS === 'oui')
 
 // RÉSEAU //
-export const PORT = process.env.PORT || (MODE_DEVELOPPEMENT ? 4000 : 80)
+export const PORT = parseInt(process.env.PORT || (MODE_DEVELOPPEMENT ? 4000 : 80), 10)
 
 // JETON DE SESSION JWT //
 // TODO : Utiliser un clé privée et une clé publique plutôt qu'on secret.
@@ -33,7 +33,7 @@ export const DUREE_VALIDITE_JETON = '1d'
 export const BDD_URI = process.env.BDD_URI || 'postgres://codinschool:codinschool@bdd/codinschool'
 
 // BCRYPT (MOTS DE PASSE) //
-export const BCRYPT_ROUND = process.env.BCRYPT_ROUND || 10
+export const BCRYPT_ROUND = parseInt(process.env.BCRYPT_ROUND || 10, 10)
 
 // FICHIERS STATIQUES //
 export const SERVIR_FICHIERS_STATIQUES = process.env.SERVIR_FICHIERS_STATIQUES
@@ -47,7 +47,7 @@ export const SERVEUR_URL = process.env.SERVEUR_URL || `http://localhost:${PORT}`
 // NOTE : Mail désactivés si pas de serveur SMTP spécifié.
 export const SMTP_ACTIF = !!process.env.SMTP_HOTE
 export const SMTP_HOTE = process.env.SMTP_HOTE
-export const SMTP_PORT = process.env.SMTP_PORT
+export const SMTP_PORT = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined
 export const SMTP_SECURISE = (process.env.SMTP_SECURE === 'oui')
 export const SMTP_UTILISATEUR = process.env.SMTP_USER
 export const SMTP_MDP = process.env.SMTP_PASS
