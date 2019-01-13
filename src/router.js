@@ -32,6 +32,16 @@ export default new Router({
       component: () => import('@/views/NonConnecte/Connexion.vue')
     },
     {
+      path: '/resetMdp',
+      name: 'mdpoublie',
+      component: () => import('@/views/NonConnecte/MdpOublie.vue')
+    },
+    {
+      path: '/exercice/creer',
+      name: 'creerexercice',
+      component: () => import('@/views/Connecte/CreerExercice.vue')
+    },
+    {
       path: '/activation/:code',
       name: 'activation',
       component: () => import('@/views/NonConnecte/Activation.vue'),
