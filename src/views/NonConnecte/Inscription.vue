@@ -24,7 +24,7 @@
       @done="validerEmail"
     >
       <template slot-scope="{ mutate, loading }">
-        <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
+        <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
           <div class="field">
             <div class="two fields">
               <div class="field">

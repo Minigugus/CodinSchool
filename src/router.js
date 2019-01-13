@@ -32,6 +32,12 @@ export default new Router({
       component: () => import('@/views/NonConnecte/Connexion.vue')
     },
     {
+      path: '/activation/:code',
+      name: 'activation',
+      component: () => import('@/views/NonConnecte/Activation.vue'),
+      props: true
+    },
+    {
       path: '/profil',
       name: 'profil',
       component: () => import('@/views/Connecte/Profil.vue')

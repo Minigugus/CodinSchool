@@ -23,3 +23,5 @@ yarn-error.log*
 *.sw*
 
 /live/
+
+yarn.lock
