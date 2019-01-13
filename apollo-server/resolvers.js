@@ -25,8 +25,8 @@ export default {
       return authentifier(email, motDePasse)
     },
 
-    activer(_, { email, code }) {
-      return activerCompte(email, code)
+    activer(_, { code }) {
+      return activerCompte(code)
     }
   },
 

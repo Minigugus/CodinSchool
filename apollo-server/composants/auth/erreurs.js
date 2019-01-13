@@ -51,10 +51,9 @@ export class EmailDejaUtiliseError extends CodinSchoolError {
   }
 }
 
-export class EmailOuCodeInvalideError extends CodinSchoolError {
-  constructor(email, code, attendu) {
-    super('EMAIL_CODE_ACTIVATION_INVALIDE', 'Adresse email ou code d\'activation incorrect.', {
-      email,
+export class CodeInvalideError extends CodinSchoolError {
+  constructor(code, attendu) {
+    super('CODE_ACTIVATION_INVALIDE', 'Code d\'activation incorrect.', {
       code,
       attendu
     })

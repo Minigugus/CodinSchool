@@ -23,7 +23,8 @@ const Profile = bdd.define(
     validationInscription: {
       allowNull: true,
       type: Sequelize.UUID,
-      defaultValue: Sequelize.UUIDV4
+      defaultValue: Sequelize.UUIDV4,
+      unique: true
     },
 
     motDePasse: {

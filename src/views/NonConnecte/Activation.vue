@@ -19,7 +19,6 @@ export default {
   },
   data() {
     return {
-      email: 'zmail@example.com',
       typeAlerte: 'Erreur'
     }
   },
@@ -29,7 +28,6 @@ export default {
     this.$apollo.mutate({
       mutation: require('@/graphql/Activation.gql'),
       variables: {
-        email: this.email,
         code: this.code
       }
     })

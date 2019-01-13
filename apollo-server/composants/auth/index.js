@@ -1,16 +1,15 @@
 import _DirectiveAcces from './DirectiveAcces'
-import { Profile, recupererParID } from '../utilisateur'
 import { hasher as _hasher, comparer as _comparer } from './motdepasse'
 import { validerJeton, creerJeton as _creerJeton } from './jwt'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
 import { activationCompte as mailActivationCompte } from '../mail'
-import { recupererParEmail } from '../utilisateur'
+import { Profile, recupererParID, recupererParEmail, recupererParValidation } from '../utilisateur'
 
 import {
   JetonInvalideError,
   IdentifiantsNonReconnusError,
   EmailDejaUtiliseError,
-  EmailOuCodeInvalideError,
+  CodeInvalideError,
   CompteNonActiveError
 } from './erreurs'
 
@@ -71,14 +70,14 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
   }
 }
 
-export const activerCompte = async (email, code) => {
-  const utilisateur = await recupererParEmail(email)
-  if (utilisateur && utilisateur.validationInscription === code) {
+export const activerCompte = async (code) => {
+  const utilisateur = await recupererParValidation(code)
+  if (utilisateur) {
     utilisateur.validationInscription = null
     await utilisateur.save()
-    return utilisateur
+    return utilisateur.emailPrimaire
   }
-  throw new EmailOuCodeInvalideError(email, code, utilisateur && utilisateur.validationInscription)
+  throw new CodeInvalideError(code, utilisateur && utilisateur.validationInscription)
 }
 
 export default async jeton => {
