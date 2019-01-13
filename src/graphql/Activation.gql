@@ -1,7 +1,3 @@
-#import "./FragmentUtilisateur.gql"
-
-mutation Activation($email: String!, $code: String!) {
-  activer(email: $email, code: $code) {
-    ...utilisateur
-  }
+mutation Activation($code: String!) {
+  activer(code: $code)
 }

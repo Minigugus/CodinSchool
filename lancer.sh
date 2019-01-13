@@ -16,7 +16,7 @@ if [[ "$0" == '/docker-lancer.sh' ]]; then
 	VERSION_ACTUELLE=$(stat -c %Y /app/package.json 2>/dev/null)
 	NOUVELLE_VERSION=$(stat -c %Y /usr/src/app/package.json)
 
-	VERSION_ACTUELLE=${VERSION_ACTUELLE:0}
+	VERSION_ACTUELLE=${VERSION_ACTUELLE:-0}
 
 	cd /app
 
