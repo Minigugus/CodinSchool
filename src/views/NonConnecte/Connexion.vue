@@ -17,7 +17,7 @@
       @done="connexionOk"
     >
       <template slot-scope="{ mutate, loading }">
-        <form v-on:submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
+        <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
           <div class="field">
             <label for="email">Adresse email</label>
             <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />

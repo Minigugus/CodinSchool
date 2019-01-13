@@ -23,7 +23,7 @@
         Les membres du groupe de projet ayant réalisé cette application sont :
         <ul class="ui list">
           <li>MAGNIEZ Florentin</li>
-          <li>MERLOT Arthur - <a href="mailto:merlot.arthur@outlook.fr">merlot.arthur@outlook.fr</a></li>
+          <li>MERLOT Arthur - <a href="mailto:merlot.arthur@outlook.com">merlot.arthur@outlook.com</a></li>
           <li>SAUVAGE Antoine - <a href="mailto:contact@asauvage.fr">contact@asauvage.fr</a> - <a href="https://asauvage.fr/" target="_blank" rel="noopener noreferrer">https://asauvage.fr/</a></li>
         </ul>
       </p>
