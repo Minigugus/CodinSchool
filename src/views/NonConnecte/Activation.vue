@@ -5,7 +5,7 @@
         Activation de compte
       </div>
     </h2>
-    <Alerte ref="notifs" :typeAlerte="typeAlerte" />
+    <Alerte ref="notifs" :typeAlerte="typeAlerte" :fermable="false"/>
   </div>
 </template>
 
@@ -32,8 +32,7 @@ export default {
       }
     })
       .then(_ => {
-        this.ajouterNotif('Félicitations ! Votre compte CodinSchool a été activé.')
-        this.ajouterNotif('Vous pouvez maintenant vous connecter.')
+        this.ajouterNotif('Félicitations ! Votre compte CodinSchool a été activé. Vous pouvez maintenant vous connecter.')
         this.typeAlerte = 'Succès'
       })
       .catch(err => this.chargerErreur(err))

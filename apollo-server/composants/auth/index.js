@@ -3,7 +3,12 @@ import { hasher as _hasher, comparer as _comparer } from './motdepasse'
 import { validerJeton, creerJeton as _creerJeton } from './jwt'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
 import { activationCompte as mailActivationCompte } from '../mail'
-import { Profile, recupererParID, recupererParEmail, recupererParValidation } from '../utilisateur'
+import {
+  Profile,
+  recupererParID,
+  recupererParEmail,
+  recupererParValidation
+} from '../utilisateur/index'
 
 import {
   JetonInvalideError,
@@ -23,14 +28,9 @@ export const comparer = _comparer
 
 export const authentifier = async (email, motDePasse) => {
   const utilisateur = await recupererParEmail(email)
-  if (
-    utilisateur &&
-    (await comparer(motDePasse, utilisateur.motDePasse))
-  )
-    if (!utilisateur.validationInscription)
-      return utilisateur
-    else
-      throw new CompteNonActiveError(utilisateur.id)
+  if (utilisateur && (await comparer(motDePasse, utilisateur.motDePasse)))
+    if (!utilisateur.validationInscription) return utilisateur
+    else throw new CompteNonActiveError(utilisateur.id)
   throw new IdentifiantsNonReconnusError(email)
 }
 
@@ -52,13 +52,13 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
       return utilisateur
     }
     catch (err) {
-      // TODO : Supprimer le compte pour libérer l'adresse email.
+      // Suppresion du compte pour libérer l'adresse mail
+      await utilisateur.destroy()
       throw new ErreurInattendueError('AUTH_INSCRIRE_MAIL_ACTIVATION', { err })
     }
   }
   catch (err) {
-    if (err instanceof CodinSchoolError)
-      throw err
+    if (err instanceof CodinSchoolError) throw err
     else if (
       err.name === 'SequelizeUniqueConstraintError' &&
       err.errors.length === 1 &&
@@ -70,7 +70,7 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
   }
 }
 
-export const activerCompte = async (code) => {
+export const activerCompte = async code => {
   const utilisateur = await recupererParValidation(code)
   if (utilisateur) {
     utilisateur.validationInscription = null

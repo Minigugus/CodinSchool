@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "es6",
+    "module": "commonjs",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
