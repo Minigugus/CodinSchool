@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
     <div v-if="visible && messages && messages.length > 0" class="ui message" :class="choixCouleur">
-      <i @click="messages = []" class="close icon"></i>
+      <i v-if="fermable" @click="messages = []" class="close icon"></i>
 
       <div class="header">{{ choixTitre }}</div>
 
@@ -34,6 +34,11 @@ export default {
     typeAlerte: {
       type: String,
       required: true
+    },
+    fermable: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
 
