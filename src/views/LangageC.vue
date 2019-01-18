@@ -12,25 +12,23 @@
       </ul>
       <hr>
 
-      <h1 class="ui center aligned header">Aide sur le langage C</h1>
+      <h1 class="ui center aligned">Aide sur le langage C</h1>
       <h2 class="ui header">Programmer en C à la Maison</h2>
       <p>
-        Ce document est un tutoriel d'installation des outils nécessaires à la programmation en C.<br>
-        Ce guide explique comment installer Code::Blocks et comment l'utiliser pour programmer en C.
+       Il est utile de pouvoir développer en C sur votre machine personnelle pour pouvoir vous exercer hors de la plateforme, mais également pour pouvoir tester vos solutions avant de les soumettre à la correction.<br>
+        L'outil C le plus pratique sous Windows est <strong>Code::Blocks</strong>.<br>
+        Sous Linux, vous devrez installer la bibliothèque <strong>gcc</strong>.<br>
+        Vous trouverez ci-dessous deux tutoriels qui vous aiderons à installer et utiliser les outils Windows et Linux.
       </p>
       <p>
       </p>
 
+      <h2 class="ui header">Sous Windows</h2>
       <h3 class="ui header">1. Télécharger Code::Blocks</h3>
       <p>
-        La première étape conciste à télécharger l'installateur de Code::Blocks.
-      </p>
+        La première étape consiste à télécharger l'installateur de Code::Blocks.       </p>
       <p>
-        Ce logiciel vous permet d'écrire du code source, de gérer vos fichiers et de simplifier la compilation du code source, c'est-à-dire le passage du code source lisible à un code binaire éxécutable par votre machine.
-      </p>
-      <p>
-        Cependant, la compilation n'est pas effectuée par ce logiciel. Il dépend donc d'outils externes pour pouvoir compiler votre code. <em>Il est donc recommandé de <strong>télécharger la version incluant MinGW</strong>, un compilateur très connu</em>.
-      </p>
+        Ce logiciel vous permet d'écrire du code source, de gérer vos fichiers et de simplifier la compilation du code source, c'est-à-dire le passage du code source lisible à un code binaire exécutable par votre machine.       </p>
       <p>
         Vous pouvez <strong>télécharger Code::Blocks</strong> ici : <a href="http://www.codeblocks.org/downloads/26" target="_blank" rel="noopener noreferrer">http://www.codeblocks.org/downloads/26</a>
       </p>
@@ -38,12 +36,12 @@
         Le fichier à télécharger est sous la forme <strong>codeblocks-<small>[VERSION]</small>  mingw-setup.exe</strong>, où <small>[VERSION]</small> est le numéro de version de Code::Blocks (s'apparente à la date de sortie du logiciel). Choisissez simplement le fichier avec le numéro de version le plus élevé.
       </p>
 
-      <h3 class="ui header">2. Installer Code::Blocks</h3>
+      <h3 class="ui header justifié">2. Installer Code::Blocks</h3>
       <p>
         Exécutez le fichier téléchargé précédement et suivez toutes les étapes indiquées.
       </p>
 
-      <h3 class="ui header">3. Utiliser Code::Bocks</h3>
+      <h3 class="ui header justifié">3. Utiliser Code::Bocks</h3>
     </div>
   </div>
 </template>
@@ -56,4 +54,7 @@ export default {
 </script>
 
 <style scoped>
+  .header p{
+    text-align: justify !important;
+  }
 </style>
