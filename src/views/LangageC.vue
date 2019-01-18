@@ -42,6 +42,7 @@
       </p>
 
       <h3 class="ui header justifié">3. Utiliser Code::Bocks</h3>
+
     </div>
   </div>
 </template>

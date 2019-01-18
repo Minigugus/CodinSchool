@@ -60,7 +60,7 @@
       </div>
 
       <transition name="fade" mode="out-in">
-        <router-view></router-view>
+        <router-view id="body"></router-view>
       </transition>
 
       <div class="ui inverted vertical footer segment">
@@ -222,7 +222,11 @@ export default {
   overflow: hidden !important;
   display: block !important;
   position: relative !important;
-  padding-bottom: 100px  !important;
+  padding-bottom: 110px  !important;
+}
+
+#body{
+  padding-bottom:100px;
 }
 
 .footer {
