@@ -225,10 +225,6 @@ export default {
   padding-bottom: 110px  !important;
 }
 
-#body{
-  padding-bottom:100px;
-}
-
 .footer {
   position: absolute  !important;
   bottom: 0 !important;
@@ -241,5 +237,11 @@ export default {
 }
 .ui.inverted.segment{
   background-color: #568EA3 !important;
+}
+
+@media screen and (max-width: 700px) {
+  #body {
+    margin-bottom: 100px;
+  }
 }
 </style>
