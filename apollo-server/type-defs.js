@@ -1,4 +1,4 @@
-import fs from 'fs'
 import path from 'path'
+import { importSchema } from 'graphql-import'
 
-export default fs.readFileSync(path.resolve(__dirname, './schema.graphql'), { encoding: 'utf8' })
+export default importSchema(path.resolve(__dirname, 'schema.graphql'))
