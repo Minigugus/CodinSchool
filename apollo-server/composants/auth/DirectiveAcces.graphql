@@ -1,0 +1,3 @@
+directive @acces(
+	interdit: [Role!] = []
+) on OBJECT | FIELD_DEFINITION

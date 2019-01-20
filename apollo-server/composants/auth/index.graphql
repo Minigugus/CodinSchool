@@ -1,0 +1,17 @@
+#import * from "./DirectiveAcces.graphql"
+
+"""
+Décrit ce que permet une authentification réussie.
+"""
+type Authentifie {
+	jeton: String!
+
+	moi: Profile!
+}
+
+"""
+Décrit ce qui est retourné lors d'une inscription.
+"""
+type Inscrit {
+	email: String!
+}
