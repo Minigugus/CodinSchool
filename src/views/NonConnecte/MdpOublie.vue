@@ -23,7 +23,7 @@
 </template>
 
 <script>
-// TODO: Relier avec un Apollo
+// TODO: Relier avec Apollo
 // TODO: Vérifier le formulaire et ajouter l'alerte (Cf : Connexion.vue)
 export default {
   name: 'mdpoublie',
