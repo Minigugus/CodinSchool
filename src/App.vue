@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="pushable">
 
-    <!-- Sidebar Menu -->
+    <!-- Menu sidebar -->
     <transition name="fade" mode="out-in">
       <div v-if="menuSideBarVisible" class="ui vertical inverted sidebar menu" :class="{ visible: menuSideBarVisible}">
         <router-link to="/" exact-active-class="active" class="item">Accueil</router-link>
@@ -21,9 +21,9 @@
         </transition>
       </div>
     </transition>
+    <!--/ Menu sidebar -->
 
-
-    <!-- Page Contents -->
+    <!-- Page -->
     <div class="pusher" :class="{ dimmed: menuSideBarVisible }" @click="cacherSideBar(false)">
       <div class="ui inverted vertical masthead center aligned segment">
         <div class="titre-site">
@@ -59,9 +59,11 @@
         </div>
       </div>
 
+      <!-- Contenu pages -->
       <transition name="fade" mode="out-in">
-        <router-view id="body"></router-view>
+        <router-view id="mainContent" ></router-view>
       </transition>
+      <!--/ Contenu pages -->
 
       <div class="ui inverted vertical footer segment">
         <div class="ui container">
@@ -81,6 +83,7 @@
       </div>
     </div>
   </div>
+  <!--/ Page -->
 </template>
 
 <script>
@@ -128,13 +131,14 @@ export default {
 .text-left {
   text-align: left !important;
 }
-
 .text-center {
   text-align: center !important;
 }
-
 .text-right {
   text-align: right !important;
+}
+.underlineHover:hover {
+  text-decoration: underline !important;
 }
 
 /* Début animation de fondu */
@@ -239,9 +243,16 @@ export default {
   background-color: #568EA3 !important;
 }
 
+.smallContainer {
+  width: 40%;
+}
+
 @media screen and (max-width: 700px) {
-  #body {
+  #mainContent {
     margin-bottom: 100px;
+  }
+  .smallContainer {
+    width: 100%;
   }
 }
 </style>

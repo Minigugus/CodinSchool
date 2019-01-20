@@ -1,27 +1,30 @@
 <template>
-  <div class="ui container segment stripe">
+  <div class="ui container segment stripe smallContainer">
     <h2 class="ui center aligned header">
       <div class="content">
-        Mot de passe oublié?
+        Mot de passe oublié
       </div>
     </h2>
-    <div class="contenu">
-      <div class="formulaire">
-        <form class="ui form">
-          <p>Entrez votre adresse Mail pour recevoir un lien vous permettant de reinitialiser votre mot de passe.</p>
-          <div class="field required">
-            <label>Adresse Mail</label>
-            <input type="text" name="email" placeholder="Adresse Mail" required oninvalid="this.setCustomValidity('Veuillez indiquer une adresse Email')">
-          </div>
-          <button class="ui button" type="submit">Envoyer</button>
-        </form>
-      </div>
-    </div>
 
+    <form class="ui form">
+      <p>
+        Entrez votre adresse email afin de recevoir un lien de reinitialisation de mot de passe.
+      </p>
+      <div class="field">
+        <label>Adresse email</label>
+        <input type="text" placeholder="Adresse email" v-model="email">
+      </div>
+
+      <router-link to="/connexion" class="retour underlineHover">Retour à la connexion</router-link>
+
+      <button class="ui button" type="submit">Envoyer</button>
+    </form>
   </div>
 </template>
 
 <script>
+// TODO: Relier avec un Apollo
+// TODO: Vérifier le formulaire et ajouter l'alerte (Cf : Connexion.vue)
 export default {
   name: 'mdpoublie',
   data() {
@@ -33,18 +36,8 @@ export default {
 </script>
 
 <style scoped>
-   .contenu{
-        padding: 20px;
-
-    }
-    .formulaire{
-        padding: 20px;
-        top: 20px;
-        width:40%;
-        margin: auto;
-        border-radius: 15px;
-    }
-    .formulaire h1, .formulaire p{
-        text-align: center;
-    }
+.retour {
+  right: 0;
+  position: absolute;
+}
 </style>

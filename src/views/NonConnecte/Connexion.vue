@@ -1,5 +1,5 @@
 <template>
-  <div class="ui container segment stripe">
+  <div class="ui container segment stripe smallContainer">
     <h2 class="ui center aligned header">
       <div class="content">
         Connexion
@@ -26,6 +26,9 @@
             <label for="motDePasse">Mot de passe</label>
             <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="current-password"/>
           </div>
+
+          <router-link to="/resetMdp" class="mdpOublie underlineHover">Mot de passe oublié ?</router-link>
+
           <button class="ui button" type="submit">Se connecter</button>
         </form>
 
@@ -125,3 +128,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mdpOublie {
+  right: 0;
+  position: absolute;
+}
+</style>

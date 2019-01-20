@@ -16,7 +16,6 @@ export default {
   data() {
     return {
       email: 'contact@asauvage.fr',
-      // pseudo: 'rigwzzzzild2z',
       motDePasse:	'rigwild',
       nom: 'Sauvage',
       prenom: 'Antoine',
