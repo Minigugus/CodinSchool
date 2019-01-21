@@ -49,7 +49,7 @@
                   <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
                 </div>
                 <div v-else key="menuConnecte" class="right menu">
-                  <sui-dropdown text="Gestion" :item="true" :closeOnBlur="false">
+                  <sui-dropdown text="Gestion" :item="true">
                     <sui-dropdown-menu>
                       <sui-dropdown-header>Etudiant</sui-dropdown-header>
                       <sui-dropdown-item :disabled="true">Liste des exercices</sui-dropdown-item>
@@ -57,12 +57,9 @@
                       <sui-dropdown-divider/>
 
                       <sui-dropdown-header>Rédacteur</sui-dropdown-header>
-                      <sui-dropdown-item>
-                        <router-link to="/redacteur/ajouterExercice">Ajouter un exercice</router-link>
-                      </sui-dropdown-item>
-                      <sui-dropdown-item >
-                        <router-link to="/redacteur/gererNiveaux">Gérer les niveaux</router-link>
-                      </sui-dropdown-item>
+
+                      <router-link to="/redacteur/ajouterExercice" class="item" exact-active-class="active">Ajouter un exercice</router-link>
+                      <router-link to="/redacteur/gererNiveaux" class="item" exact-active-class="active">Gérer les niveaux</router-link>
 
                       <sui-dropdown-divider/>
 
@@ -72,8 +69,8 @@
                     </sui-dropdown-menu>
                   </sui-dropdown>
 
-                  <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
-                  <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
+                  <router-link to="/profil" class="item" exact-active-class="active">Profil</router-link>
+                  <a @click="deconnexion" class="item" exact-active-class="active">Se déconnecter</a>
                 </div>
               </transition>
             </template>
@@ -242,6 +239,13 @@ export default {
   padding: 0 !important;
   color: rgba(0,0,0,.87) !important;
 }
+.ui.menu .ui.dropdown .menu>.active.item {
+  background: rgba(0, 0, 0, 0.08) !important;
+  font-weight: normal !important;
+  color: rgba(0,0,0,.95) !important;
+}
+
+
 .pushable {
   overflow-x: initial;
 }
