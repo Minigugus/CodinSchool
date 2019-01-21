@@ -88,11 +88,10 @@ export function createProvider(options = {}, { router }) {
     errorHandler(error) {
       if (isUnauthorizedError(error)) {
         // Liste des pages qui ont besoin de connexion
-        // TODO: Indiquer les pages qui ont besoin d'être connecté
-        const besoinConnexion = ['profil', 'gestioncontenu']
+        const besoinConnexion = ['profil', 'gererniveaux', 'ajouterexercice']
         const res = besoinConnexion.some(x => router.currentRoute.name === x)
 
-        // Rediriger à la page de connexion si page en cours a besoin de connexion
+        // Rediriger vers la page de connexion si la page en cours a besoin de connexion
         if (res) router.replace({ name: 'connexion' })
       }
       else {

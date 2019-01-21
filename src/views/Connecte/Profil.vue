@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>En construction ...</h1>
     <pre>{{ JSON.stringify(this.moi, null, 2) }}</pre>
     <Alerte typeAlerte="Erreur" :messages="[]" />
   </div>
@@ -16,7 +17,6 @@ export default {
   data() {
     return {
       email: 'contact@asauvage.fr',
-      // pseudo: 'rigwzzzzild2z',
       motDePasse:	'rigwild',
       nom: 'Sauvage',
       prenom: 'Antoine',

@@ -1,9 +1,11 @@
-/*
-Données modifiables :
-  - nomUtilisateur: Pseudo de l'utilisateur
-  - lienActivation: Lien d'activation de mot de passe
-*/
-
+/**
+ * Template de mail d'activation de compte
+ *
+ * @param {string} nomUtilisateur `Prénom nom` de l'utilisateur
+ * @param {string} lienActivation lien d'activation de mot de passe
+ *
+ * @returns {string} le template modifié
+ */
 export default (nomUtilisateur, lienActivation) => `
 <!DOCTYPE html>
 <html lang="fr">
