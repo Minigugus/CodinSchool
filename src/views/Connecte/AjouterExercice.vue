@@ -2,7 +2,7 @@
   <div class="ui container segment stripe">
     <h2 class="ui center aligned header">
       <div class="content">
-        Créer un exercice
+        Ajouter un exercice
       </div>
     </h2>
     <div class="contenu">
@@ -49,7 +49,7 @@
 // TODO: Relier avec Apollo
 // TODO: Vérifier le formulaire et ajouter l'alerte (Cf : Connexion.vue)
 export default {
-  name: 'creerexercice',
+  name: 'ajouterexercice',
   data() {
     return {
       id: 'mon-super-exercice',

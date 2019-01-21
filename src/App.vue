@@ -1,27 +1,26 @@
 <template>
   <div id="app" class="pushable">
 
-    <!-- Menu sidebar -->
+    <!-- Menu sidebar mobile -->
     <transition name="fade" mode="out-in">
       <div v-if="menuSideBarVisible" class="ui vertical inverted sidebar menu" :class="{ visible: menuSideBarVisible}">
         <router-link to="/" exact-active-class="active" class="item">Accueil</router-link>
-        <router-link to="/langagec" exact-active-class="active" class="item">Langage C</router-link>
-        <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
+        <router-link to="/langageC" exact-active-class="active" class="item">Aide sur le langage C</router-link>
+        <router-link to="/aPropos" exact-active-class="active" class="item">A propos</router-link>
 
-        <transition name="fade" mode="out-in">
-          <div v-if="!moi" key="menuNonConnecteMobile">
-            <router-link to="/connexion" exact-active-class="active" class="item">Connexion</router-link>
-            <router-link to="/inscription" exact-active-class="active" class="item">Inscription</router-link>
-          </div>
-          <div v-else key="menuConnecteMobile">
-            <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
-            <router-link to="/niveau/gerer" exact-active-class="active" class="item">Gérer niveaux</router-link>
-            <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
-          </div>
-        </transition>
+        <div v-if="!moi" key="menuNonConnecteMobile">
+          <router-link to="/connexion" exact-active-class="active" class="item">Connexion</router-link>
+          <router-link to="/inscription" exact-active-class="active" class="item">Inscription</router-link>
+        </div>
+        <div v-else key="menuConnecteMobile">
+          <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
+          <router-link to="/redacteur/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
+          <router-link to="/redacteur/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
+          <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
+        </div>
       </div>
     </transition>
-    <!--/ Menu sidebar -->
+    <!--/ Menu sidebar mobile -->
 
     <!-- Page -->
     <div class="pusher" :class="{ dimmed: menuSideBarVisible }" @click="cacherSideBar(false)">
@@ -38,10 +37,11 @@
                 <i class="sidebar icon"></i>
               </a>
             </template>
+            <!-- Menu principal -->
             <template v-else>
               <router-link to="/" exact-active-class="active" class="item">Accueil</router-link>
-              <router-link to="/langagec" exact-active-class="active" class="item">Langage C</router-link>
-              <router-link to="/apropos" exact-active-class="active" class="item">A propos</router-link>
+              <router-link to="/langageC" exact-active-class="active" class="item">Aide langage C</router-link>
+              <router-link to="/aPropos" exact-active-class="active" class="item">A propos</router-link>
 
               <transition name="fade" mode="out-in">
                 <div v-if="!moi" key="menuNonConnecte" class="right menu">
@@ -49,34 +49,57 @@
                   <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
                 </div>
                 <div v-else key="menuConnecte" class="right menu">
+                  <sui-dropdown text="Gestion" :item="true" :closeOnBlur="false">
+                    <sui-dropdown-menu>
+                      <sui-dropdown-header>Etudiant</sui-dropdown-header>
+                      <sui-dropdown-item :disabled="true">Liste des exercices</sui-dropdown-item>
+
+                      <sui-dropdown-divider/>
+
+                      <sui-dropdown-header>Rédacteur</sui-dropdown-header>
+                      <sui-dropdown-item>
+                        <router-link to="/redacteur/ajouterExercice">Ajouter un exercice</router-link>
+                      </sui-dropdown-item>
+                      <sui-dropdown-item >
+                        <router-link to="/redacteur/gererNiveaux">Gérer les niveaux</router-link>
+                      </sui-dropdown-item>
+
+                      <sui-dropdown-divider/>
+
+                      <sui-dropdown-header>Administrateur</sui-dropdown-header>
+                      <sui-dropdown-item :disabled="true">Gérer les utilisateurs</sui-dropdown-item>
+                      <sui-dropdown-item :disabled="true">Gérer les rôles</sui-dropdown-item>
+                    </sui-dropdown-menu>
+                  </sui-dropdown>
+
                   <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
-                  <router-link to="/niveau/gerer" exact-active-class="active" class="item">Gérer niveaux</router-link>
                   <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
                 </div>
               </transition>
             </template>
+            <!--/ Menu principal -->
           </div>
         </div>
       </div>
 
       <!-- Contenu pages -->
       <transition name="fade" mode="out-in">
-        <router-view id="mainContent" ></router-view>
+        <router-view id="mainContent"></router-view>
       </transition>
       <!--/ Contenu pages -->
 
       <div class="ui inverted vertical footer segment">
         <div class="ui container">
-          <div class="ui stackable inverted divided equal height stackable grid">
-            <div class="three wide column">
+          <div class="ui inverted divided equal height grid">
+            <div class="height wide column">
               <h4 class="ui inverted header">A Propos</h4>
               <div class="ui inverted link list">
                 <a href="#" class="item">Carte du Site</a>
                 <a href="#" class="item">Nous Contacter</a>
               </div>
             </div>
-            <div class="seven wide column">
-              <p>&copy; 2018 Codinschool</p>
+            <div class="height wide column">
+              <p>&copy; 2019 Codinschool</p>
             </div>
           </div>
         </div>
@@ -104,7 +127,7 @@ export default {
   },
   computed: {
     isTailleMobile() {
-      return this.tailleEcran < 700
+      return this.tailleEcran < 1000
     }
   },
   methods: {
@@ -210,6 +233,15 @@ export default {
   padding: 1em 2em;
 }
 
+/* Menu dropdown */
+.ui.dropdown .menu>.header {
+  color: rgb(0, 0, 0);
+  font-weight: 1000;
+}
+.ui.dropdown .menu>.item a {
+  padding: 0 !important;
+  color: rgba(0,0,0,.87) !important;
+}
 .pushable {
   overflow-x: initial;
 }
@@ -247,10 +279,7 @@ export default {
   width: 40%;
 }
 
-@media screen and (max-width: 700px) {
-  #mainContent {
-    margin-bottom: 100px;
-  }
+@media screen and (max-width: 10px) {
   .smallContainer {
     width: 100%;
   }

@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>En construction ...</h1>
     <pre>{{ JSON.stringify(this.moi, null, 2) }}</pre>
     <Alerte typeAlerte="Erreur" :messages="[]" />
   </div>

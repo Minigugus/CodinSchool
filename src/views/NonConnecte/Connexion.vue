@@ -27,7 +27,7 @@
             <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="current-password"/>
           </div>
 
-          <router-link to="/resetMdp" class="mdpOublie underlineHover">Mot de passe oublié ?</router-link>
+          <router-link to="/mdpOublie" class="mdpOublie underlineHover">Mot de passe oublié ?</router-link>
 
           <button class="ui button" type="submit">Se connecter</button>
         </form>

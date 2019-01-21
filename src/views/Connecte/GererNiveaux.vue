@@ -24,7 +24,7 @@ export default {
       pageEnCours: 'OrganiserNiveaux'
     }
   },
-  name: 'gestioncontenu',
+  name: 'gererniveaux',
   components: {
     OrganiserNiveaux,
     EditerNiveau
