@@ -22,7 +22,7 @@
       <p>
         Les membres du groupe de projet ayant réalisé cette application sont :
         <ul class="ui list">
-          <li>NOM Prenom</li>
+          <li>NOM Prenom - <a href="mailto:mail@example.com">mail@example.com</a></li>
           <li>NOM Prenom - <a href="mailto:mail@example.com">mail@example.com</a></li>
           <li>Nom Prenom - <a href="mailto:mail@example.com">mail@example.com</a> - <a href="https://anom.fr/" target="_blank" rel="noopener noreferrer">https://anom.fr/</a></li>
         </ul>

@@ -1,78 +1,75 @@
 <template>
-  <div class="ui container segment stripe">
+  <div class="ui container segment stripe smallContainer">
     <h2 class="ui center aligned header">
       <div class="content">
         Inscription
       </div>
     </h2>
 
-    <ApolloMutation
-      v-if="!inscriptionFin"
-      :mutation="require('@/graphql/Inscription.gql')"
-      :variables="{
-        nouvelUtilisateur: {
-          email: formulaire.email,
-          // pseudo: formulaire.pseudo,
-          motDePasse: formulaire.motDePasse,
-          nom: formulaire.nom,
-          prenom: formulaire.prenom,
-          dateNaissance: formulaire.dateNaissance
-        }
-      }"
-      class="form"
-      @error="chargerErreur"
-      @done="validerEmail"
-    >
-      <template slot-scope="{ mutate, loading }">
-        <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
-          <div class="field">
-            <div class="two fields">
-              <div class="field">
-                <label for="nom">Nom</label>
-                <input type="text" id="nom" v-model="formulaire.nom" placeholder="Nom">
-              </div>
-              <div class="field">
-                <label for="prenom">Prénom</label>
-                <input type="text" id="prenom" v-model="formulaire.prenom" placeholder="Prénom">
+    <transition name="fade-slow">
+      <ApolloMutation
+        v-if="!inscriptionFin"
+        :mutation="require('@/graphql/Inscription.gql')"
+        :variables="{
+          nouvelUtilisateur: {
+            email: formulaire.email,
+            motDePasse: formulaire.motDePasse,
+            nom: formulaire.nom,
+            prenom: formulaire.prenom,
+            dateNaissance: formulaire.dateNaissance
+          }
+        }"
+        class="form"
+        @error="chargerErreur"
+        @done="validerEmail"
+      >
+        <template slot-scope="{ mutate, loading }">
+          <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
+            <div class="field">
+              <div class="two fields">
+                <div class="field">
+                  <label for="nom">Nom</label>
+                  <input type="text" id="nom" v-model="formulaire.nom" placeholder="Nom">
+                </div>
+                <div class="field">
+                  <label for="prenom">Prénom</label>
+                  <input type="text" id="prenom" v-model="formulaire.prenom" placeholder="Prénom">
+                </div>
               </div>
             </div>
-          </div>
-          <!-- <div class="field">
-            <label for="pseudo">Pseudo</label>
-            <input type="text" id="pseudo" v-model="formulaire.pseudo" placeholder="Pseudo" />
-          </div> -->
-          <div class="field">
-            <label for="email">Adresse email</label>
-            <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />
-          </div>
-          <div class="field">
-            <label for="motDePasse">Mot de passe</label>
-            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="new-password "/>
-          </div>
-          <div class="field">
-            <label for="motDePasse2">Confirmation du mot de passe</label>
-            <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
-          </div>
-          <div class="field">
-            <label for="dateNaissance">Date de naissance</label>
-            <input type="number" id="dateNaissance" v-model="formulaire.dateNaissance" placeholder="Date de naissance" />
-          </div>
-          <button class="ui button" type="submit">S'inscrire</button>
-        </form>
+            <div class="field">
+              <label for="email">Adresse email</label>
+              <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />
+            </div>
+            <div class="field">
+              <label for="motDePasse">Mot de passe</label>
+              <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="new-password "/>
+            </div>
+            <div class="field">
+              <label for="motDePasse2">Confirmation du mot de passe</label>
+              <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
+            </div>
+            <div class="field">
+              <label for="dateNaissance">Date de naissance</label>
+              <input type="number" id="dateNaissance" v-model="formulaire.dateNaissance" placeholder="Date de naissance" />
+            </div>
+            <button class="ui button" type="submit">S'inscrire</button>
+          </form>
 
-        <Alerte ref="erreurs" typeAlerte="Erreur" />
-      </template>
-    </ApolloMutation>
+          <Alerte ref="erreurs" typeAlerte="Erreur" />
+        </template>
+      </ApolloMutation>
 
-    <div v-else>
-      <h2 class="ui center aligned icon header">
-        <i class="circular envelope icon"></i>
-        Inscription enregistrée !
-      </h2>
-      <h3 class="ui center aligned icon header">
-        Vous avez reçu un email contenant un lien d'activation de votre compte.
-      </h3>
-    </div>
+      <div v-else>
+        <h2 class="ui center aligned icon header">
+          <i class="circular envelope icon"></i>
+          Inscription enregistrée !
+        </h2>
+        <h3 class="ui center aligned icon header">
+          Vous avez reçu un email contenant un lien d'activation de votre compte.
+        </h3>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -89,7 +86,6 @@ export default {
       formulaire: {
         nom: 'Sauvage',
         prenom: 'Prenom',
-        // pseudo: 'pseudo',
         email: 'mail@example.com',
         motDePasse:	'pseudo',
         motDePasse2:	'pseudo',
