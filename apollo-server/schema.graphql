@@ -1,31 +1,3 @@
 #import * from "./composants/role/index.graphql"
 #import * from "./composants/auth/index.graphql"
 #import * from "./composants/utilisateur/index.graphql"
-
-"""
-Décrit ce que peut demander un Utilisateur.
-"""
-type Query @acces {
-	moi: Profile!
-
-	utilisateur(id: ID!): Profile
-}
-
-"""
-Décrit ce que peut effectuer un Utilisateur.
-"""
-type Mutation {
-	inscription(inscription: Inscription!): Inscrit!
-	activer(code: String!): String!
-
-	connexion(email: String!, motDePasse: String!): Authentifie!
-
-	editer(modifications: EditionUtilisateur): Query! @acces
-
-	creerUtilisateur(utilisateur: Inscription): Profile!
-	@acces(interdit: [ Etudiant, Redacteur ])
-	editerUtilisateur(id: ID!, utilisateur: EditionUtilisateur): Profile!
-	@acces(interdit: [ Etudiant, Redacteur ])
-	supprimerUtilisateur(id: ID!): Profile!
-	@acces(interdit: [ Etudiant, Redacteur ])
-}

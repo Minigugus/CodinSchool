@@ -1,5 +1,27 @@
 #import * from "./DirectiveAcces.graphql"
 
+type Query {
+	moi: Profile!
+
+	utilisateur(id: ID!): Profile
+}
+
+type Mutation {
+	inscription(inscription: Inscription!): Inscrit!
+	activer(code: String!): String!
+
+	connexion(email: String!, motDePasse: String!): Authentifie!
+
+	editer(modifications: EditionUtilisateur): Query! @acces
+
+	creerUtilisateur(utilisateur: Inscription): Profile!
+	@acces(interdit: [ Etudiant, Redacteur ])
+	editerUtilisateur(id: ID!, utilisateur: EditionUtilisateur): Profile!
+	@acces(interdit: [ Etudiant, Redacteur ])
+	supprimerUtilisateur(id: ID!): Profile!
+	@acces(interdit: [ Etudiant, Redacteur ])
+}
+
 """
 Décrit ce que permet une authentification réussie.
 """
