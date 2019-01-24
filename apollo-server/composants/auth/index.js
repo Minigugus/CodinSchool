@@ -11,7 +11,6 @@ import {
 } from '../utilisateur/index'
 
 import {
-  JetonInvalideError,
   IdentifiantsNonReconnusError,
   EmailDejaUtiliseError,
   CodeInvalideError,
@@ -84,19 +83,16 @@ export default async jeton => {
   if (!jeton) return null
   // TODO : Ajouter une liste noire pour bloquer les jetons mal utilisés (anti-piratage).
   try {
-    if (!/Bearer /.test(jeton)) throw new JetonInvalideError(jeton, 'Méthode `Bearer` requise.')
+    if (!/Bearer /.test(jeton)) return null
     jeton = jeton.slice(7)
     const decode = await validerJeton(jeton)
-    if (decode && !('id' in decode)) throw new JetonInvalideError(jeton, '`id` non trouvé')
+    if (decode && !('id' in decode)) return null
     const utilisateur = await recupererParID(decode.id)
-    if (!utilisateur) throw new JetonInvalideError(jeton, `Utilisateur '${decode.id}' non trouvé`)
+    if (!utilisateur) return null
     return utilisateur
   }
   catch (err) {
     if (err instanceof CodinSchoolError) throw err
-    else if (err.name === 'JsonWebTokenError')
-      throw new JetonInvalideError(jeton, 'Jeton de connexion invalide.', err)
-
     throw new ErreurInattendueError('AUTH_VALIDER_JETON', { jeton, err })
   }
 }
