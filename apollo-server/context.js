@@ -3,7 +3,7 @@ import authentifier from './composants/auth'
 const auth = req => {
   if (req) {
     const autorisation = req.headers.authorization
-    if (autorisation) return authentifier(autorisation)
+    if (autorisation) return authentifier(autorisation).catch(_ => null)
   }
   return null
 }
