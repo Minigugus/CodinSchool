@@ -38,9 +38,8 @@
           </transition>
 
           <div class="contenu">
-            <div class="titre-niveau">
-              {{ aNiveau.nom }}
-            </div>
+            <div class="titre-niveau">{{ aNiveau.nom }}</div>
+            <div class="id-niveau">#{{ aNiveau.id }}</div>
             <div class="description-niveau">
               <span>{{ aNiveau.description }}</span>
             </div>
@@ -80,8 +79,11 @@ export default {
       this.niveau.sontDraggable = false
     },
 
-    // Lance l'édition d'un niveau en émettant un évènement
-    // "editerNiveau" avec l'id du niveau à éditer
+    /**
+     * Lance l'édition d'un niveau en émettant un évènement
+     * @param {string|int} idNiveau id du niveau à éditer
+     * @returns {void}
+     */
     editerNiveau(idNiveau) {
       this.$emit('editerNiveau', idNiveau)
     }
@@ -140,6 +142,15 @@ export default {
   font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
   font-weight: 700;
   color: rgba(0,0,0,.85);
+}
+.id-niveau {
+  font-size: 1em;
+  margin-left: 8px !important;
+  display: inline-block;
+  margin: 0;
+  font-family: Lato, 'Helvetica Neue', Arial,Helvetica, sans-serif;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.377);
 }
 .description-niveau {
   margin: .5em 0 .5em;

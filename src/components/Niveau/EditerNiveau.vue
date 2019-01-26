@@ -1,20 +1,46 @@
 <template>
   <div class="ui text container">
-    <h1 class="ui center aligned header">Edition du niveau {{ idNiveau }}</h1>
+    <h1 class="ui center aligned header">Edition du niveau "{{ idNiveau }}"</h1>
 
+    <!-- Formulaire d'édition du niveau TODO: Liaison à Apollo -->
+    <div class="ui container segment stripe smallContainer">
+      <form class="ui form">
+        <div class="eight wide field">
+          <label>Identifiant</label>
+          <input type="text" v-model="niveau.id" placeholder="Identifiant">
+        </div>
+
+        <div class="field">
+          <label>Nom</label>
+          <input type="text" v-model="niveau.nom" placeholder="Titre">
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <textarea v-model="niveau.description" placeholder="Consigne de L'exercice"></textarea>
+        </div>
+
+        <button class="ui button" type="submit">Modifier le niveau</button>
+      </form>
+    </div>
+    <!--/ Formulaire d'édition du niveau -->
+
+    <!-- Bouton de réorganisation des exercices -->
     <div class="reorganiser-exercice">
       <transition name="fade" mode="out-in">
         <button v-if="!exercice.sontDraggable" key="reorganiser" @click="exercice.sontDraggable = true" class="ui button primary right labeled icon">
           <i class="right bars icon"></i>
-          Réorganiser
+          Réorganiser les exercices
         </button>
         <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
           <i class="right check icon"></i>
-          Valider
+          Valider la réorganisation
         </button>
       </transition>
     </div>
+    <!--/ Bouton de réorganisation des exercices -->
 
+    <!-- Liste des exercices du niveau -->
     <draggable
     :list="exercice.liste"
     :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
@@ -38,9 +64,8 @@
           </transition>
 
           <div class="contenu">
-            <div class="titre-exercice">
-              {{ aExercice.nom }}
-            </div>
+            <div class="titre-exercice">{{ aExercice.nom }}</div>
+            <div class="id-exercice">#{{ aExercice.id }}</div>
             <div class="description-exercice">
               <span>{{ aExercice.description }}</span>
             </div>
@@ -48,6 +73,7 @@
         </div>
       </transition-group>
     </draggable>
+    <!--/ Liste des exercices du niveau -->
   </div>
 </template>
 
@@ -58,6 +84,11 @@ import { fakeListeNiveau } from '@/functions'
 export default {
   data() {
     return {
+      niveau: {
+        id: null,
+        nom: null,
+        description: null
+      },
       exercice: {
         sontDraggable: false,
         liste: []
@@ -72,6 +103,7 @@ export default {
 
   mounted() {
     // TODO: Chargement des niveaux depuis Apollo quand schéma GraphQL sera prêt
+    this.niveau = fakeListeNiveau.find(x => x.id === this.idNiveau)
     this.exercice.liste = fakeListeNiveau.find(x => x.id === this.idNiveau).exercice
   },
 
@@ -138,9 +170,18 @@ export default {
   font-size: 1.3em;
   display: inline-block;
   margin: 0;
-  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  font-family: Lato,'Helvetica Neue', Arial,Helvetica, sans-serif;
   font-weight: 700;
   color: rgba(0,0,0,.85);
+}
+.id-exercice {
+  font-size: 1em;
+  margin-left: 8px !important;
+  display: inline-block;
+  margin: 0;
+  font-family: Lato, 'Helvetica Neue', Arial,Helvetica, sans-serif;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.377);
 }
 .description-exercice {
   margin: .5em 0 .5em;
