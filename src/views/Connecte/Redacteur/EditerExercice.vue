@@ -1,11 +1,19 @@
 <template>
   <div class="ui text vertical segment container">
-    <router-link :to="`/redacteur/niveau/${niveau.id}`" class="ui button left labeled icon" tag="button">
-      <i class="left arrow icon"></i>
-      Retour au niveau "{{ niveau.nom }}"
-    </router-link>
+    <!-- Fil d'ariane -->
+    <div class="ui large breadcrumb">
+      <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+      <i class="right angle icon divider"></i>
+      <router-link :to="`/redacteur/niveau/${niveau.id}`" class="section">{{ niveau.id }}</router-link>
+      <i class="right arrow icon divider"></i>
+      <div class="active section">{{ exercice.id }}</div>
+    </div>
+    <!--/ Fil d'ariane -->
 
-    <h1 class="ui center aligned header">Edition de l'exercice "{{ idExercice }}"</h1>
+    <h1 class="ui center aligned header">
+      Edition d'exercice
+      <h3>"{{ exercice.nom }}"</h3>
+    </h1>
 
     <!-- Formulaire d'édition du niveau TODO: Liaison à Apollo -->
     <div class="ui container segment stripe smallContainer">
