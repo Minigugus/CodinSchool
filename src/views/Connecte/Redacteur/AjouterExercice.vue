@@ -45,10 +45,13 @@
 </template>
 
 <script>
+import Utilisateur from '@/mixins/Utilisateur'
+
 // TODO: Relier avec Apollo
 // TODO: Vérifier le formulaire et ajouter l'alerte (Cf : Connexion.vue)
 export default {
   name: 'ajouterexercice',
+  mixins: [Utilisateur],
   data() {
     return {
       id: 'mon-super-exercice',
@@ -60,6 +63,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

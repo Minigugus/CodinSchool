@@ -1,7 +1,8 @@
 <template>
-  <div class="ui text container">
+  <div class="ui text vertical segment container">
     <h1 class="ui center aligned header">Gestion des niveaux</h1>
 
+    <!-- Bouton de réorganisation des niveaux -->
     <div class="reorganiser-niveau">
       <transition name="fade" mode="out-in">
         <button v-if="!niveau.sontDraggable" key="reorganiser" @click="niveau.sontDraggable = true" class="ui button primary right labeled icon">
@@ -14,7 +15,9 @@
         </button>
       </transition>
     </div>
+    <!--/ Bouton de réorganisation des niveaux -->
 
+    <!-- Liste des niveaux -->
     <draggable
     :list="niveau.liste"
     :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
@@ -22,21 +25,26 @@
     >
       <transition-group name="flip-list" class="liste-niveau">
         <div v-for="aNiveau in niveau.liste" :key="aNiveau.id" class="niveau">
+          <!-- Bouton d'édition d'un niveau -->
           <transition name="slide-left">
             <div v-if="!niveau.sontDraggable" :key="'editer-' + aNiveau.id" class="editer">
-              <button @click="editerNiveau(aNiveau.id)" class="ui button primary right labeled icon">
+              <router-link :to="`/redacteur/niveau/${aNiveau.id}`" class="ui button primary right labeled icon" tag="button">
                 <i class="right arrow icon"></i>
                 Editer
-              </button>
+              </router-link>
             </div>
           </transition>
+          <!--/ Bouton d'édition d'un niveau -->
 
+          <!-- Icône de drag du niveau -->
           <transition name="fade-slow">
             <div v-if="niveau.sontDraggable" class="drag-icon">
               <i class="bars icon"></i>
             </div>
           </transition>
+          <!--/ Icône de drag du niveau -->
 
+          <!-- Informations du niveau -->
           <div class="contenu">
             <div class="titre-niveau">{{ aNiveau.nom }}</div>
             <div class="id-niveau">#{{ aNiveau.id }}</div>
@@ -44,14 +52,17 @@
               <span>{{ aNiveau.description }}</span>
             </div>
           </div>
+          <!--/ Informations du niveau -->
         </div>
       </transition-group>
     </draggable>
+    <!--/ Liste des niveaux -->
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+import Utilisateur from '@/mixins/Utilisateur'
 import { fakeListeNiveau } from '@/functions'
 
 export default {
@@ -63,7 +74,8 @@ export default {
       }
     }
   },
-  name: 'organiserniveaux',
+  name: 'listeniveaux',
+  mixins: [Utilisateur],
   components: {
     draggable
   },
@@ -77,15 +89,6 @@ export default {
     // TODO: Application des modifications via mutation Apollo
     validerReorganisation() {
       this.niveau.sontDraggable = false
-    },
-
-    /**
-     * Lance l'édition d'un niveau en émettant un évènement
-     * @param {string|int} idNiveau id du niveau à éditer
-     * @returns {void}
-     */
-    editerNiveau(idNiveau) {
-      this.$emit('editerNiveau', idNiveau)
     }
   }
 }
@@ -150,7 +153,7 @@ export default {
   margin: 0;
   font-family: Lato, 'Helvetica Neue', Arial,Helvetica, sans-serif;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.377);
+  color: rgba(0, 0, 0, 0.28);
 }
 .description-niveau {
   margin: .5em 0 .5em;
