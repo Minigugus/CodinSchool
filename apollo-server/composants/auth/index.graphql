@@ -1,4 +1,5 @@
 #import * from "./DirectiveAcces.graphql"
+#import * from "../utilisateur/index.graphql"
 
 type Query {
 	moi: Profile!
@@ -11,6 +12,9 @@ type Mutation {
 	activer(code: String!): String!
 
 	connexion(email: String!, motDePasse: String!): Authentifie!
+
+	motDePasseOublie(email: String!): String!
+	reinitialisationMotDePasse(email: String!, code: String!, motDePasse: String!): String!
 
 	editer(modifications: EditionUtilisateur): Query! @acces
 
