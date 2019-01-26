@@ -89,6 +89,13 @@ export const activerCompte = async code => {
   throw new CodeInvalideError(code, utilisateur && utilisateur.validationInscription)
 }
 
+/**
+ * Envoyer une demande de réinitialisation de mot de passe.
+ * Pas de retour d'erreur afin de ne pas fuiter d'informations sur les utilisateurs.
+ *
+ * @param {string} email l'adresse email du compte concerné
+ * @return {string} l'adresse email du compte concerné
+ */
 export const demandeResetMdp = async email => {
   const utilisateur = await recupererParEmail(email)
   if (utilisateur/* && !utilisateur.validationInscription*/) {
