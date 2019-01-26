@@ -10,7 +10,7 @@ import activationCompteModele from './modeles/activationCompte'
 import resetMdpModele from './modeles/resetMdp'
 
 const lienActivation = code => `${SERVEUR_URL}/#/activation/${code}`
-const lienReset = code => `${SERVEUR_URL}/#/reset/${code}`
+const lienReset = (email, code) => `${SERVEUR_URL}/#/reset/${email}/${code}`
 
 /**
  * Envoyer un mail en utilisant le modèle `activationCompte.js`
@@ -37,5 +37,5 @@ export const activationCompte = (destinataire, nom, code) => envoyerMail(
 export const nouveauMdp = (destinataire, nom, code) => envoyerMail(
   formaterMail({ nom, mail: destinataire }),
   'Réinitialisation de votre mot de passe',
-  resetMdpModele(nom, lienReset(code))
+  resetMdpModele(nom, lienReset(destinataire, code))
 )

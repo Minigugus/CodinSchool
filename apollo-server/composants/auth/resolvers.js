@@ -1,3 +1,12 @@
+import { recupererParID } from '../utilisateur'
+import {
+  inscrire,
+  authentifier,
+  activerCompte,
+  creerJeton,
+  demandeResetMdp,
+  resetMdp
+} from './index.js'
 
 export default {
   Query: {
@@ -21,9 +30,16 @@ export default {
 
     activer(_, { code }) {
       return activerCompte(code)
+    },
+
+    motDePasseOublie(_, { email }) {
+      return demandeResetMdp(email)
+    },
+    reinitialisationMotDePasse(_, { email, code, motDePasse }) {
+      return resetMdp(email, code, motDePasse)
     }
   },
-  
+
   Authentifie: {
     jeton(utilisateur) {
       return creerJeton(utilisateur)
