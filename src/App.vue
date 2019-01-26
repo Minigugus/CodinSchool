@@ -1,6 +1,5 @@
 <template>
   <div id="app" class="pushable">
-
     <!-- Menu sidebar mobile -->
     <transition name="fade" mode="out-in">
       <div v-if="menuSideBarVisible" class="ui vertical inverted sidebar menu" :class="{ visible: menuSideBarVisible}">
@@ -37,6 +36,7 @@
                 <i class="sidebar icon"></i>
               </a>
             </template>
+
             <!-- Menu principal -->
             <template v-else>
               <router-link to="/" exact-active-class="active" class="item">Accueil</router-link>
@@ -59,7 +59,7 @@
                       <sui-dropdown-header>Rédacteur</sui-dropdown-header>
 
                       <router-link to="/redacteur/ajouterExercice" class="item" exact-active-class="active">Ajouter un exercice</router-link>
-                      <router-link to="/redacteur/gererNiveaux" class="item" exact-active-class="active">Gérer les niveaux</router-link>
+                      <router-link to="/redacteur/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
 
                       <sui-dropdown-divider/>
 
@@ -85,7 +85,7 @@
       </transition>
       <!--/ Contenu pages -->
 
-      <div class="ui inverted vertical footer segment">
+      <footer class="ui inverted vertical footer segment">
         <div class="ui container">
           <div class="ui inverted divided equal height grid">
             <div class="height wide column">
@@ -100,7 +100,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   </div>
   <!--/ Page -->

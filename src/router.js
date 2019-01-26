@@ -4,6 +4,39 @@ import Accueil from '@/views/Accueil.vue'
 
 Vue.use(Router)
 
+/**
+ * Liste des pages liées au rôle "Rédacteur"
+ */
+const PAGES_REDACTEUR = [
+  {
+    // Lister/Réorganiser les niveaux
+    path: '/redacteur/niveau/liste',
+    name: 'listeniveaux',
+    component: () => import('@/views/Connecte/Redacteur/ListeNiveaux.vue')
+  },
+  {
+    // Consulter/Modifier un niveau
+    path: '/redacteur/niveau/:idNiveau',
+    name: 'editerniveau',
+    component: () => import('@/views/Connecte/Redacteur/EditerNiveau.vue'),
+    props: true
+  },
+  {
+    // Consulter/Modifier un exercice
+    path: '/redacteur/niveau/:idNiveau/exercice/:idExercice',
+    name: 'editerexercice',
+    component: () => import('@/views/Connecte/Redacteur/EditerExercice.vue'),
+    props: true
+  },
+  {
+    // Ajouter/Créer un exercice
+    path: '/redacteur/niveau/:idNiveau/ajouterExercice',
+    name: 'ajouterexercice',
+    component: () => import('@/views/Connecte/Redacteur/AjouterExercice.vue'),
+    props: true
+  }
+]
+
 export default new Router({
   routes: [
     {
@@ -54,21 +87,6 @@ export default new Router({
       path: '/profil',
       name: 'profil',
       component: () => import('@/views/Connecte/Profil.vue')
-    },
-
-    /* PARTIE ROLE REDACTEUR */
-    {
-      // Gérer les niveaux
-      path: '/redacteur/gererNiveaux',
-      name: 'gererniveaux',
-      component: () => import('@/views/Connecte/GererNiveaux.vue')
-    },
-    {
-      // Ajouter/Créer un exercice
-      path: '/redacteur/ajouterExercice',
-      name: 'ajouterexercice',
-      component: () => import('@/views/Connecte/AjouterExercice.vue')
     }
-    /* / PARTIE ROLE REDACTEUR */
-  ]
+  ].concat(PAGES_REDACTEUR)
 })

@@ -1,5 +1,10 @@
 <template>
-  <div class="ui text container">
+  <div class="ui text vertical segment container">
+    <router-link to="/redacteur/niveau/liste" class="ui button left labeled icon" tag="button">
+      <i class="left arrow icon"></i>
+      Retour à la liste des niveaux
+    </router-link>
+
     <h1 class="ui center aligned header">Edition du niveau "{{ idNiveau }}"</h1>
 
     <!-- Formulaire d'édition du niveau TODO: Liaison à Apollo -->
@@ -48,21 +53,26 @@
     >
       <transition-group name="flip-list" class="liste-exercice">
         <div v-for="aExercice in exercice.liste" :key="aExercice.id" class="exercice">
+          <!-- Bouton d'édition d'un exercice -->
           <transition name="slide-left">
             <div v-if="!exercice.sontDraggable" :key="'editer-' + aExercice.id" class="editer">
-              <button @click="editerExercice(aExercice.id)" class="ui button primary right labeled icon">
+              <router-link :to="`/redacteur/niveau/${niveau.id}/exercice/${aExercice.id}`" class="ui button primary right labeled icon" tag="button">
                 <i class="right arrow icon"></i>
                 Editer
-              </button>
+              </router-link>
             </div>
           </transition>
+          <!--/ Bouton d'édition d'un exercice -->
 
+          <!-- Icône de drag de l'exercice -->
           <transition name="fade-slow">
             <div v-if="exercice.sontDraggable" class="drag-icon">
               <i class="bars icon"></i>
             </div>
           </transition>
+          <!--/ Icône de drag de l'exercice -->
 
+          <!-- Informations de l'exercice -->
           <div class="contenu">
             <div class="titre-exercice">{{ aExercice.nom }}</div>
             <div class="id-exercice">#{{ aExercice.id }}</div>
@@ -70,6 +80,7 @@
               <span>{{ aExercice.description }}</span>
             </div>
           </div>
+          <!--/ Informations de l'exercice -->
         </div>
       </transition-group>
     </draggable>
@@ -104,19 +115,13 @@ export default {
   mounted() {
     // TODO: Chargement des niveaux depuis Apollo quand schéma GraphQL sera prêt
     this.niveau = fakeListeNiveau.find(x => x.id === this.idNiveau)
-    this.exercice.liste = fakeListeNiveau.find(x => x.id === this.idNiveau).exercice
+    this.exercice.liste = this.niveau.exercice
   },
 
   methods: {
     // TODO: Application des modifications via mutation Apollo
     validerReorganisation() {
       this.exercice.sontDraggable = false
-    },
-
-    // Lance l'édition d'un niveau en émettant un évènement
-    // "editerExercice" avec l'id de l'exercice à éditer
-    editerExercice(idExercice) {
-      this.$emit('editerExercice', idExercice)
     }
   }
 }
