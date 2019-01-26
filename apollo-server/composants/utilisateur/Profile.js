@@ -65,7 +65,7 @@ const Profile = bdd.define(
       validate: {
         datePassee(valeur) {
           if (new Date(Date.parse(valeur)).getFullYear() >= new Date().getFullYear())
-            throw new Error('Date impossible');
+            throw new Error('Date impossible')
         }
       }
     },

@@ -71,7 +71,7 @@ export default {
       }
     }
   },
-  name: 'editerniveau',
+  name: 'editerexercice',
   props: ['idNiveau', 'idExercice'],
 
   mounted() {

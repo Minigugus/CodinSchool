@@ -1,14 +1,11 @@
-import Sequelize from 'sequelize'
+// import Sequelize from 'sequelize'
 import uuidv4 from 'uuid/v4'
 import DirectiveAcces from './DirectiveAcces'
 import { hasher, comparer } from './motdepasse'
 import { validerJeton, creerJeton } from './jwt'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
 
-import {
-  activationCompte as mailActivationCompte,
-  nouveauMdp as mailNouveauMdp
-} from '../mail'
+import { activationCompte as mailActivationCompte, nouveauMdp as mailNouveauMdp } from '../mail'
 
 import {
   Profile,
@@ -25,12 +22,7 @@ import {
   CompteNonActiveError
 } from './erreurs'
 
-export {
-  DirectiveAcces,
-  hasher,
-  comparer,
-  creerJeton
-}
+export { DirectiveAcces, hasher, comparer, creerJeton }
 
 // TODO : Répartir les fonctions suivantes dans leur fichiers respectifs.
 
@@ -97,38 +89,36 @@ export const activerCompte = async code => {
  */
 export const demandeResetMdp = async email => {
   const utilisateur = await recupererParEmail(email)
-  if (utilisateur/* && !utilisateur.validationInscription*/) {
-    const code = uuidv4(); // Sequelize ne permet pas de générer un UUID lors d'une mise à jour
-    utilisateur.reinitialisationMdp = code;
+  if (utilisateur /* && !utilisateur.validationInscription*/) {
+    const code = uuidv4() // Sequelize ne permet pas de générer un UUID lors d'une mise à jour
+    utilisateur.reinitialisationMdp = code
     await utilisateur.save()
-    try
-    {
+    try {
       await mailNouveauMdp(
         utilisateur.emailPrimaire,
         `${utilisateur.prenom} ${utilisateur.nom}`,
         code
-      );
+      )
     }
-    catch (err)
-    {
+    catch (err) {
       utilisateur.reinitialisationMdp = null
-      await utilisateur.save();
+      await utilisateur.save()
     }
   }
   // On ne lève pas d'erreur pour ne pas signaler à l'utilisateur
   // que l'adresse email n'existe pas (anti-robots).
-  return email;
+  return email
 }
 
 export const resetMdp = async (email, code, mdp) => {
-  const utilisateur = await recupererParEmail(email);
+  const utilisateur = await recupererParEmail(email)
   if (utilisateur && utilisateur.reinitialisationMdp === code) {
-    utilisateur.motDePasse = await hasher(mdp);
-    utilisateur.reinitialisationMdp = null;
+    utilisateur.motDePasse = await hasher(mdp)
+    utilisateur.reinitialisationMdp = null
     await utilisateur.save()
     return utilisateur.emailPrimaire
   }
-  throw new CodeOuEmailInvalideError(email, code, utilisateur && utilisateur.reinitialisationMdp);
+  throw new CodeOuEmailInvalideError(email, code, utilisateur && utilisateur.reinitialisationMdp)
 }
 
 export default async jeton => {

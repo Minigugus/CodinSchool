@@ -9,7 +9,6 @@ const app = express()
 
 serveur.applyMiddleware({ app })
 
-configServer(app)
-  .then(() =>
-    app.listen(PORT, () => logInfo(`Serveur lancé. http://localhost:${PORT}${serveur.graphqlPath}`))
-  )
+configServer(app).then(() =>
+  app.listen(PORT, () => logInfo(`Serveur lancé. http://localhost:${PORT}${serveur.graphqlPath}`))
+)

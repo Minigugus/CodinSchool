@@ -6,7 +6,7 @@
       </div>
     </h2>
 
-    <transition name="fade-slow">
+    <transition name="fade-slow" mode="out-in">
       <ApolloMutation
         v-if="!inscriptionFin"
         :mutation="require('@/graphql/Inscription.gql')"
@@ -86,7 +86,7 @@ export default {
       formulaire: {
         nom: 'Sauvage',
         prenom: 'Prenom',
-        email: 'mail@example.com',
+        email: 'nom.prenom@hotmail.fr',
         motDePasse:	'pseudo',
         motDePasse2:	'pseudo',
         dateNaissance: 2018

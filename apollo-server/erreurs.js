@@ -6,8 +6,8 @@ export default erreur => {
 
   // if (!(erreur instanceof CodinSchoolError))
   // {
-  // 	log_erreur('Erreur non gérée', erreur);
-  // 	erreur = new ErreurInattendueError('ERREUR_NON_GEREE');
+  // 	log_erreur('Erreur non gérée', erreur)
+  // 	erreur = new ErreurInattendueError('ERREUR_NON_GEREE')
   // }
   return erreur
 }
