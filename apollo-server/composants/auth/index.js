@@ -1,8 +1,15 @@
-import _DirectiveAcces from './DirectiveAcces'
-import { hasher as _hasher, comparer as _comparer } from './motdepasse'
-import { validerJeton, creerJeton as _creerJeton } from './jwt'
+import Sequelize from 'sequelize'
+import uuidv4 from 'uuid/v4'
+import DirectiveAcces from './DirectiveAcces'
+import { hasher, comparer } from './motdepasse'
+import { validerJeton, creerJeton } from './jwt'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
-import { activationCompte as mailActivationCompte } from '../mail'
+
+import {
+  activationCompte as mailActivationCompte,
+  nouveauMdp as mailNouveauMdp
+} from '../mail'
+
 import {
   Profile,
   recupererParID,
@@ -14,14 +21,16 @@ import {
   IdentifiantsNonReconnusError,
   EmailDejaUtiliseError,
   CodeInvalideError,
+  CodeOuEmailInvalideError,
   CompteNonActiveError
 } from './erreurs'
 
-export const DirectiveAcces = _DirectiveAcces
-export const creerJeton = _creerJeton
-
-export const hasher = _hasher
-export const comparer = _comparer
+export {
+  DirectiveAcces,
+  hasher,
+  comparer,
+  creerJeton
+}
 
 // TODO : Répartir les fonctions suivantes dans leur fichiers respectifs.
 
@@ -65,7 +74,7 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
       err.errors[0].path === 'emailPrimaire'
     )
       throw new EmailDejaUtiliseError(email)
-    throw new ErreurInattendueError('AUTH_INSCRIRE', { err })
+    throw new ErreurInattendueError('AUTH_INSCRIRE', { err, message: err.message })
   }
 }
 
@@ -77,6 +86,49 @@ export const activerCompte = async code => {
     return utilisateur.emailPrimaire
   }
   throw new CodeInvalideError(code, utilisateur && utilisateur.validationInscription)
+}
+
+/**
+ * Envoyer une demande de réinitialisation de mot de passe.
+ * Pas de retour d'erreur afin de ne pas fuiter d'informations sur les utilisateurs.
+ *
+ * @param {string} email l'adresse email du compte concerné
+ * @return {string} l'adresse email du compte concerné
+ */
+export const demandeResetMdp = async email => {
+  const utilisateur = await recupererParEmail(email)
+  if (utilisateur/* && !utilisateur.validationInscription*/) {
+    const code = uuidv4(); // Sequelize ne permet pas de générer un UUID lors d'une mise à jour
+    utilisateur.reinitialisationMdp = code;
+    await utilisateur.save()
+    try
+    {
+      await mailNouveauMdp(
+        utilisateur.emailPrimaire,
+        `${utilisateur.prenom} ${utilisateur.nom}`,
+        code
+      );
+    }
+    catch (err)
+    {
+      utilisateur.reinitialisationMdp = null
+      await utilisateur.save();
+    }
+  }
+  // On ne lève pas d'erreur pour ne pas signaler à l'utilisateur
+  // que l'adresse email n'existe pas (anti-robots).
+  return email;
+}
+
+export const resetMdp = async (email, code, mdp) => {
+  const utilisateur = await recupererParEmail(email);
+  if (utilisateur && utilisateur.reinitialisationMdp === code) {
+    utilisateur.motDePasse = await hasher(mdp);
+    utilisateur.reinitialisationMdp = null;
+    await utilisateur.save()
+    return utilisateur.emailPrimaire
+  }
+  throw new CodeOuEmailInvalideError(email, code, utilisateur && utilisateur.reinitialisationMdp);
 }
 
 export default async jeton => {

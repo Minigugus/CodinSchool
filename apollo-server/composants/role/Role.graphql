@@ -1,0 +1,8 @@
+"""
+Représente le Role d'un Utilisateur.
+"""
+enum Role {
+	Etudiant
+	Redacteur
+	Administrateur
+}

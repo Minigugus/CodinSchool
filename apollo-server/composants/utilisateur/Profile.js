@@ -26,6 +26,10 @@ const Profile = bdd.define(
       defaultValue: Sequelize.UUIDV4,
       unique: true
     },
+    reinitialisationMdp: {
+      allowNull: true,
+      type: Sequelize.UUID
+    },
 
     motDePasse: {
       allowNull: false,
@@ -35,16 +39,45 @@ const Profile = bdd.define(
     emailPrimaire: {
       allowNull: false,
       type: Sequelize.STRING,
-      unique: true
+      unique: true,
+      validate: {
+        isEmail: true
+      }
     },
 
-    nom: { type: Sequelize.STRING, allowNull: false },
-    prenom: { type: Sequelize.STRING, allowNull: false },
-    dateNaissance: { type: Sequelize.INTEGER, allowNull: false },
+    nom: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      validate: {
+        isAlpha: true
+      }
+    },
+    prenom: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      validate: {
+        isAlpha: true
+      }
+    },
+    dateNaissance: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      validate: {
+        datePassee(valeur) {
+          if (new Date(Date.parse(valeur)).getFullYear() >= new Date().getFullYear())
+            throw new Error('Date impossible');
+        }
+      }
+    },
 
     adresse: Sequelize.STRING,
     codePostal: Sequelize.STRING,
-    emailSecondaire: Sequelize.STRING,
+    emailSecondaire: {
+      type: Sequelize.STRING,
+      validate: {
+        isEmail: true
+      }
+    },
 
     telephonePrimaire: Sequelize.STRING,
     telephoneSecondaire: Sequelize.STRING,

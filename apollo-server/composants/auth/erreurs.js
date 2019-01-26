@@ -34,6 +34,16 @@ export class CodeInvalideError extends CodinSchoolError {
   }
 }
 
+export class CodeOuEmailInvalideError extends CodinSchoolError {
+  constructor(email, code, attendu) {
+    super('CODE_EMAIL_INVALIDE', 'Code de réinitialisation ou email incorrect.', {
+      email,
+      code,
+      attendu
+    })
+  }
+}
+
 export class CompteNonActiveError extends CodinSchoolError {
   constructor(id) {
     super('COMPTE_NON_ACTIVE', 'Ce compte n\'a pas encore été activé.', { id })
