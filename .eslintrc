@@ -18,13 +18,13 @@
     "vue"
   ],
   "rules": {
-    "graphql/template-strings": [
-      "error",
-      {
-        "env": "literal",
-        "projectName": "app"
-      }
-    ],
+    // "graphql/template-strings": [
+    //   "error",
+    //   {
+    //     "env": "literal",
+    //     "projectName": "app"
+    //   }
+    // ],
 
     //
     //Possible Errors

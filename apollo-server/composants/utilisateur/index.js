@@ -1,6 +1,6 @@
-import _Profile from './Profile'
+import Profile from './Profile'
 
-export const Profile = _Profile
+export { Profile }
 
 export const recupererParID = id => Profile.findByPk(id)
 export const recupererParEmail = email =>

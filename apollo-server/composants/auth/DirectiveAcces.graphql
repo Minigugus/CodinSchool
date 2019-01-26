@@ -1,0 +1,5 @@
+#import * from "../role/index.graphql"
+
+directive @acces(
+	interdit: [Role!] = []
+) on OBJECT | FIELD_DEFINITION

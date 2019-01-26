@@ -1,0 +1,42 @@
+#import * from "./Profile.graphql"
+
+"""
+Représente une demande d'inscription d'un Utilisateur.
+"""
+input Inscription {
+	email: String!
+	motDePasse: String!
+
+	nom: String!
+	prenom: String!
+	dateNaissance: Int!
+}
+
+"""
+Paramètres demandés lors de l'édition d'un Utilisateur.
+"""
+input EditionUtilisateur {
+	# motDePasseActuel: String!
+	motDePasse: String
+
+	nom: String
+	prenom: String
+	dateNaissance: Int
+	adresse: String
+	codePostal: Int
+
+	emailPrimaire: String
+	emailSecondaire: String
+	emailVisible: Boolean
+
+	telephonePrimaire: String
+	telephoneSecondaire: String
+	telephoneVisible: Boolean
+
+	diplome: String
+	anneeDiplome: Int
+
+	siteWeb: String
+
+	avatar: String
+}

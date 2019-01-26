@@ -1,48 +1,9 @@
-import { creerJeton, authentifier, inscrire, activerCompte } from './composants/auth'
-import { recupererParID } from './composants/utilisateur'
+import deepmerge from 'deepmerge';
 
-export default {
-  Query: {
-    moi(_, __, { utilisateur }) {
-      return utilisateur
-    },
+import Authentification from './composants/auth/resolvers.js'
 
-    utilisateur(_, { id }) {
-      return recupererParID(id)
-    }
+export default deepmerge.all([
+  { Query: { }, Mutation: { } },
 
-    // utilisateurs(_, __) {
-    //   return bdd.utilisateurs
-    // }
-  },
-
-  Mutation: {
-    inscription(_, { inscription }) {
-      return inscrire(inscription)
-    },
-
-    connexion(_, { email, motDePasse }) {
-      return authentifier(email, motDePasse)
-    },
-
-    activer(_, { code }) {
-      return activerCompte(code)
-    }
-  },
-
-  Authentifie: {
-    jeton(utilisateur) {
-      return creerJeton(utilisateur)
-    },
-
-    moi(utilisateur) {
-      return utilisateur
-    }
-  },
-
-  Inscrit: {
-    email(utilisateur) {
-      return utilisateur.emailPrimaire
-    }
-  }
-}
+  Authentification
+])
