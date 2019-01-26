@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       formulaire: {
-        email: 'contact@asauvage.fr',
+        email: 'sauvage.antoine@hotmail.fr',
         motDePasse:	'rigwild'
       }
     }

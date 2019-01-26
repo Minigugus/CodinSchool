@@ -55,4 +55,4 @@ export default {
       return utilisateur.emailPrimaire
     }
   }
-};
+}
