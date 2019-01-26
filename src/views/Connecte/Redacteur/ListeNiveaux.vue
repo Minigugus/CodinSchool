@@ -1,17 +1,17 @@
 <template>
   <div class="ui text vertical segment container">
-    <h1 class="ui center aligned header">Gestion des niveaux</h1>
+    <h1 class="ui center aligned header">Liste des niveaux</h1>
 
     <!-- Bouton de réorganisation des niveaux -->
     <div class="reorganiser-niveau">
       <transition name="fade" mode="out-in">
         <button v-if="!niveau.sontDraggable" key="reorganiser" @click="niveau.sontDraggable = true" class="ui button primary right labeled icon">
           <i class="right bars icon"></i>
-          Réorganiser
+          Réorganiser les niveaux
         </button>
         <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
           <i class="right check icon"></i>
-          Valider
+          Valider la réorganisation
         </button>
       </transition>
     </div>
