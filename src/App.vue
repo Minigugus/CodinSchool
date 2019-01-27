@@ -58,7 +58,6 @@
 
                       <sui-dropdown-header>Rédacteur</sui-dropdown-header>
 
-                      <router-link to="/redacteur/ajouterExercice" class="item" exact-active-class="active">Ajouter un exercice</router-link>
                       <router-link to="/redacteur/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
 
                       <sui-dropdown-divider/>
@@ -80,7 +79,7 @@
       </div>
 
       <!-- Contenu pages -->
-      <transition name="fade" mode="out-in">
+      <transition name="fade-fast" mode="out-in">
         <router-view id="mainContent"></router-view>
       </transition>
       <!--/ Contenu pages -->
@@ -171,6 +170,17 @@ export default {
   opacity: 0 !important;
 }
 /* Fin animation de fondu */
+
+/* Début animation de fondu rapide */
+.fade-fast-enter-active,
+.fade-fast-leave-active {
+  transition: all .12s !important;
+}
+.fade-fast-enter,
+.fade-fast-leave-to {
+  opacity: 0 !important;
+}
+/* Fin animation de fondu rapide */
 
 /* Début animation de fondu lent */
 .fade-slow-enter-active,

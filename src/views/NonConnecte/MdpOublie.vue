@@ -13,8 +13,8 @@
       @error="chargerErreur"
       @done="formOk"
     >
-      <template slot-scope="{ mutate, loading }">
-        <form @submit.prevent="mutate()" :class="{ loading }" class="ui form">
+      <template v-if="typeAlerte !== 'Succès'" slot-scope="{ mutate, loading }">
+        <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
           <p>
             Entrez votre adresse email afin de recevoir un lien de reinitialisation de mot de passe.
           </p>
@@ -27,14 +27,15 @@
 
           <button class="ui button" type="submit">Envoyer</button>
         </form>
-
-        <Alerte ref="notifs" :typeAlerte="typeAlerte" />
       </template>
+
+      <Alerte ref="notifs" :typeAlerte="typeAlerte" :fermable="typeAlerte !== 'Succès'" />
     </ApolloMutation>
   </div>
 </template>
 
 <script>
+import { setErreurInput } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
@@ -45,13 +46,31 @@ export default {
   data() {
     return {
       email: '',
-      typeAlerte: 'Succès'
+      typeAlerte: 'Erreur'
     }
   },
   methods: {
     // Afficher une alerte
     setNotif(...str) {
       this.$refs.notifs.setAlerte(...str)
+    },
+
+    // Réinitialiser les erreurs du formulaire
+    viderNotif() {
+      this.$refs.notifs.viderAlerte()
+      setErreurInput(false, 'email')
+    },
+
+    // Vérifier que le formulaire est bien rempli
+    verifierFormulaire() {
+      this.viderNotif()
+      if (this.email === '') {
+        this.typeAlerte = 'Erreur'
+        this.setNotif('Le champs est vide.')
+        setErreurInput(true, 'email')
+        return false
+      }
+      return true
     },
 
     // La demande de réinitialisation de mot de passe s'est bien passée
@@ -65,8 +84,8 @@ export default {
     chargerErreur(errorObject) {
       let e = errorObject.message
       if (e.includes('GraphQL error: ')) {
-        this.setNotif(e.replace('GraphQL error: ', ''))
         this.typeAlerte = 'Erreur'
+        this.setNotif(e.replace('GraphQL error: ', ''))
       }
     }
   }

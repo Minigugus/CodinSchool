@@ -17,7 +17,7 @@
       @error="chargerErreur"
       @done="formOk"
     >
-      <template slot-scope="{ mutate, loading }">
+      <template v-if="typeAlerte !== 'Succès'" slot-scope="{ mutate, loading }">
         <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
           <p>
             Définissez votre nouveau mot de passe.
@@ -45,9 +45,9 @@
 
           <button class="ui button" type="submit">Modifier mon mot de passe</button>
         </form>
-
-        <Alerte ref="notifs" :typeAlerte="typeAlerte" />
       </template>
+
+      <Alerte ref="notifs" :typeAlerte="typeAlerte" :fermable="typeAlerte !== 'Succès'" />
     </ApolloMutation>
   </div>
 </template>
@@ -65,7 +65,7 @@ export default {
     return {
       nouveauMdp: '',
       nouveauMdp2: '',
-      typeAlerte: 'Succès'
+      typeAlerte: 'Erreur'
     }
   },
   props: ['email', 'code'],
