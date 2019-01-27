@@ -50,8 +50,8 @@
               <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
             </div>
             <div class="field">
-              <label for="dateNaissance">Date de naissance</label>
-              <input type="number" id="dateNaissance" v-model="formulaire.dateNaissance" placeholder="Date de naissance" />
+              <label for="dateNaissance">Année de naissance</label>
+              <input type="number" id="dateNaissance" v-model.number="formulaire.dateNaissance" placeholder="Année de naissance" />
             </div>
             <button class="ui button" type="submit">S'inscrire</button>
           </form>
@@ -90,7 +90,7 @@ export default {
         email: '',
         motDePasse: '',
         motDePasse2: '',
-        dateNaissance: ''
+        dateNaissance: null
       },
       inscriptionFin: false
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="ui container segment stripe">
+  <div class="ui container segment stripe smallContainer">
     <h2 class="ui center aligned header">
       <div class="content">
         Activation de compte
