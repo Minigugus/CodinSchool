@@ -1,7 +1,7 @@
 #import * from "./DirectiveAcces.graphql"
 #import * from "../utilisateur/index.graphql"
 
-type Query {
+type Query @acces {
 	moi: Profile!
 
 	utilisateur(id: ID!): Profile
