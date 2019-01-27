@@ -21,7 +21,8 @@ const SMTP = {
 }
 
 /**
- *  Formater un mail pour l'envoi
+ *  Formater un mail pour l'envoi.
+ *
  * @param {string|{ nom, mail }} mailOuObjet données à traiter
  * @return {string} String formatée pour l'envoi
  */
@@ -29,7 +30,7 @@ export const formaterMail = mailOuObjet =>
   typeof mailOuObjet === 'string' ? mailOuObjet : `"${mailOuObjet.nom}" <${mailOuObjet.mail}>`
 
 /**
- * Envoyer un mail à l'aide de nodemailer
+ * Envoyer un mail à l'aide de nodemailer.
  *
  * @param {string} destinataire Données du destinataire
  * @param {string} objet Objet du message
@@ -49,8 +50,6 @@ export default (destinataire, objet, contenu) => {
       .catch(err => {
         throw new ErreurInattendueError('ENVOYER_MAIL', { destinataire, objet, err })
       })
-  if (MODE_DEVELOPPEMENT)
-    logInfo(contenu)
-  else
-    logAttention(`Impossible d'envoyer un mail à '${destinataire}' : le SMTP est désactivé !`)
+  if (MODE_DEVELOPPEMENT) logInfo(contenu)
+  else logAttention(`Impossible d'envoyer un mail à '${destinataire}' : le SMTP est désactivé !`)
 }

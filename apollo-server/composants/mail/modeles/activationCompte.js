@@ -1,5 +1,5 @@
 /**
- * Template de mail d'activation de compte
+ * Template de mail d'activation de compte.
  *
  * @param {string} nomUtilisateur `Prénom nom` de l'utilisateur
  * @param {string} lienActivation lien d'activation de mot de passe
