@@ -76,6 +76,13 @@ export default new Router({
       component: () => import('@/views/NonConnecte/MdpOublie.vue')
     },
     {
+      // Réinitialisation de mot de passe
+      path: '/resetMdp/:email/:code',
+      name: 'mdpreset',
+      component: () => import('@/views/NonConnecte/MdpReset.vue'),
+      props: true
+    },
+    {
       // Activation de compte
       path: '/activation/:code',
       name: 'activation',

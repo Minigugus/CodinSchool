@@ -51,8 +51,8 @@ export default {
   data() {
     return {
       formulaire: {
-        email: 'nom.prenom@hotmail.fr',
-        motDePasse:	'pseudo'
+        email: '',
+        motDePasse:	''
       }
     }
   },

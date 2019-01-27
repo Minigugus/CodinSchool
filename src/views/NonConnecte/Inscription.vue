@@ -74,6 +74,7 @@
 </template>
 
 <script>
+import { isEmail, setErreurInput } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
@@ -84,12 +85,12 @@ export default {
   data() {
     return {
       formulaire: {
-        nom: 'Sauvage',
-        prenom: 'Prenom',
-        email: 'nom.prenom@hotmail.fr',
-        motDePasse:	'pseudo',
-        motDePasse2:	'pseudo',
-        dateNaissance: 2018
+        nom: '',
+        prenom: '',
+        email: '',
+        motDePasse: '',
+        motDePasse2: '',
+        dateNaissance: ''
       },
       inscriptionFin: false
     }
@@ -108,34 +109,24 @@ export default {
       this.$refs.erreurs.ajouterAlerte(...str)
     },
 
-    // Mettre un fond rouge sur un élément de formulaire
-    setErreurInput(activerErreur, ...id) {
-      id.forEach(input => activerErreur
-        ? document.getElementById(input).parentElement.classList.add('error')
-        : document.getElementById(input).parentElement.classList.remove('error'))
-    },
-
     // Vérifier que tous les champs du formulaire sont remplis
     verifierTousChampsRemplis() {
       let allInputCompleted = true
       Object.keys(this.formulaire).forEach(input => {
         if (!this.formulaire[input]) {
-          this.setErreurInput(true, input)
+          setErreurInput(true, input)
           allInputCompleted = false
         }
       })
-      if (!allInputCompleted)
-        this.ajouterErreur('Tous les champs sont obligatoires.')
+      if (!allInputCompleted) this.ajouterErreur('Tous les champs sont obligatoires.')
       return allInputCompleted
     },
 
     // Vérifier que l'adresse email entrée est valide
     verifierEmail() {
-      const isEmailValid = email => /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email)
-
-      if (!isEmailValid(this.formulaire.email)) {
+      if (!isEmail(this.formulaire.email)) {
         this.ajouterErreur('L\'adresse email renseignée est invalide.')
-        this.setErreurInput(true, 'email')
+        setErreurInput(true, 'email')
         return false
       }
       return true
@@ -147,14 +138,14 @@ export default {
         return
       if (this.formulaire.motDePasse.length < 4) {
         this.ajouterErreur('Le mot de passe doit avoir une taille de 4 caractères mininum.')
-        this.setErreurInput(true, 'motDePasse')
-        this.setErreurInput(false, 'motDePasse2')
+        setErreurInput(true, 'motDePasse')
+        setErreurInput(false, 'motDePasse2')
         return false
       }
       else if (this.formulaire.motDePasse !== this.formulaire.motDePasse2) {
         this.ajouterErreur('Les mots de passe ne correspondent pas.')
-        this.setErreurInput(true, 'motDePasse')
-        this.setErreurInput(true, 'motDePasse2')
+        setErreurInput(true, 'motDePasse')
+        setErreurInput(true, 'motDePasse2')
         return false
       }
       return true
@@ -162,7 +153,7 @@ export default {
 
     // Vider les alertes d'erreurs et les couleurs des input
     resetErreurs() {
-      this.setErreurInput(false, ...Object.keys(this.formulaire))
+      setErreurInput(false, ...Object.keys(this.formulaire))
       this.$refs.erreurs.viderAlerte()
     },
 

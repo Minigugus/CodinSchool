@@ -1,0 +1,3 @@
+mutation ResetMdp($email: String!, $code: String!, $motDePasse: String!) {
+  reinitialisationMotDePasse(email: $email, code: $code, motDePasse: $motDePasse)
+}

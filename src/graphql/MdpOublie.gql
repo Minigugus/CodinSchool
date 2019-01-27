@@ -1,0 +1,3 @@
+mutation MdpOublie($email: String!) {
+  motDePasseOublie(email: $email)
+}

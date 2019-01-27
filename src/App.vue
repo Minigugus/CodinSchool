@@ -212,6 +212,16 @@ export default {
   opacity: 0 !important;
 }
 /* Fin animation de glissement vers la gauche de loin*/
+
+.smallContainer {
+  width: 40% !important;
+}
+
+@media screen and (max-width: 10px) {
+  .smallContainer {
+    width: 100% !important;
+  }
+}
 </style>
 
 <style scoped>
@@ -277,15 +287,5 @@ export default {
 }
 .ui.inverted.segment{
   background-color: #568EA3 !important;
-}
-
-.smallContainer {
-  width: 40%;
-}
-
-@media screen and (max-width: 10px) {
-  .smallContainer {
-    width: 100%;
-  }
 }
 </style>

@@ -6,30 +6,68 @@
       </div>
     </h2>
 
-    <form class="ui form">
-      <p>
-        Entrez votre adresse email afin de recevoir un lien de reinitialisation de mot de passe.
-      </p>
-      <div class="field">
-        <label>Adresse email</label>
-        <input type="text" placeholder="Adresse email" v-model="email">
-      </div>
+    <ApolloMutation
+      :mutation="require('@/graphql/MdpOublie.gql')"
+      :variables="{ email }"
+      class="form"
+      @error="chargerErreur"
+      @done="formOk"
+    >
+      <template slot-scope="{ mutate, loading }">
+        <form @submit.prevent="mutate()" :class="{ loading }" class="ui form">
+          <p>
+            Entrez votre adresse email afin de recevoir un lien de reinitialisation de mot de passe.
+          </p>
+          <div class="field">
+            <label for="email">Adresse email</label>
+            <input type="email" id="email" v-model="email" placeholder="Adresse email" />
+          </div>
 
-      <router-link to="/connexion" class="retour underlineHover">Retour à la connexion</router-link>
+          <router-link to="/connexion" class="retour underlineHover">Retour à la connexion</router-link>
 
-      <button class="ui button" type="submit">Envoyer</button>
-    </form>
+          <button class="ui button" type="submit">Envoyer</button>
+        </form>
+
+        <Alerte ref="notifs" :typeAlerte="typeAlerte" />
+      </template>
+    </ApolloMutation>
   </div>
 </template>
 
 <script>
-// TODO: Relier avec Apollo
-// TODO: Vérifier le formulaire et ajouter l'alerte (Cf : Connexion.vue)
+import Alerte from '@/components/Alerte.vue'
+
 export default {
   name: 'mdpoublie',
+  components: {
+    Alerte
+  },
   data() {
     return {
-      email: 'mail@example.com'
+      email: '',
+      typeAlerte: 'Succès'
+    }
+  },
+  methods: {
+    // Afficher une alerte
+    setNotif(...str) {
+      this.$refs.notifs.setAlerte(...str)
+    },
+
+    // La demande de réinitialisation de mot de passe s'est bien passée
+    formOk() {
+      this.typeAlerte = 'Succès'
+      this.setNotif('Votre demande de réinitialisation de mot de passe a été validée.',
+        'Vous avez reçu un email de confirmation contenant un lien permettant de définir votre nouveau mot de passe.')
+    },
+
+    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
+    chargerErreur(errorObject) {
+      let e = errorObject.message
+      if (e.includes('GraphQL error: ')) {
+        this.setNotif(e.replace('GraphQL error: ', ''))
+        this.typeAlerte = 'Erreur'
+      }
     }
   }
 }

@@ -52,6 +52,11 @@ export default {
       this.messages.push(...notifNonPresent)
     },
 
+    setAlerte(...str) {
+      this.viderAlerte()
+      this.messages = str
+    },
+
     viderAlerte() {
       this.messages = []
     }

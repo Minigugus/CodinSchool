@@ -16,7 +16,7 @@
     </h1>
 
     <!-- Formulaire d'édition du niveau TODO: Liaison à Apollo -->
-    <div class="ui container segment stripe smallContainer">
+    <div class="ui container segment stripe">
       <form class="ui form">
         <div class="field">
           <label>Niveau</label>
