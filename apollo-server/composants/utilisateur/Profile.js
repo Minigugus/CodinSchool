@@ -41,7 +41,9 @@ const Profile = bdd.define(
       type: Sequelize.STRING,
       unique: true,
       validate: {
-        isEmail: true
+        isEmail: {
+          msg: 'Ce champ doit être une adresse e-mail valide.'
+        }
       }
     },
 
@@ -49,23 +51,37 @@ const Profile = bdd.define(
       type: Sequelize.STRING,
       allowNull: false,
       validate: {
-        isAlpha: true
+        is: {
+          args: /(?:\w|[\- ])+/gi,
+          msg: 'Ce champ ne peut contenir que des lettres minuscules ou majuscules, des tirets (-) et des espaces.'
+        },
+        len: {
+          args: [ 2, 20 ],
+          msg: 'Ce champ doit contenir entre 2 et 20 caractères.'
+        }
       }
     },
     prenom: {
       type: Sequelize.STRING,
       allowNull: false,
       validate: {
-        isAlpha: true
+        is: {
+          args: /(?:\w|[\- ])+/gi,
+          msg: 'Ce champ ne peut contenir que des lettres minuscules ou majuscules, des tirets (-) et des espaces.'
+        },
+        len: {
+          args: [ 2, 20 ],
+          msg: 'Ce champ doit contenir entre 2 et 20 caractères.'
+        }
       }
     },
     dateNaissance: {
       type: Sequelize.INTEGER,
       allowNull: false,
       validate: {
-        datePassee(valeur) {
+        estDatePassee(valeur) {
           if (new Date(Date.parse(valeur)).getFullYear() >= new Date().getFullYear())
-            throw new Error('Date impossible')
+            throw new Error('Une date de naissance doit être passée.')
         }
       }
     },
@@ -75,7 +91,9 @@ const Profile = bdd.define(
     emailSecondaire: {
       type: Sequelize.STRING,
       validate: {
-        isEmail: true
+        isEmail: {
+          msg: 'Ce champ doit être une adresse e-mail valide.'
+        }
       }
     },
 

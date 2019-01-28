@@ -49,3 +49,9 @@ export class CompteNonActiveError extends CodinSchoolError {
     super('COMPTE_NON_ACTIVE', 'Ce compte n\'a pas encore été activé.', { id })
   }
 }
+
+export class ValidationEchoueeError extends CodinSchoolError {
+  constructor(champs) {
+    super('VALIDATION_ECHOUEE', 'Un ou plusieurs champs sont invalides.', { champs })
+  }
+}
