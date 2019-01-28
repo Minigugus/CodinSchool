@@ -72,7 +72,8 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
         err.errors.map(erreur => ({
           nom: erreur.path,
           validation: erreur.validatorKey,
-          valeur: erreur.value
+          valeur: erreur.value,
+          message: erreur.message
         }))
       )
     throw new ErreurInattendueError('AUTH_INSCRIRE', { err, message: err.message })
