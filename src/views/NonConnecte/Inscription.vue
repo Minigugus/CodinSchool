@@ -27,37 +27,37 @@
           <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
             <div class="field">
               <div class="two fields">
-                <div class="field" :class="{ error: form.nom.err }">
+                <div class="field" :class="{ error: form.nom.err.length > 0 }">
                   <label for="nom">Nom</label>
                   <input type="text" id="nom" v-model="form.nom.v" placeholder="Nom">
-                  <div v-show="form.nom.err" class="ui basic red pointing prompt label transition">{{ form.nom.err }}</div>
+                  <div v-for="(err, index) in form.nom.err" :key="'nom-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
                 </div>
-                <div class="field" :class="{ error: form.prenom.err }">
+                <div class="field" :class="{ error: form.prenom.err.length > 0 }">
                   <label for="prenom">Prénom</label>
                   <input type="text" id="prenom" v-model="form.prenom.v" placeholder="Prénom">
-                  <div v-show="form.prenom.err" class="ui basic red pointing prompt label transition">{{ form.prenom.err }}</div>
+                  <div v-for="(err, index) in form.prenom.err" :key="'prenom-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
                 </div>
               </div>
             </div>
-            <div class="field" :class="{ error: form.email.err }">
+            <div class="field" :class="{ error: form.email.err.length > 0 }">
               <label for="email">Adresse email</label>
               <input type="text" id="email" v-model="form.email.v" placeholder="Adresse email" />
-              <div v-show="form.email.err" class="ui basic red pointing prompt label transition">{{ form.email.err }}</div>
+              <div v-for="(err, index) in form.email.err" :key="'email-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
             </div>
-            <div class="field" :class="{ error: form.mdp.err }">
+            <div class="field" :class="{ error: form.mdp.err.length > 0 }">
               <label for="mdp">Mot de passe</label>
               <input type="password" id="mdp" v-model="form.mdp.v" placeholder="Mot de passe" autocomplete="new-password "/>
-              <div v-show="form.mdp.err" class="ui basic red pointing prompt label transition">{{ form.mdp.err }}</div>
+              <div v-for="(err, index) in form.mdp.err" :key="'mdp-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
             </div>
-            <div class="field" :class="{ error: form.mdp2.err }">
+            <div class="field" :class="{ error: form.mdp2.err.length > 0 }">
               <label for="mdp2">Confirmation du mot de passe</label>
               <input type="password" id="mdp2" v-model="form.mdp2.v" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
-              <div v-show="form.mdp2.err" class="ui basic red pointing prompt label transition">{{ form.mdp2.err }}</div>
+              <div v-for="(err, index) in form.mdp2.err" :key="'mdp2-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
             </div>
-            <div class="field" :class="{ error: form.dateNaissance.err }">
+            <div class="field" :class="{ error: form.dateNaissance.err.length > 0 }">
               <label for="dateNaissance">Année de naissance</label>
               <input type="number" id="dateNaissance" v-model.number="form.dateNaissance.v" placeholder="Année de naissance" />
-              <div v-show="form.dateNaissance.err" class="ui basic red pointing prompt label transition">{{ form.dateNaissance.err }}</div>
+              <div v-for="(err, index) in form.dateNaissance.err" :key="'dateNaissance-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
             </div>
             <button class="ui button" type="submit">S'inscrire</button>
           </form>
@@ -91,12 +91,12 @@ export default {
   data() {
     return {
       form: {
-        nom: { v: '', err: null},
-        prenom: { v: '', err: null},
-        email: { v: '', err: null},
-        mdp: { v: '', err: null},
-        mdp2: { v: '', err: null},
-        dateNaissance: { v: '', err: null}
+        nom: { v: '', err: []},
+        prenom: { v: '', err: []},
+        email: { v: '', err: []},
+        mdp: { v: '', err: []},
+        mdp2: { v: '', err: []},
+        dateNaissance: { v: '', err: []}
       },
 
       inscriptionFin: false
@@ -112,7 +112,7 @@ export default {
       // Un ou plusieurs champs sont invalides
       if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
         gqlError.extensions.exception.props.champs.forEach(x =>
-          (this.form[x.nom] && (this.form[x.nom].err = x.message)))
+          (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
 
       // Affichage de l'erreur dans l'alerte
       this.ajouterErreur(gqlError.message)
@@ -128,7 +128,7 @@ export default {
       let allInputCompleted = true
       Object.keys(this.form).forEach(input => {
         if (this.form[input].v === '') {
-          this.form[input].err = 'Le champs est vide.'
+          this.form[input].err = ['Le champs est vide.']
           allInputCompleted = false
         }
       })
@@ -140,7 +140,7 @@ export default {
     verifierEmail() {
       if (!isEmail(this.form.email.v)) {
         this.ajouterErreur('L\'adresse email renseignée est invalide.')
-        this.form.email.err = 'Adresse email invalide.'
+        this.form.email.err = ['Adresse email invalide.']
         return false
       }
       return true
@@ -152,13 +152,13 @@ export default {
         return
       if (this.form.mdp.v.length > 0 && this.form.mdp.v.length < 4) {
         this.ajouterErreur('Le mot de passe doit avoir une taille de 4 caractères mininum.')
-        this.form.mdp.err = 'Mot de passe trop court.'
-        this.form.mdp2.err = null
+        this.form.mdp.err = ['Mot de passe trop court.']
+        this.form.mdp2.err = []
         return false
       }
       else if (this.form.mdp.v !== this.form.mdp2.v) {
         this.ajouterErreur('Les mots de passe ne correspondent pas.')
-        this.form.mdp2.err = 'Confirmation de mot de passe incorrecte.'
+        this.form.mdp2.err = ['Confirmation de mot de passe incorrecte.']
         return false
       }
       return true
@@ -166,7 +166,7 @@ export default {
 
     // Vider les alertes d'erreurs et les couleurs des input
     resetErreurs() {
-      Object.keys(this.form).forEach(input => this.form[input].err = null)
+      Object.keys(this.form).forEach(input => this.form[input].err = [])
       this.$refs.erreurs.viderAlerte()
     },
 
