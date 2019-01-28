@@ -36,8 +36,8 @@ export default {
     },
     ouvert: {
       type: Boolean,
-      require: false,
-      default: false
+      required: false,
+      default: () => false
     }
   },
 

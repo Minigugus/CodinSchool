@@ -24,41 +24,16 @@
         @done="validerEmail"
       >
         <template slot-scope="{ mutate, loading }">
-          <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
-            <div class="field">
-              <div class="two fields">
-                <div class="field" :class="{ error: form.nom.err.length > 0 }">
-                  <label for="nom">Nom</label>
-                  <input type="text" id="nom" v-model="form.nom.v" placeholder="Nom">
-                  <div v-for="(err, index) in form.nom.err" :key="'nom-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
-                </div>
-                <div class="field" :class="{ error: form.prenom.err.length > 0 }">
-                  <label for="prenom">Prénom</label>
-                  <input type="text" id="prenom" v-model="form.prenom.v" placeholder="Prénom">
-                  <div v-for="(err, index) in form.prenom.err" :key="'prenom-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
-                </div>
-              </div>
+          <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form" novalidate>
+            <div class="two fields">
+              <form-champs v-model="form.nom.v" nom="Nom" id="nom" :err="form.nom.err"></form-champs>
+              <form-champs v-model="form.prenom.v" nom="Prénom" id="prenom" :err="form.prenom.err"></form-champs>
             </div>
-            <div class="field" :class="{ error: form.email.err.length > 0 }">
-              <label for="email">Adresse email</label>
-              <input type="text" id="email" v-model="form.email.v" placeholder="Adresse email" />
-              <div v-for="(err, index) in form.email.err" :key="'email-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
-            </div>
-            <div class="field" :class="{ error: form.mdp.err.length > 0 }">
-              <label for="mdp">Mot de passe</label>
-              <input type="password" id="mdp" v-model="form.mdp.v" placeholder="Mot de passe" autocomplete="new-password "/>
-              <div v-for="(err, index) in form.mdp.err" :key="'mdp-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
-            </div>
-            <div class="field" :class="{ error: form.mdp2.err.length > 0 }">
-              <label for="mdp2">Confirmation du mot de passe</label>
-              <input type="password" id="mdp2" v-model="form.mdp2.v" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
-              <div v-for="(err, index) in form.mdp2.err" :key="'mdp2-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
-            </div>
-            <div class="field" :class="{ error: form.dateNaissance.err.length > 0 }">
-              <label for="dateNaissance">Année de naissance</label>
-              <input type="number" id="dateNaissance" v-model.number="form.dateNaissance.v" placeholder="Année de naissance" />
-              <div v-for="(err, index) in form.dateNaissance.err" :key="'dateNaissance-'+index" class="ui basic red pointing prompt label transition">{{ err }}</div>
-            </div>
+            <form-champs v-model="form.email.v" nom="Adresse email" type="email" id="email" :err="form.email.err"></form-champs>
+            <form-champs v-model="form.mdp.v" nom="Mot de passe" id="mdp" type="password" :err="form.mdp.err"></form-champs>
+            <form-champs v-model="form.mdp2.v" nom="Confirmation du mot de passe" id="mdp2" type="password" :err="form.mdp2.err"></form-champs>
+            <form-champs v-model.number="form.dateNaissance.v" type="number" nom="Année de naissance" id="dateNaissance" :err="form.dateNaissance.err"></form-champs>
+
             <button class="ui button" type="submit">S'inscrire</button>
           </form>
 
@@ -82,11 +57,13 @@
 <script>
 import { isEmail } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
+import FormChamps from '@/components/FormChamps.vue'
 
 export default {
   name: 'inscription',
   components: {
-    Alerte
+    Alerte,
+    FormChamps
   },
   data() {
     return {
@@ -138,6 +115,7 @@ export default {
 
     // Vérifier que l'adresse email entrée est valide
     verifierEmail() {
+      if (!this.form.email.v) return
       if (!isEmail(this.form.email.v)) {
         this.ajouterErreur('L\'adresse email renseignée est invalide.')
         this.form.email.err = ['Adresse email invalide.']
@@ -148,8 +126,7 @@ export default {
 
     // Vérifier que la confirmation de mot de passe est identique
     verifierMdp() {
-      if (this.form.mdp.v.length === 0)
-        return
+      if (!this.form.mdp.v) return
       if (this.form.mdp.v.length > 0 && this.form.mdp.v.length < 4) {
         this.ajouterErreur('Le mot de passe doit avoir une taille de 4 caractères mininum.')
         this.form.mdp.err = ['Mot de passe trop court.']
@@ -161,6 +138,18 @@ export default {
         this.form.mdp2.err = ['Confirmation de mot de passe incorrecte.']
         return false
       }
+      return true
+    },
+
+    // Vérifier que la date de naissance entrée est valide
+    verifierDateNaissance() {
+      if (!this.form.dateNaissance.v) return
+      if (!parseInt(this.form.dateNaissance.v, 10)) {
+        this.ajouterErreur('L\'année de naissance renseignée est invalide.')
+        this.form.dateNaissance.err = ['Année de naissance incorrecte.']
+        return false
+      }
+      this.form.dateNaissance.v = parseInt(this.form.dateNaissance.v, 10)
       return true
     },
 
@@ -177,6 +166,7 @@ export default {
       if (!this.verifierTousChampsRemplis()) envoyerFormulaire = false
       if (!this.verifierEmail()) envoyerFormulaire = false
       if (!this.verifierMdp()) envoyerFormulaire = false
+      if (!this.verifierDateNaissance()) envoyerFormulaire = false
       return envoyerFormulaire
     },
 
