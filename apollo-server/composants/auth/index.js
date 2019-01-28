@@ -19,7 +19,8 @@ import {
   EmailDejaUtiliseError,
   CodeInvalideError,
   CodeOuEmailInvalideError,
-  CompteNonActiveError
+  CompteNonActiveError,
+  ValidationEchoueeError
 } from './erreurs'
 
 export { DirectiveAcces, hasher, comparer, creerJeton }
@@ -66,6 +67,15 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
       err.errors[0].path === 'emailPrimaire'
     )
       throw new EmailDejaUtiliseError(email)
+    else if (err.name === 'SequelizeValidationError')
+      throw new ValidationEchoueeError(
+        err.errors.map(erreur => ({
+          nom: erreur.path,
+          validation: erreur.validatorKey,
+          valeur: erreur.value,
+          message: erreur.message
+        }))
+      )
     throw new ErreurInattendueError('AUTH_INSCRIRE', { err, message: err.message })
   }
 }

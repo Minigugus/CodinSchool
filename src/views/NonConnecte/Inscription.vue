@@ -12,11 +12,11 @@
         :mutation="require('@/graphql/Inscription.gql')"
         :variables="{
           nouvelUtilisateur: {
-            email: formulaire.email,
-            motDePasse: formulaire.motDePasse,
-            nom: formulaire.nom,
-            prenom: formulaire.prenom,
-            dateNaissance: formulaire.dateNaissance
+            email: form.email.v,
+            motDePasse: form.mdp.v,
+            nom: form.nom.v,
+            prenom: form.prenom.v,
+            dateNaissance: form.dateNaissance.v
           }
         }"
         class="form"
@@ -24,35 +24,16 @@
         @done="validerEmail"
       >
         <template slot-scope="{ mutate, loading }">
-          <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
-            <div class="field">
-              <div class="two fields">
-                <div class="field">
-                  <label for="nom">Nom</label>
-                  <input type="text" id="nom" v-model="formulaire.nom" placeholder="Nom">
-                </div>
-                <div class="field">
-                  <label for="prenom">Prénom</label>
-                  <input type="text" id="prenom" v-model="formulaire.prenom" placeholder="Prénom">
-                </div>
-              </div>
+          <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form" novalidate>
+            <div class="two fields">
+              <form-champs v-model="form.nom.v" nom="Nom" id="nom" :err="form.nom.err"></form-champs>
+              <form-champs v-model="form.prenom.v" nom="Prénom" id="prenom" :err="form.prenom.err"></form-champs>
             </div>
-            <div class="field">
-              <label for="email">Adresse email</label>
-              <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />
-            </div>
-            <div class="field">
-              <label for="motDePasse">Mot de passe</label>
-              <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="new-password "/>
-            </div>
-            <div class="field">
-              <label for="motDePasse2">Confirmation du mot de passe</label>
-              <input type="password" id="motDePasse2" v-model="formulaire.motDePasse2" placeholder="Confirmation du mot de passe" autocomplete="new-password "/>
-            </div>
-            <div class="field">
-              <label for="dateNaissance">Année de naissance</label>
-              <input type="number" id="dateNaissance" v-model.number="formulaire.dateNaissance" placeholder="Année de naissance" />
-            </div>
+            <form-champs v-model="form.email.v" nom="Adresse email" type="email" id="email" :err="form.email.err"></form-champs>
+            <form-champs v-model="form.mdp.v" nom="Mot de passe" id="mdp" type="password" :err="form.mdp.err"></form-champs>
+            <form-champs v-model="form.mdp2.v" nom="Confirmation du mot de passe" id="mdp2" type="password" :err="form.mdp2.err"></form-champs>
+            <form-champs v-model.number="form.dateNaissance.v" type="number" nom="Année de naissance" id="dateNaissance" :err="form.dateNaissance.err"></form-champs>
+
             <button class="ui button" type="submit">S'inscrire</button>
           </form>
 
@@ -74,24 +55,27 @@
 </template>
 
 <script>
-import { isEmail, setErreurInput } from '@/functions'
+import { isEmail } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
+import FormChamps from '@/components/FormChamps.vue'
 
 export default {
   name: 'inscription',
   components: {
-    Alerte
+    Alerte,
+    FormChamps
   },
   data() {
     return {
-      formulaire: {
-        nom: '',
-        prenom: '',
-        email: '',
-        motDePasse: '',
-        motDePasse2: '',
-        dateNaissance: null
+      form: {
+        nom: { v: '', err: []},
+        prenom: { v: '', err: []},
+        email: { v: '', err: []},
+        mdp: { v: '', err: []},
+        mdp2: { v: '', err: []},
+        dateNaissance: { v: '', err: []}
       },
+
       inscriptionFin: false
     }
   },
@@ -99,9 +83,16 @@ export default {
   methods: {
     // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
     chargerErreur(errorObject) {
-      let e = errorObject.message
-      if (e.includes('GraphQL error: '))
-        this.ajouterErreur(e.replace('GraphQL error: ', ''))
+      const { gqlError } = errorObject
+      if (!gqlError) return console.error(errorObject)
+
+      // Un ou plusieurs champs sont invalides
+      if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
+        gqlError.extensions.exception.props.champs.forEach(x =>
+          (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
+
+      // Affichage de l'erreur dans l'alerte
+      this.ajouterErreur(gqlError.message)
     },
 
     // Ajouter une erreur dans la liste des erreurs
@@ -112,9 +103,9 @@ export default {
     // Vérifier que tous les champs du formulaire sont remplis
     verifierTousChampsRemplis() {
       let allInputCompleted = true
-      Object.keys(this.formulaire).forEach(input => {
-        if (!this.formulaire[input]) {
-          setErreurInput(true, input)
+      Object.keys(this.form).forEach(input => {
+        if (this.form[input].v === '') {
+          this.form[input].err = ['Le champs est vide.']
           allInputCompleted = false
         }
       })
@@ -124,36 +115,47 @@ export default {
 
     // Vérifier que l'adresse email entrée est valide
     verifierEmail() {
-      if (!isEmail(this.formulaire.email)) {
+      if (!this.form.email.v) return
+      if (!isEmail(this.form.email.v)) {
         this.ajouterErreur('L\'adresse email renseignée est invalide.')
-        setErreurInput(true, 'email')
+        this.form.email.err = ['Adresse email invalide.']
         return false
       }
       return true
     },
 
     // Vérifier que la confirmation de mot de passe est identique
-    verifierMotDePasse() {
-      if (this.formulaire.motDePasse.length === 0)
-        return
-      if (this.formulaire.motDePasse.length < 4) {
+    verifierMdp() {
+      if (!this.form.mdp.v) return
+      if (this.form.mdp.v.length > 0 && this.form.mdp.v.length < 4) {
         this.ajouterErreur('Le mot de passe doit avoir une taille de 4 caractères mininum.')
-        setErreurInput(true, 'motDePasse')
-        setErreurInput(false, 'motDePasse2')
+        this.form.mdp.err = ['Mot de passe trop court.']
+        this.form.mdp2.err = []
         return false
       }
-      else if (this.formulaire.motDePasse !== this.formulaire.motDePasse2) {
+      else if (this.form.mdp.v !== this.form.mdp2.v) {
         this.ajouterErreur('Les mots de passe ne correspondent pas.')
-        setErreurInput(true, 'motDePasse')
-        setErreurInput(true, 'motDePasse2')
+        this.form.mdp2.err = ['Confirmation de mot de passe incorrecte.']
         return false
       }
       return true
     },
 
+    // Vérifier que la date de naissance entrée est valide
+    verifierDateNaissance() {
+      if (!this.form.dateNaissance.v) return
+      if (!parseInt(this.form.dateNaissance.v, 10)) {
+        this.ajouterErreur('L\'année de naissance renseignée est invalide.')
+        this.form.dateNaissance.err = ['Année de naissance incorrecte.']
+        return false
+      }
+      this.form.dateNaissance.v = parseInt(this.form.dateNaissance.v, 10)
+      return true
+    },
+
     // Vider les alertes d'erreurs et les couleurs des input
     resetErreurs() {
-      setErreurInput(false, ...Object.keys(this.formulaire))
+      Object.keys(this.form).forEach(input => this.form[input].err = [])
       this.$refs.erreurs.viderAlerte()
     },
 
@@ -163,7 +165,8 @@ export default {
       let envoyerFormulaire = true
       if (!this.verifierTousChampsRemplis()) envoyerFormulaire = false
       if (!this.verifierEmail()) envoyerFormulaire = false
-      if (!this.verifierMotDePasse()) envoyerFormulaire = false
+      if (!this.verifierMdp()) envoyerFormulaire = false
+      if (!this.verifierDateNaissance()) envoyerFormulaire = false
       return envoyerFormulaire
     },
 
