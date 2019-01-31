@@ -6,6 +6,12 @@ export default {
   Query: {
     niveaux() {
       return Niveau.findAll({ order: [['position', 'ASC']] })
+    },
+    async niveau(_, { id }) {
+      const niveau = Niveau.findByPk(id)
+      if (!niveau)
+        throw new Error(`Le Niveau « ${id} » n'existe pas.`)
+      return niveau
     }
   },
   Mutation: {
