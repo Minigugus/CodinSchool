@@ -25,7 +25,7 @@ const Niveau = bdd.define(
 
     position: {
       allowNull: false,
-      type: Sequelize.INTEGER//,
+      type: Sequelize.INTEGER // ,
       // unique: true
     }
   },
