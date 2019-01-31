@@ -1,0 +1,46 @@
+#import * from '../auth/index.graphql'
+#import * from './Exercice.graphql'
+
+type Query {
+  exercice(id: ID!): Exercice!
+}
+
+type Mutation {
+
+  creerExercice(exercice: CreationExercice!): Exercice!
+  @acces(interdit: [ Etudiant ])
+
+  editerExercice(id: ID!, exercice: EditionExercice): Exercice!
+  @acces(interdit: [ Etudiant ])
+
+  reorganiserExercices(niveau: ID!, exercices: [ID!]!): [Exercice!]!
+  @acces(interdit: [ Etudiant ])
+
+  supprimerExercice(id: ID!): ID!
+  @acces(interdit: [ Etudiant ])
+
+}
+
+"""
+Paramètres demandés lors de la création d'un Exercice.
+"""
+input CreationExercice {
+	niveau: ID!
+
+  id: ID!
+  titre: String!
+  enonce: String
+  correction: String
+}
+
+"""
+Paramètres demandés lors de l'édition d'un Exercice.
+"""
+input EditionExercice {
+	niveau: ID
+
+  id: ID
+  titre: String
+  enonce: String
+  correction: String
+}
