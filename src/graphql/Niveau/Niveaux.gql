@@ -1,6 +1,6 @@
 #import "./FragmentNiveau.gql"
 
-query niveau {
+query Niveaux {
   niveaux {
     ...niveau
   }

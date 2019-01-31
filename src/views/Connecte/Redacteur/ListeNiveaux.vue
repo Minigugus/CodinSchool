@@ -19,12 +19,12 @@
 
     <!-- Liste des niveaux -->
     <draggable
-    :list="niveau.liste"
+    :list="niveaux"
     :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
     element="div"
     >
       <transition-group name="flip-list" class="liste-niveau">
-        <div v-for="aNiveau in niveau.liste" :key="aNiveau.id" class="niveau">
+        <div v-for="aNiveau in niveaux" :key="aNiveau.id" class="niveau">
           <!-- Bouton d'édition d'un niveau -->
           <transition name="slide-left">
             <div v-if="!niveau.sontDraggable" :key="'editer-' + aNiveau.id" class="editer">
@@ -46,10 +46,10 @@
 
           <!-- Informations du niveau -->
           <div class="contenu">
-            <div class="titre-niveau">{{ aNiveau.nom }}</div>
+            <div class="titre-niveau">{{ aNiveau.titre }}</div>
             <div class="id-niveau">#{{ aNiveau.id }}</div>
             <div class="description-niveau">
-              <span>{{ aNiveau.description }}</span>
+              <span>{{ aNiveau.introduction }}</span>
             </div>
           </div>
           <!--/ Informations du niveau -->
@@ -63,14 +63,14 @@
 <script>
 import draggable from 'vuedraggable'
 import Utilisateur from '@/mixins/Utilisateur'
-import { fakeListeNiveau } from '@/functions'
+import Niveaux from '@/graphql/Niveau/Niveaux.gql'
+import ReorganiserNiveaux from '@/graphql/Niveau/ReorganiserNiveaux.gql'
 
 export default {
   data() {
     return {
       niveau: {
-        sontDraggable: false,
-        liste: []
+        sontDraggable: false
       }
     }
   },
@@ -80,15 +80,32 @@ export default {
     draggable
   },
 
-  mounted() {
-    // TODO: Chargement des niveaux depuis Apollo quand schéma GraphQL sera prêt
-    this.niveau.liste = fakeListeNiveau.map(({id, nom, description}) => ({id, nom, description}))
+  apollo: {
+    niveaux: Niveaux
   },
 
   methods: {
-    // TODO: Application des modifications via mutation Apollo
-    validerReorganisation() {
+    async validerReorganisation() {
       this.niveau.sontDraggable = false
+
+      const apolloClient = this.$apollo.provider.defaultClient
+
+      // Mise à jour du cache
+      await apolloClient.mutate({
+        mutation: ReorganiserNiveaux,
+        variables: {
+          niveaux: this.niveaux.map(x => x.id)
+        },
+        update: (store, { data: { reorganiserNiveaux: nouvelleOrganisation } }) => {
+          // Lire le cache pour récupérer le contenu actuel
+          const data = store.readQuery({ query: Niveaux })
+
+          // Modifier le contenu actuel récupéré
+          data.niveaux = nouvelleOrganisation
+
+          // Appliquer la modification en cache
+          store.writeQuery({ query: Niveaux, data })
+        }})
     }
   }
 }
