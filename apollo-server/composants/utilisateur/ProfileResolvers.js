@@ -1,12 +1,5 @@
-import { recupererParID } from '../utilisateur'
-import {
-  inscrire,
-  authentifier,
-  activerCompte,
-  creerJeton,
-  demandeResetMdp,
-  resetMdp
-} from './index.js'
+import { creerJeton } from '../auth'
+import { recupererParID, inscrire, authentifier, activerCompte, demandeResetMdp, resetMdp } from './ProfileLogique'
 
 export default {
   Query: {

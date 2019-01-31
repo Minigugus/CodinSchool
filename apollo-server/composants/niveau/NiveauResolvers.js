@@ -1,4 +1,4 @@
-import { recupererTous, recupererParID, creerNiveau, editerNiveau, reorganiserNiveaux, supprimerNiveau, recupererExercicesNiveau } from '.'
+import { recupererTous, recupererParID, creerNiveau, editerNiveau, reorganiserNiveaux, supprimerNiveau, recupererExercicesNiveau } from './NiveauLogique'
 
 export default {
   Query: {

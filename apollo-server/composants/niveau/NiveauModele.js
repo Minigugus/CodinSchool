@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
 import bdd from '../bdd'
 
-import Exercice from '../exercice/Exercice'
+import Exercice from '../exercice/ExerciceModele'
 
 const Niveau = bdd.define(
   'niveau',
