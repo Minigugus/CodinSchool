@@ -26,7 +26,7 @@ export default {
 
   mounted() {
     this.$apollo.mutate({
-      mutation: require('@/graphql/Activation.gql'),
+      mutation: require('@/graphql/Utilisateur/Activation.gql'),
       variables: {
         code: this.code
       }

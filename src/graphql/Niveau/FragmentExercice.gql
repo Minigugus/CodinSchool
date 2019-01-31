@@ -1,0 +1,7 @@
+fragment exercice on Exercice {
+  id
+  titre
+  enonce
+  correction
+  position
+}

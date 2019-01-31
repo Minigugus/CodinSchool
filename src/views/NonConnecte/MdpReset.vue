@@ -7,7 +7,7 @@
     </h2>
 
     <ApolloMutation
-      :mutation="require('@/graphql/ResetMdp.gql')"
+      :mutation="require('@/graphql/Utilisateur/ResetMdp.gql')"
       :variables="{
         email,
         code,
