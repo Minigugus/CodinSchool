@@ -29,6 +29,7 @@ export const DUREE_VALIDITE_JETON = '1d'
 
 // BASE DE DONNÉES //
 export const BDD_URI = process.env.BDD_URI || 'postgres://codinschool:codinschool@bdd/codinschool'
+export const BDD_MAJ_MCD = process.env.BDD_MAJ_MCD === 'oui'
 
 // BCRYPT (MOTS DE PASSE) //
 export const BCRYPT_ROUND = parseInt(process.env.BCRYPT_ROUND || 10, 10)
