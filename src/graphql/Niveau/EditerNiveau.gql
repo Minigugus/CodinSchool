@@ -1,6 +1,6 @@
 #import "./FragmentNiveau.gql"
 
-mutation editerNiveau($id: ID!, $niveau: EditionNiveau!) {
+mutation EditerNiveau($id: ID!, $niveau: EditionNiveau!) {
   editerNiveau(id: $id, niveau: $niveau) {
     ...niveau
   }

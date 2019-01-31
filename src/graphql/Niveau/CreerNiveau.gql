@@ -1,6 +1,6 @@
 #import "./FragmentNiveau.gql"
 
-mutation creerNiveau($niveau: CreationNiveau!) {
+mutation CreerNiveau($niveau: CreationNiveau!) {
   creerNiveau(niveau: $niveau) {
     ...niveau
   }

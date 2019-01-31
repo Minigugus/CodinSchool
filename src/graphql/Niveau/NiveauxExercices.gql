@@ -1,7 +1,7 @@
 #import "./FragmentNiveau.gql"
 #import "./FragmentExercice.gql"
 
-query niveau {
+query NiveauxExercices {
   niveaux {
     ...niveau
     exercices {
