@@ -99,6 +99,8 @@
 <script>
 import draggable from 'vuedraggable'
 import { fakeListeNiveau } from '@/functions'
+// import Exercice from '@/graphql/Niveau/Exercice.gql'
+// import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
 
 export default {
   data() {
@@ -119,6 +121,18 @@ export default {
     draggable
   },
   props: ['idNiveau'],
+
+  // apollo: {
+  //   exercices() {
+  //     console.log(this.idNiveau)
+  //     return {
+  //       query: Exercice,
+  //       variables: {
+  //         id: this.idNiveau
+  //       }
+  //     }
+  //   }
+  // },
 
   mounted() {
     // TODO: Chargement des niveaux depuis Apollo quand schéma GraphQL sera prêt
