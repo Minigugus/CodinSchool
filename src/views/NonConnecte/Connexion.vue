@@ -7,7 +7,7 @@
     </h2>
 
     <ApolloMutation
-      :mutation="require('@/graphql/Connexion.gql')"
+      :mutation="require('@/graphql/Utilisateur/Connexion.gql')"
       :variables="{
         email: formulaire.email,
         motDePasse: formulaire.motDePasse
@@ -40,7 +40,7 @@
 
 <script>
 import { onLogin } from '@/vue-apollo'
-import UTILISATEUR from '@/graphql/Utilisateur.gql'
+import UTILISATEUR from '@/graphql/Utilisateur/Utilisateur.gql'
 import Alerte from '@/components/Alerte.vue'
 
 export default {

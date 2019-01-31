@@ -1,4 +1,4 @@
-import Utilisateur from '@/graphql/Utilisateur.gql'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 
 export default {
   apollo: {

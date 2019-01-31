@@ -7,7 +7,7 @@
     </h2>
 
     <ApolloMutation
-      :mutation="require('@/graphql/MdpOublie.gql')"
+      :mutation="require('@/graphql/Utilisateur/MdpOublie.gql')"
       :variables="{ email }"
       class="form"
       @error="chargerErreur"

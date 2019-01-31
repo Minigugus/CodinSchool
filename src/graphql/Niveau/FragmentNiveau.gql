@@ -1,0 +1,7 @@
+fragment niveau on Niveau {
+  id
+  titre
+  introduction
+  dateCreation
+  position
+}

@@ -9,7 +9,7 @@
     <transition name="fade-slow" mode="out-in">
       <ApolloMutation
         v-if="!inscriptionFin"
-        :mutation="require('@/graphql/Inscription.gql')"
+        :mutation="require('@/graphql/Utilisateur/Inscription.gql')"
         :variables="{
           nouvelUtilisateur: {
             email: form.email.v,

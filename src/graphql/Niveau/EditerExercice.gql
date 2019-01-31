@@ -1,0 +1,7 @@
+#import "./FragmentExercice.gql"
+
+mutation EditerExercice($id: ID!, $exercice: EditionExercice) {
+  editerExercice(id: $id, exercice: $exercice) {
+    ...exercice
+  }
+}
