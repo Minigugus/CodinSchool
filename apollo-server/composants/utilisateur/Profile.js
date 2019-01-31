@@ -3,7 +3,7 @@ import bdd from '../bdd'
 
 import roles from '../role'
 
-const Profile = bdd.define(
+export default bdd.define(
   'utilisateur',
   {
     id: {
@@ -114,5 +114,3 @@ const Profile = bdd.define(
     updatedAt: false
   }
 )
-
-export default Profile

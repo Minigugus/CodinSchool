@@ -1,0 +1,40 @@
+#import * from '../auth/index.graphql'
+#import * from './Niveau.graphql'
+
+type Query {
+  niveaux: [Niveau!]!
+}
+
+type Mutation {
+
+  creerNiveau(niveau: CreationNiveau!): Niveau!
+  @acces(interdit: [ Etudiant ])
+
+  editerNiveau(id: ID!, niveau: EditionNiveau): Niveau!
+  @acces(interdit: [ Etudiant ])
+
+  reorganiserNiveaux(niveaux: [ID!]!): [Niveau!]!
+  @acces(interdit: [ Etudiant ])
+
+  supprimerNiveau(id: ID!): ID!
+  @acces(interdit: [ Etudiant ])
+
+}
+
+"""
+Paramètres demandés lors de la création d'un Niveau.
+"""
+input CreationNiveau {
+	id: ID!
+  titre: String!
+  introduction: String
+}
+
+"""
+Paramètres demandés lors de l'édition d'un Niveau.
+"""
+input EditionNiveau {
+	id: ID
+  titre: String
+  introduction: String
+}

@@ -1,0 +1,16 @@
+#import * from '../niveau/Niveau.graphql'
+
+"""
+Représente un Exercice de CodinSchool.
+"""
+type Exercice {
+  id: ID!
+  titre: String!
+  enonce: String!
+  correction: String
+
+  dateCreation: String!
+  position: Int!
+
+	niveau: Niveau!
+}
