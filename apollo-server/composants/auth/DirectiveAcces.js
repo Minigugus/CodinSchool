@@ -5,7 +5,7 @@
 import { defaultFieldResolver } from 'graphql'
 import { SchemaDirectiveVisitor } from 'graphql-tools'
 
-import { AuthentificationRequiseError, AccesInterditError } from './erreurs'
+import { AuthentificationRequiseError, AccesInterditError } from './AuthErreurs'
 
 const TYPE_REQUIS = Symbol()
 const DEJA_PROTEGE = Symbol()

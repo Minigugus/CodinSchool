@@ -1,5 +1,11 @@
 import CodinSchoolError from '../erreur'
 
+export class NiveauExistantError extends CodinSchoolError {
+  constructor(id) {
+    super('NIVEAU_EXISTANT', `Le Niveau « ${id} » existe déjà.`, { id })
+  }
+}
+
 export class NiveauNonTrouveError extends CodinSchoolError {
   constructor(id) {
     super('NIVEAU_NON_TROUVE', `Le Niveau « ${id} » n'a pas été trouvé.`, { id })

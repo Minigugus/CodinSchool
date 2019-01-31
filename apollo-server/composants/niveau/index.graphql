@@ -1,7 +1,7 @@
-#import * from '../auth/index.graphql'
-#import * from './Niveau.graphql'
+#import * from "../auth/DirectiveAcces.graphql"
+#import * from "./Niveau.graphql"
 
-type Query {
+type Query @acces {
   niveaux: [Niveau!]!
   niveau(id: ID!): Niveau!
 }

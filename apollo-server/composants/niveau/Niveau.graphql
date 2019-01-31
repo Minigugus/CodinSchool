@@ -1,4 +1,4 @@
-#import * from '../exercice/Exercice.graphql'
+#import * from "../exercice/Exercice.graphql"
 
 """
 Représente un Niveau de CodinSchool.

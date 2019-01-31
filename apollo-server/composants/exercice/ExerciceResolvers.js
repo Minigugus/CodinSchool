@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize'
-import Exercice from './Exercice'
+import Exercice from './ExerciceModele'
 import bdd from '../bdd'
 
 export default {
@@ -23,7 +23,7 @@ export default {
     },
     async editerExercice(_, { id, exercice }) {
       const affecte = await Exercice.update(exercice, { where: { id } })
-      if (!affecte) throw new Error(`L'Exercice « ${id} » n'existe pas.`)
+      if (!affecte[0]) throw new Error(`L'Exercice « ${id} » n'existe pas.`)
       return await Exercice.findByPk(id)
     },
     async reorganiserExercices(_, { niveau, exercices }) {

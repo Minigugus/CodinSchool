@@ -1,5 +1,5 @@
-#import * from '../auth/index.graphql'
-#import * from './Exercice.graphql'
+#import * from "../auth/DirectiveAcces.graphql"
+#import * from "./Exercice.graphql"
 
 type Query {
   exercice(id: ID!): Exercice!
