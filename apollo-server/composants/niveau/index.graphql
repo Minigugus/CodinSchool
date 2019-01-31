@@ -3,6 +3,7 @@
 
 type Query {
   niveaux: [Niveau!]!
+  niveau(id: ID!): Niveau!
 }
 
 type Mutation {
