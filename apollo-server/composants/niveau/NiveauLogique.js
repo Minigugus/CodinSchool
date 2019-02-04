@@ -33,7 +33,7 @@ export const editerNiveau = async (id, niveau) => {
   const affecte = await Niveau.update(niveau, { where: { id } })
   if (!affecte[0])
     throw new NiveauNonTrouveError(id)
-  return Niveau.findByPk(id)
+  return Niveau.findByPk(niveau.id || id)
 }
 
 export const supprimerNiveau = async id => {
