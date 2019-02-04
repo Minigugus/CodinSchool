@@ -17,6 +17,10 @@
 
       <!-- Formulaire d'édition du niveau -->
       <div class="ui container segment stripe">
+        <p v-if="exercice.sontDraggable" class="text-center">
+          Le niveau n'est pas éditable lorsque les exercices sont en cours de réorganisation.
+        </p>
+
         <ApolloMutation
           :mutation="require('@/graphql/Niveau/EditerNiveau.gql')"
           :variables="{
@@ -32,12 +36,34 @@
           @done="rechargerNiveau"
         >
           <template slot-scope="{ mutate, loading }">
-            <form @submit.prevent="mutate" :class="{ loading }" class="ui form" novalidate>
-              <form-champs v-model="niveau.id" nom="Identifiant" id="id" :err="champs.niveau.id.err"></form-champs>
-              <form-champs v-model="niveau.titre" nom="Titre" id="titre" :err="champs.niveau.titre.err"></form-champs>
-              <form-champs v-model="niveau.introduction" tag="textarea" nom="Introduction" id="introduction" :err="champs.niveau.introduction.err"></form-champs>
+            <form @submit.prevent="!exercice.sontDraggable && mutate()" :class="{ loading }" class="ui form" novalidate>
+              <form-champs
+              v-model="niveau.id"
+              nom="Identifiant"
+              id="id"
+              :err="champs.niveau.id.err"
+              :disabled="exercice.sontDraggable"></form-champs>
 
-              <button class="ui button" type="submit">Modifier le niveau</button>
+              <form-champs
+              v-model="niveau.titre"
+              nom="Titre"
+              id="titre"
+              :err="champs.niveau.titre.err"
+              :disabled="exercice.sontDraggable"></form-champs>
+
+              <form-champs
+              v-model="niveau.introduction"
+              tag="textarea"
+              nom="Introduction"
+              id="introduction"
+              :err="champs.niveau.introduction.err"
+              :disabled="exercice.sontDraggable"></form-champs>
+
+              <button
+              class="ui button"
+              type="submit"
+              :class="{ disabled: exercice.sontDraggable }"
+              >Modifier le niveau</button>
             </form>
 
             <Alerte ref="erreurs" :typeAlerte="typeAlerte" />
@@ -46,31 +72,39 @@
       </div>
       <!--/ Formulaire d'édition du niveau -->
 
-      <h2 class="ui center aligned header">Réorganiser les exercices du niveau</h2>
+      <template v-if="niveau.exercices.length === 0">
+        <div class="ui container segment stripe text-center">
+          Ce niveau ne contient aucun exercice.<br>
+          <router-link :to="'/redacteur/ajouterExercice/' + idNiveau" class="underlineHover">
+            Ajouter un exercice au niveau
+          </router-link>
+        </div>
+      </template>
+      <template v-else>
+        <h2 class="ui center aligned header">Réorganiser les exercices du niveau</h2>
 
-      <!-- Bouton de réorganisation des exercices -->
-      <div class="reorganiser-exercice">
-        <transition name="fade" mode="out-in">
-          <button v-if="!exercice.sontDraggable" key="reorganiser" @click="exercice.sontDraggable = true" class="ui button primary right labeled icon">
-            <i class="right bars icon"></i>
-            Réorganiser les exercices
-          </button>
-          <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
-            <i class="right check icon"></i>
-            Valider la réorganisation
-          </button>
-        </transition>
-      </div>
-      <!--/ Bouton de réorganisation des exercices -->
+        <!-- Bouton de réorganisation des exercices -->
+        <div class="reorganiser-exercice">
+          <transition name="fade" mode="out-in">
+            <button v-if="!exercice.sontDraggable" key="reorganiser" @click="exercice.sontDraggable = true" class="ui button primary right labeled icon">
+              <i class="right bars icon"></i>
+              Réorganiser les exercices
+            </button>
+            <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
+              <i class="right check icon"></i>
+              Valider la réorganisation
+            </button>
+          </transition>
+        </div>
+        <!--/ Bouton de réorganisation des exercices -->
 
-      <!-- Liste des exercices du niveau -->
-      <draggable
-      :list="exercice.liste"
-      :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
-      element="div"
-      >
-        <transition-group name="flip-list" class="liste-exercice">
-          <div v-for="aExercice in exercice.liste" :key="aExercice.id" class="exercice">
+        <!-- Liste des exercices du niveau -->
+        <draggable
+        :list="exercice.liste"
+        :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
+        element="div"
+        >
+          <div v-for="aExercice in niveau.exercices" :key="aExercice.id" class="exercice">
             <!-- Bouton d'édition d'un exercice -->
             <transition name="slide-left">
               <div v-if="!exercice.sontDraggable" :key="'editer-' + aExercice.id" class="editer">
@@ -100,18 +134,20 @@
             </div>
             <!--/ Informations de l'exercice -->
           </div>
-        </transition-group>
-      </draggable>
-      <!--/ Liste des exercices du niveau -->
+        </draggable>
+        <!--/ Liste des exercices du niveau -->
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 import Niveau from '@/graphql/Niveau/Niveau.gql'
+import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
 
 export default {
@@ -125,14 +161,14 @@ export default {
         }
       },
       exercice: {
-        sontDraggable: false,
-        liste: []
+        sontDraggable: false
       },
 
       typeAlerte: 'Erreur'
     }
   },
   name: 'editerniveau',
+  mixins: [Utilisateur],
   components: {
     draggable,
     Alerte,
@@ -164,14 +200,17 @@ export default {
       //     (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
 
       // Affichage de l'erreur dans l'alerte
+      this.$refs.erreurs.viderAlerte()
+      this.typeAlerte = 'Erreur'
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
     // Formulaire validé, injection des données et mise à jour de l'url
     async rechargerNiveau({ data }) {
+      this.$refs.erreurs.viderAlerte()
       const apolloClient = this.$apollo.provider.defaultClient
 
-      // Mise à jour du cache
+      // Mise à jour du cache du niveau
       apolloClient.writeQuery({
         query: Niveau,
         variables: {
@@ -184,12 +223,23 @@ export default {
         }
       })
 
+      // Mise à jour du cache de la liste des niveaux
+      let listeData = apolloClient.readQuery({ query: Niveaux })
+      const niveauModifie = listeData.niveaux.findIndex(x => x.id === this.idNiveau)
+      if (!isNaN(niveauModifie)) {
+        listeData.niveaux[niveauModifie].id = data.editerNiveau.id
+        apolloClient.writeQuery({
+          query: Niveaux,
+          data: listeData
+        })
+      }
+
       // Affichage d'une alerte de succès
       this.$refs.erreurs.ajouterAlerte('Le niveau a été modifié.')
       this.typeAlerte = 'Succès'
 
       // On modifie le props de l'idNiveau dans l'url
-      this.$router.replace({ name: 'editerniveau', params: { idNiveau: this.niveau.id } })
+      this.$router.replace({ name: 'editerniveau', params: { idNiveau: data.editerNiveau.id } })
     },
 
     async validerReorganisation() {
@@ -202,7 +252,7 @@ export default {
         mutation: ReorganiserExercices,
         variables: {
           niveau: this.niveau.id,
-          exercices: this.niveaux.map(x => x.id)
+          exercices: this.niveau.exercices.map(x => x.id)
         },
         update: (store, { data: { reorganiserExercices: nouvelleOrganisation } }) => {
           // Lire le cache pour récupérer le contenu actuel

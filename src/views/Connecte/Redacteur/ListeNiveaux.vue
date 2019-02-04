@@ -1,29 +1,30 @@
 <template>
   <div class="ui text vertical segment container">
-    <h1 class="ui center aligned header">Liste des niveaux</h1>
+    <div v-if="$apollo.queries.niveaux.loading" class="ui text vertical segment container loading"></div>
+    <div v-else>
+      <h1 class="ui center aligned header">Liste des niveaux</h1>
 
-    <!-- Bouton de réorganisation des niveaux -->
-    <div class="reorganiser-niveau">
-      <transition name="fade" mode="out-in">
-        <button v-if="!niveau.sontDraggable" key="reorganiser" @click="niveau.sontDraggable = true" class="ui button primary right labeled icon">
-          <i class="right bars icon"></i>
-          Réorganiser les niveaux
-        </button>
-        <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
-          <i class="right check icon"></i>
-          Valider la réorganisation
-        </button>
-      </transition>
-    </div>
-    <!--/ Bouton de réorganisation des niveaux -->
+      <!-- Bouton de réorganisation des niveaux -->
+      <div class="reorganiser-niveau">
+        <transition name="fade" mode="out-in">
+          <button v-if="!niveau.sontDraggable" key="reorganiser" @click="niveau.sontDraggable = true" class="ui button primary right labeled icon">
+            <i class="right bars icon"></i>
+            Réorganiser les niveaux
+          </button>
+          <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
+            <i class="right check icon"></i>
+            Valider la réorganisation
+          </button>
+        </transition>
+      </div>
+      <!--/ Bouton de réorganisation des niveaux -->
 
-    <!-- Liste des niveaux -->
-    <draggable
-    :list="niveaux"
-    :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
-    element="div"
-    >
-      <transition-group name="flip-list" class="liste-niveau">
+      <!-- Liste des niveaux -->
+      <draggable
+      :list="niveaux"
+      :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
+      element="div"
+      >
         <div v-for="aNiveau in niveaux" :key="aNiveau.id" class="niveau">
           <!-- Bouton d'édition d'un niveau -->
           <transition name="slide-left">
@@ -54,9 +55,9 @@
           </div>
           <!--/ Informations du niveau -->
         </div>
-      </transition-group>
-    </draggable>
-    <!--/ Liste des niveaux -->
+      </draggable>
+      <!--/ Liste des niveaux -->
+    </div>
   </div>
 </template>
 

@@ -52,6 +52,7 @@ import Utilisateur from '@/mixins/Utilisateur'
 export default {
   name: 'ajouterexercice',
   mixins: [Utilisateur],
+  props: ['idNiveau'],
   data() {
     return {
       id: 'mon-super-exercice',

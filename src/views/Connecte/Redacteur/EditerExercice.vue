@@ -54,6 +54,7 @@
 
 <script>
 import { fakeListeNiveau } from '@/functions'
+import Utilisateur from '@/mixins/Utilisateur'
 
 export default {
   data() {
@@ -72,6 +73,7 @@ export default {
     }
   },
   name: 'editerexercice',
+  mixins: [Utilisateur],
   props: ['idNiveau', 'idExercice'],
 
   mounted() {
