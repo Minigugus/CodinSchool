@@ -1,0 +1,7 @@
+#import "./FragmentNiveau.gql"
+
+query Niveau($id: ID!) {
+  niveau (id: $id) {
+    ...niveau
+  }
+}
