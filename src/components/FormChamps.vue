@@ -2,12 +2,21 @@
   <div class="field" :class="{ error: err.length > 0, disabled }">
     <label v-if="nom" :for="id">{{ nom }}</label>
     <input
+    v-if="tag === 'input'"
     :type="type"
     :id="id"
     :value="value"
     @input="$emit('input', $event.target.value)"
     :placeholder="placeholder"
     >
+
+    <textarea
+    v-else-if="tag === 'textarea'"
+    :id="id"
+    :value="value"
+    @input="$emit('input', $event.target.value)"
+    :placeholder="placeholder"
+    ></textarea>
 
     <div v-for="(anError, index) in err" :key="id + '-' + index" class="ui basic red pointing prompt label transition">
       {{ anError }}
@@ -22,6 +31,11 @@ export default {
   props: {
     value: {
       type: [String, Date, Number]
+    },
+    tag: {
+      type: String,
+      required: false,
+      default: 'input'
     },
     nom: {
       type: String,
