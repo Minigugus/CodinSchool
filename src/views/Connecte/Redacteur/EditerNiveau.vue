@@ -35,13 +35,8 @@
             <form @submit.prevent="mutate" :class="{ loading }" class="ui form" novalidate>
               <form-champs v-model="niveau.id" nom="Identifiant" id="id" :err="champs.niveau.id.err"></form-champs>
               <form-champs v-model="niveau.titre" nom="Titre" id="titre" :err="champs.niveau.titre.err"></form-champs>
+              <form-champs v-model="niveau.introduction" tag="textarea" nom="Introduction" id="introduction" :err="champs.niveau.introduction.err"></form-champs>
 
-              <!-- TODO: Mise à jour de FormChamps pour prise en charge textarea -->
-              <!-- <form-champs v-model="niveau.introduction" nom="Introduction" id="introduction" :err="champs.niveau.introduction.err"></form-champs> -->
-              <div class="field">
-                <label for="introduction">Introduction</label>
-                <textarea v-model="niveau.introduction" id="introduction" placeholder="Consigne de L'exercice"></textarea>
-              </div>
               <button class="ui button" type="submit">Modifier le niveau</button>
             </form>
 
@@ -161,6 +156,12 @@ export default {
     chargerErreur(errorObject) {
       const { gqlError } = errorObject
       if (!gqlError) return console.error(errorObject)
+
+      // TODO: Code VALIDATION_ECHOUEE côté serveur à ajouter
+      // // Un ou plusieurs champs sont invalides
+      // if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
+      //   gqlError.extensions.exception.props.champs.forEach(x =>
+      //     (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
 
       // Affichage de l'erreur dans l'alerte
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
