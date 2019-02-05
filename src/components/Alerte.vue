@@ -39,7 +39,15 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    },
+    listeMsg: {
+      type: Array,
+      required: false
     }
+  },
+
+  mounted() {
+    if (this.listeMsg) this.messages = this.listeMsg
   },
 
   methods: {
