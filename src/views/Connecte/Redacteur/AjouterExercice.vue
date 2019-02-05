@@ -6,60 +6,124 @@
       </div>
     </h2>
 
-    <form class="ui form">
-      <div class="eight wide field">
-        <label>Identifiant</label>
-        <input type="text" v-model="id" placeholder="Identifiant">
-      </div>
+    <ApolloMutation
+    :mutation="require('@/graphql/Niveau/CreerExercice.gql')"
+    :variables="{
+      exercice: {
+        id: champs.id.v,
+        titre: champs.titre.v,
+        niveau: champs.niveau.v,
+        enonce: champs.enonce.v,
+        correction: champs.correction.v
+      }
+    }"
+    @error="chargerErreur"
+    @done="niveauCree"
+    >
+      <template slot-scope="{ mutate, loading }">
+        <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
+          <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
+          <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Les boucles" />
 
-      <div class="field">
-        <label>Titre</label>
-        <input type="text" v-model="titre" placeholder="Titre">
-      </div>
+          <div class="field" :class="{ error: champs.niveau.err.length > 0 }">
+            <label>Niveau</label>
+            <select class="ui dropdown" v-model="champs.niveau.v">
+              <option>-</option>
+              <option v-for="(aNiveau, index) in niveaux" :value="aNiveau.id" :key="'option-' + index">{{ aNiveau.titre }} (#{{ aNiveau.id }})</option>
+            </select>
+            <div v-for="(anError, index) in champs.niveau.err" :key="'erreur-niveau-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
+          </div>
 
-      <div class="field">
-        <label>Niveau</label>
-        <select class="ui dropdown simple" v-model="niveau">
-          <option>-</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
-          <option>5</option>
-        </select>
-      </div>
+          <form-champs v-model="champs.enonce.v" nom="Enoncé" id="enonce" :err="champs.enonce.err"
+          placeholder="Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne."
+          />
+          <form-champs v-model="champs.correction.v" tag="textarea" nom="Correction" id="correction" :err="champs.correction.err" />
 
-      <div class="field">
-        <label>Description</label>
-        <textarea v-model="description" placeholder="Description de L'exercice"></textarea>
-      </div>
+          <button class="ui button" type="submit">Ajouter l'exercice</button>
+        </form>
 
-      <div class="field">
-        <label>Correction</label>
-        <textarea v-model="correction" placeholder="Un programme qui répond à la consigne"></textarea>
-      </div>
-
-      <button class="ui button" type="submit">Ajouter l'exercice</button>
-    </form>
+        <Alerte ref="erreurs" :typeAlerte="typeAlerte" />
+      </template>
+    </ApolloMutation>
   </div>
 </template>
 
 <script>
 import Utilisateur from '@/mixins/Utilisateur'
+import Niveaux from '@/graphql/Niveau/Niveaux.gql'
+import Alerte from '@/components/Alerte.vue'
+import FormChamps from '@/components/FormChamps.vue'
 
-// TODO: Relier avec Apollo
-// TODO: Vérifier le formulaire et ajouter l'alerte (Cf : Connexion.vue)
 export default {
   name: 'ajouterexercice',
   mixins: [Utilisateur],
   props: ['idNiveau'],
+  components: {
+    Alerte,
+    FormChamps
+  },
   data() {
     return {
-      id: 'mon-super-exercice',
-      titre: 'Les boucles',
-      niveau: '-',
-      description: 'Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne.',
-      correction: '#include <stdio.h>\nint main(void) {\n  int i;\n  for (i = 0 ; i < 10 ; ++i)\n    printf("%d\\n", i);\n  return 0;\n}'
+      champs: {
+        id: { v: '', err: [] },
+        titre: { v: '', err: [] },
+        niveau: { v: '-', err: [] },
+        enonce: { v: '', err: [] },
+        correction: { v: '#include <stdio.h>\nint main(void) {\n  for (int i = 0 ; i < 10 ; ++i)\n    printf("%d\\n", i);\n  return 0;\n}', err: [] }
+      },
+      typeAlerte: 'Erreur'
+    }
+  },
+  apollo: {
+    niveaux: {
+      query: Niveaux,
+      result({ data, loading }) {
+        if (!loading && data.niveaux.find(x => x.id === this.idNiveau)) this.champs.niveau.v = this.idNiveau
+      }
+    }
+  },
+
+  methods: {
+    checkForm() {
+      this.$refs.erreurs.viderAlerte()
+      this.typeAlerte = 'Erreur'
+      let tousRemplis = true
+      for (const el in this.champs) {
+        if (this.champs[el].v === '') {
+          this.champs[el].err.push('Champs vide.')
+          tousRemplis = false
+        }
+      }
+      if (this.champs.niveau.v === '') {
+        this.champs.niveau.err.push('Veuillez sélectionner un niveau.')
+        tousRemplis = false
+      }
+      if (!tousRemplis) this.$refs.erreurs.ajouterAlerte('Tous les champs sont obligatoires.')
+
+      return tousRemplis
+    },
+
+    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
+    chargerErreur(errorObject) {
+      const { gqlError } = errorObject
+      if (!gqlError) return console.error(errorObject)
+
+      // TODO: Code VALIDATION_ECHOUEE côté serveur à ajouter
+      // // Un ou plusieurs champs sont invalides
+      // if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
+      //   gqlError.extensions.exception.props.champs.forEach(x =>
+      //     (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
+
+      // Affichage de l'erreur dans l'alerte
+      this.$refs.erreurs.viderAlerte()
+      this.typeAlerte = 'Erreur'
+      this.$refs.erreurs.ajouterAlerte(gqlError.message)
+    },
+
+    niveauCree({ data }) {
+      this.$refs.erreurs.viderAlerte()
+      this.typeAlerte = 'Succès'
+      this.$refs.erreurs.ajouterAlerte(`L'exercice "${data.creerExercice.id}"a été ajouté au niveau "${this.champs.niveau.v}".`)
     }
   }
 }

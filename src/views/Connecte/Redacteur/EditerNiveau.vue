@@ -1,5 +1,6 @@
 <template>
   <div class="ui text vertical segment container">
+    <!-- Erreur de chargement de la page -->
     <div v-if="erreurLoadingNiveau" class="ui text vertical segment container">
       <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
@@ -7,7 +8,11 @@
       </router-link>
       <Alerte typeAlerte="Erreur" :listeMsg="[erreurLoadingNiveau]" :fermable="false" />
     </div>
+
+    <!-- Ecran de chargement de la page -->
     <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
+
+    <!-- Contenu de la page -->
     <div v-else>
       <!-- Fil d'ariane -->
       <div class="ui large breadcrumb">
@@ -38,7 +43,6 @@
               introduction: niveau.introduction,
             }
           }"
-          class="form"
           @error="chargerErreur"
           @done="rechargerNiveau"
         >
@@ -49,14 +53,14 @@
               nom="Identifiant"
               id="id"
               :err="champs.niveau.id.err"
-              :disabled="exercice.sontDraggable"></form-champs>
+              :disabled="exercice.sontDraggable" />
 
               <form-champs
               v-model="niveau.titre"
               nom="Titre"
               id="titre"
               :err="champs.niveau.titre.err"
-              :disabled="exercice.sontDraggable"></form-champs>
+              :disabled="exercice.sontDraggable" />
 
               <form-champs
               v-model="niveau.introduction"
@@ -64,7 +68,7 @@
               nom="Introduction"
               id="introduction"
               :err="champs.niveau.introduction.err"
-              :disabled="exercice.sontDraggable"></form-champs>
+              :disabled="exercice.sontDraggable" />
 
               <button
               class="ui button"
@@ -91,7 +95,7 @@
         <h2 class="ui center aligned header">Réorganiser les exercices du niveau</h2>
 
         <!-- Bouton de réorganisation des exercices -->
-        <div class="reorganiser-exercice">
+        <div class="text-center">
           <transition name="fade" mode="out-in">
             <button v-if="!exercice.sontDraggable" key="reorganiser" @click="exercice.sontDraggable = true" class="ui button primary right labeled icon">
               <i class="right bars icon"></i>
@@ -107,15 +111,16 @@
 
         <!-- Liste des exercices du niveau -->
         <draggable
-        :list="exercice.liste"
+        :list="niveau.exercices"
         :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
         element="div"
+        class="liste-exercice"
         >
           <div v-for="aExercice in niveau.exercices" :key="aExercice.id" class="exercice">
             <!-- Bouton d'édition d'un exercice -->
             <transition name="slide-left">
               <div v-if="!exercice.sontDraggable" :key="'editer-' + aExercice.id" class="editer">
-                <router-link :to="`/redacteur/niveau/${niveau.id}/exercice/${aExercice.id}`" class="ui button primary right labeled icon" tag="button">
+                <router-link :to="`/redacteur/niveau/${niveau.id}/exercice/${aExercice.id}`" class="ui button primary right labeled icon disabled" tag="button">
                   <i class="right arrow icon"></i>
                   Editer
                 </router-link>
@@ -133,7 +138,7 @@
 
             <!-- Informations de l'exercice -->
             <div class="contenu">
-              <div class="titre-exercice">{{ aExercice.nom }}</div>
+              <div class="titre-exercice">{{ aExercice.titre }}</div>
               <div class="id-exercice">#{{ aExercice.id }}</div>
               <div class="description-exercice">
                 <span>{{ aExercice.description }}</span>
@@ -143,6 +148,13 @@
           </div>
         </draggable>
         <!--/ Liste des exercices du niveau -->
+
+        <div class="text-center">
+          <router-link :to="'/redacteur/ajouterExercice/' + idNiveau" class="ui button right labeled icon text-center" tag="button">
+            <i class="plus icon"></i>
+            Ajouter un exercice
+          </router-link>
+        </div>
       </template>
     </div>
   </div>
@@ -273,7 +285,7 @@ export default {
           const data = store.readQuery({ query: Niveau, variables: { id: this.niveau.id } })
 
           // Modifier le contenu actuel récupéré
-          data.exercices = nouvelleOrganisation
+          data.niveau.exercices = nouvelleOrganisation
 
           // Appliquer la modification en cache
           store.writeQuery({ query: Niveau, variables: { id: this.niveau.id }, data })
@@ -292,9 +304,7 @@ export default {
   background: #c8ebfb !important;
 }
 .liste-exercice {
-  background-color: #f3f3f3 !important;
-  display: block;
-  border-radius: 12px;
+  margin: 20px 0px;
 }
 .exercice {
   display: block;
@@ -312,10 +322,6 @@ export default {
 }
 .exercice:last-of-type {
   border-bottom: none;
-}
-.reorganiser-exercice {
-  text-align: center;
-  padding-bottom: 10px;
 }
 .drag-icon {
   line-height: 60px;

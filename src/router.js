@@ -30,7 +30,7 @@ const PAGES_REDACTEUR = [
   },
   {
     // Ajouter/Créer un exercice
-    path: '/redacteur/ajouterExercice/:idNiveau',
+    path: '/redacteur/ajouterExercice/:idNiveau?',
     name: 'ajouterexercice',
     component: () => import('@/views/Connecte/Redacteur/AjouterExercice.vue'),
     props: true
