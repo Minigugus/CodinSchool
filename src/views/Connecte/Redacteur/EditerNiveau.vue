@@ -1,6 +1,13 @@
 <template>
   <div class="ui text vertical segment container">
-    <div v-if="$apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
+    <div v-if="erreurLoadingNiveau" class="ui text vertical segment container">
+      <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
+        <i class="left arrow icon"></i>
+        Retour à la liste des niveaux
+      </router-link>
+      <Alerte typeAlerte="Erreur" :listeMsg="[erreurLoadingNiveau]" :fermable="false" />
+    </div>
+    <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
     <div v-else>
       <!-- Fil d'ariane -->
       <div class="ui large breadcrumb">
@@ -153,6 +160,8 @@ import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
 export default {
   data() {
     return {
+      erreurLoadingNiveau: false,
+
       champs: {
         niveau: {
           id: { err: [] },
@@ -182,6 +191,11 @@ export default {
         query: Niveau,
         variables: {
           id: this.idNiveau
+        },
+        error: errorObject => {
+          const { gqlError } = errorObject
+          if (!gqlError) return console.error(errorObject)
+          this.erreurLoadingNiveau = gqlError.message
         }
       }
     }
