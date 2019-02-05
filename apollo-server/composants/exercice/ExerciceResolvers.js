@@ -11,7 +11,7 @@ export default {
   },
   Mutation: {
     creerExercice(_, { exercice }) {
-      // TODO: Position des exercices à corriger (Pour la réorganisation)
+      // TODO: Récupérer le niveau d'un exercice (exercice.getNiveau is not a function)
       return bdd.transaction(async transaction => {
         const dernierExercice = await Exercice.max('position', {
           where: { niveau: exercice.niveau },
