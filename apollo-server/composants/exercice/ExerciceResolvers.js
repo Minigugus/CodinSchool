@@ -10,15 +10,14 @@ export default {
     }
   },
   Mutation: {
-    creerExercice(_, { exercice }) {
-      // TODO: Récupérer le niveau d'un exercice (exercice.getNiveau is not a function)
+    creerExercice(_, { exercice: { niveau, ...exercice } }) {
       return bdd.transaction(async transaction => {
         const dernierExercice = await Exercice.max('position', {
-          where: { niveau: exercice.niveau },
+          where: { niveauId: niveau },
           transaction
         })
         exercice.position = dernierExercice + 1 || 0
-        return Exercice.create(exercice, { transaction })
+        return Exercice.create({ niveauId: niveau, ...exercice }, { transaction })
       })
     },
     async editerExercice(_, { id, exercice }) {
@@ -30,7 +29,7 @@ export default {
       await bdd.transaction(async transaction => {
         return Promise.all(
           exercices.map((id, position) =>
-            Exercice.update({ niveau, position }, { where: { id }, transaction })
+            Exercice.update({ niveauId: niveau, position }, { where: { id }, transaction })
           )
         )
       })

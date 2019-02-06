@@ -46,5 +46,5 @@ const Niveau = bdd.define(
 
 export default Niveau
 
-Niveau.hasMany(Exercice, { foreignKey: 'niveau' })
-// Exercice.belongsTo(Niveau, { foreignKey: 'niveau' })
+Niveau.hasMany(Exercice)
+Exercice.belongsTo(Niveau)
