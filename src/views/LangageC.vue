@@ -88,7 +88,7 @@
 import Expandable from '@/components/Expandable.vue'
 
 export default {
-  name: 'langagec',
+  name: 'Langagec',
   components: {
     Expandable
   }

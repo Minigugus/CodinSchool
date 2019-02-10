@@ -1,8 +1,8 @@
 <template>
   <div>
     <h1>En construction ...</h1>
-    <pre>{{ JSON.stringify(this.moi, null, 2) }}</pre>
-    <Alerte typeAlerte="Erreur" :messages="[]" />
+    <pre>{{ JSON.stringify(moi, null, 2) }}</pre>
+    <Alerte type-alerte="Erreur" :messages="[]" />
   </div>
 </template>
 
@@ -12,8 +12,9 @@ import Alerte from '@/components/Alerte.vue'
 
 
 export default {
-  name: 'profil',
+  name: 'Profil',
   components: { Alerte },
+  mixins: [Utilisateur],
   data() {
     return {
       email: 'mail@example.com',
@@ -23,7 +24,6 @@ export default {
       dateNaissance: 2018
     }
   },
-  mixins: [Utilisateur],
 
   methods: {}
 }

@@ -7,18 +7,18 @@
     </h2>
 
     <ApolloMutation
-    :mutation="require('@/graphql/Niveau/CreerExercice.gql')"
-    :variables="{
-      exercice: {
-        id: champs.id.v,
-        titre: champs.titre.v,
-        niveau: champs.niveau.v,
-        enonce: champs.enonce.v,
-        correction: champs.correction.v
-      }
-    }"
-    @error="chargerErreur"
-    @done="niveauCree"
+      :mutation="require('@/graphql/Niveau/CreerExercice.gql')"
+      :variables="{
+        exercice: {
+          id: champs.id.v,
+          titre: champs.titre.v,
+          niveau: champs.niveau.v,
+          enonce: champs.enonce.v,
+          correction: champs.correction.v
+        }
+      }"
+      @error="chargerErreur"
+      @done="niveauCree"
     >
       <template slot-scope="{ mutate, loading }">
         <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
@@ -35,14 +35,14 @@
           </div>
 
           <form-champs v-model="champs.enonce.v" nom="Enoncé" id="enonce" :err="champs.enonce.err"
-          placeholder="Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne."
+                       placeholder="Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne."
           />
           <form-champs v-model="champs.correction.v" tag="textarea" nom="Correction" id="correction" :err="champs.correction.err" />
 
           <button class="ui button" type="submit">Ajouter l'exercice</button>
         </form>
 
-        <Alerte ref="erreurs" :typeAlerte="typeAlerte" />
+        <Alerte ref="erreurs" :type-alerte="typeAlerte" />
       </template>
     </ApolloMutation>
   </div>
@@ -55,12 +55,18 @@ import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
 export default {
-  name: 'ajouterexercice',
-  mixins: [Utilisateur],
-  props: ['idNiveau'],
+  name: 'Ajouterexercice',
   components: {
     Alerte,
     FormChamps
+  },
+  mixins: [Utilisateur],
+  props: {
+    idNiveau: {
+      type: String,
+      required: false,
+      default: null
+    }
   },
   data() {
     return {

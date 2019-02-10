@@ -19,16 +19,6 @@
 export default {
   name: 'Expandable',
 
-  data() {
-    return {
-      estOuvert: false
-    }
-  },
-
-  mounted() {
-    this.estOuvert = this.ouvert
-  },
-
   props: {
     titre: {
       type: String,
@@ -39,6 +29,16 @@ export default {
       required: false,
       default: false
     }
+  },
+
+  data() {
+    return {
+      estOuvert: false
+    }
+  },
+
+  mounted() {
+    this.estOuvert = this.ouvert
   },
 
   methods: {

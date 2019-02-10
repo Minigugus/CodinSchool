@@ -27,7 +27,7 @@ const importerSchema = (fichier, dossier = __dirname) => {
       )
       // On charge les importations
       const regex = /# ?import (\*|(.*)) from ('|")([^"']+)('|");?/g
-      for (let i; (i = regex.exec(contenu)) !== null;) importer(i[4], _dossier)
+      for (let i; (i = regex.exec(contenu)) !== null; null) importer(i[4], _dossier)
     }
   }
   importer(fichier, dossier)

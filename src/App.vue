@@ -33,7 +33,7 @@
           <div class="ui large secondary inverted pointing menu">
             <template v-if="isTailleMobile">
               <a class="toc item" @click="menuSideBarVisible = true">
-                <i class="sidebar icon"></i>
+                <i class="sidebar icon" />
               </a>
             </template>
 
@@ -54,13 +54,13 @@
                       <sui-dropdown-header>Etudiant</sui-dropdown-header>
                       <sui-dropdown-item :disabled="true">Liste des exercices</sui-dropdown-item>
 
-                      <sui-dropdown-divider/>
+                      <sui-dropdown-divider />
 
                       <sui-dropdown-header>Rédacteur</sui-dropdown-header>
 
                       <router-link to="/redacteur/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
 
-                      <sui-dropdown-divider/>
+                      <sui-dropdown-divider />
 
                       <sui-dropdown-header>Administrateur</sui-dropdown-header>
                       <sui-dropdown-item :disabled="true">Gérer les utilisateurs</sui-dropdown-item>
@@ -80,7 +80,7 @@
 
       <!-- Contenu pages -->
       <transition name="fade-fast" mode="out-in">
-        <router-view id="mainContent"></router-view>
+        <router-view id="mainContent" />
       </transition>
       <!--/ Contenu pages -->
 
@@ -110,21 +110,21 @@ import Utilisateur from '@/mixins/Utilisateur'
 import { onLogout } from '@/vue-apollo'
 
 export default {
+  mixins: [Utilisateur],
   data() {
     return {
       menuSideBarVisible: false,
       tailleEcran: null
     }
   },
-  mixins: [Utilisateur],
-  mounted() {
-    this.tailleEcran = window.innerWidth
-    window.addEventListener('resize', () => this.tailleEcran = window.innerWidth)
-  },
   computed: {
     isTailleMobile() {
       return this.tailleEcran < 1000
     }
+  },
+  mounted() {
+    this.tailleEcran = window.innerWidth
+    window.addEventListener('resize', () => this.tailleEcran = window.innerWidth)
   },
   methods: {
     // Cacher la sideBar
