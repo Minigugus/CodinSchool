@@ -5,7 +5,7 @@
         Activation de compte
       </div>
     </h2>
-    <Alerte ref="notifs" :typeAlerte="typeAlerte" :fermable="false"/>
+    <Alerte ref="notifs" :type-alerte="typeAlerte" :fermable="false" />
   </div>
 </template>
 
@@ -13,16 +13,21 @@
 import Alerte from '@/components/Alerte.vue'
 
 export default {
-  name: 'activation',
+  name: 'Activation',
   components: {
     Alerte
+  },
+  props: {
+    email: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
       typeAlerte: 'Erreur'
     }
   },
-  props: ['code'],
 
   mounted() {
     this.$apollo.mutate({

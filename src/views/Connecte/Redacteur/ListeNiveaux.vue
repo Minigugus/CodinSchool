@@ -21,9 +21,9 @@
 
       <!-- Liste des niveaux -->
       <draggable
-      :list="niveaux"
-      :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
-      element="div"
+        :list="niveaux"
+        :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
+        element="div"
       >
         <div v-for="aNiveau in niveaux" :key="aNiveau.id" class="niveau">
           <!-- Bouton d'édition d'un niveau -->
@@ -68,17 +68,17 @@ import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 import ReorganiserNiveaux from '@/graphql/Niveau/ReorganiserNiveaux.gql'
 
 export default {
+  name: 'Listeniveaux',
+  components: {
+    draggable
+  },
+  mixins: [Utilisateur],
   data() {
     return {
       niveau: {
         sontDraggable: false
       }
     }
-  },
-  name: 'listeniveaux',
-  mixins: [Utilisateur],
-  components: {
-    draggable
   },
 
   apollo: {

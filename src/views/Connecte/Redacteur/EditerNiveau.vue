@@ -6,7 +6,7 @@
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
-      <Alerte typeAlerte="Erreur" :listeMsg="[erreurLoadingNiveau]" :fermable="false" />
+      <Alerte type-alerte="Erreur" :liste-msg="[erreurLoadingNiveau]" :fermable="false" />
     </div>
 
     <!-- Ecran de chargement de la page -->
@@ -49,35 +49,40 @@
           <template slot-scope="{ mutate, loading }">
             <form @submit.prevent="!exercice.sontDraggable && mutate()" :class="{ loading }" class="ui form" novalidate>
               <form-champs
-              v-model="niveau.id"
-              nom="Identifiant"
-              id="id"
-              :err="champs.niveau.id.err"
-              :disabled="exercice.sontDraggable" />
+                v-model="niveau.id"
+                nom="Identifiant"
+                id="id"
+                :err="champs.niveau.id.err"
+                :disabled="exercice.sontDraggable"
+              />
 
               <form-champs
-              v-model="niveau.titre"
-              nom="Titre"
-              id="titre"
-              :err="champs.niveau.titre.err"
-              :disabled="exercice.sontDraggable" />
+                v-model="niveau.titre"
+                nom="Titre"
+                id="titre"
+                :err="champs.niveau.titre.err"
+                :disabled="exercice.sontDraggable"
+              />
 
               <form-champs
-              v-model="niveau.introduction"
-              tag="textarea"
-              nom="Introduction"
-              id="introduction"
-              :err="champs.niveau.introduction.err"
-              :disabled="exercice.sontDraggable" />
+                v-model="niveau.introduction"
+                tag="textarea"
+                nom="Introduction"
+                id="introduction"
+                :err="champs.niveau.introduction.err"
+                :disabled="exercice.sontDraggable"
+              />
 
               <button
-              class="ui button"
-              type="submit"
-              :class="{ disabled: exercice.sontDraggable }"
-              >Modifier le niveau</button>
+                class="ui button"
+                type="submit"
+                :class="{ disabled: exercice.sontDraggable }"
+              >
+                Modifier le niveau
+              </button>
             </form>
 
-            <Alerte ref="erreurs" :typeAlerte="typeAlerte" />
+            <Alerte ref="erreurs" :type-alerte="typeAlerte" />
           </template>
         </ApolloMutation>
       </div>
@@ -111,10 +116,10 @@
 
         <!-- Liste des exercices du niveau -->
         <draggable
-        :list="niveau.exercices"
-        :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
-        element="div"
-        class="liste-exercice"
+          :list="niveau.exercices"
+          :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
+          element="div"
+          class="liste-exercice"
         >
           <div v-for="aExercice in niveau.exercices" :key="aExercice.id" class="exercice">
             <!-- Bouton d'édition d'un exercice -->
@@ -170,6 +175,19 @@ import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
 
 export default {
+  name: 'Editerniveau',
+  components: {
+    draggable,
+    Alerte,
+    FormChamps
+  },
+  mixins: [Utilisateur],
+  props: {
+    idNiveau: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       erreurLoadingNiveau: false,
@@ -188,14 +206,6 @@ export default {
       typeAlerte: 'Erreur'
     }
   },
-  name: 'editerniveau',
-  mixins: [Utilisateur],
-  components: {
-    draggable,
-    Alerte,
-    FormChamps
-  },
-  props: ['idNiveau'],
 
   apollo: {
     niveau() {

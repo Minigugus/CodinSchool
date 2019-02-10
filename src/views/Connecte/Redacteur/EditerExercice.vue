@@ -57,6 +57,19 @@ import { fakeListeNiveau } from '@/functions'
 import Utilisateur from '@/mixins/Utilisateur'
 
 export default {
+  name: 'Editerexercice',
+  mixins: [Utilisateur],
+  props: {
+    idNiveau: {
+      type: String,
+      required: false,
+      default: null
+    },
+    idExercice: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       niveau: {
@@ -72,9 +85,6 @@ export default {
       }
     }
   },
-  name: 'editerexercice',
-  mixins: [Utilisateur],
-  props: ['idNiveau', 'idExercice'],
 
   mounted() {
     // TODO: Chargement de l'exercice depuis Apollo quand schéma GraphQL sera prêt

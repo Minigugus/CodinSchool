@@ -24,12 +24,6 @@ const typesAlertes = [
 export default {
   name: 'Alerte',
 
-  data() {
-    return {
-      messages: []
-    }
-  },
-
   props: {
     typeAlerte: {
       type: String,
@@ -42,12 +36,34 @@ export default {
     },
     listeMsg: {
       type: Array,
-      required: false
+      required: false,
+      default: () => []
+    }
+  },
+
+  data() {
+    return {
+      messages: []
+    }
+  },
+
+  computed: {
+    visible() {
+      return this.messages.length > 0
+    },
+
+    choixTitre() {
+      const config = this.getAlerteTypeConfig()
+      return config ? config.titre : ''
+    },
+    choixCouleur() {
+      const config = this.getAlerteTypeConfig()
+      return config ? config.type : ''
     }
   },
 
   mounted() {
-    if (this.listeMsg) this.messages = this.listeMsg
+    this.messages = this.listeMsg
   },
 
   methods: {
@@ -67,21 +83,6 @@ export default {
 
     viderAlerte() {
       this.messages = []
-    }
-  },
-
-  computed: {
-    visible() {
-      return this.messages.length > 0
-    },
-
-    choixTitre() {
-      const config = this.getAlerteTypeConfig()
-      return config ? config.titre : ''
-    },
-    choixCouleur() {
-      const config = this.getAlerteTypeConfig()
-      return config ? config.type : ''
     }
   }
 }

@@ -24,7 +24,7 @@
           </div>
           <div class="field">
             <label for="motDePasse">Mot de passe</label>
-            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="current-password"/>
+            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="current-password" />
           </div>
 
           <router-link to="/mdpOublie" class="mdpOublie underlineHover">Mot de passe oublié ?</router-link>
@@ -32,7 +32,7 @@
           <button class="ui button" type="submit">Se connecter</button>
         </form>
 
-        <Alerte ref="erreurs" typeAlerte="Erreur" />
+        <Alerte ref="erreurs" type-alerte="Erreur" />
       </template>
     </ApolloMutation>
   </div>
@@ -44,7 +44,7 @@ import UTILISATEUR from '@/graphql/Utilisateur/Utilisateur.gql'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
-  name: 'connexion',
+  name: 'Connexion',
   components: {
     Alerte
   },

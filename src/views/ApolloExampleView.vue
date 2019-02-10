@@ -64,7 +64,7 @@
       @done="newMessage = ''"
     >
       <template slot-scope="{ mutate }">
-        <form v-on:submit.prevent="formValid && mutate()">
+        <form @submit.prevent="formValid && mutate()">
           <label for="field-message">Message</label>
           <input
             id="field-message"
@@ -82,7 +82,7 @@
         :key="file.id"
         class="image-item"
       >
-        <img :src="`${$filesRoot}/${file.path}`" class="image"/>
+        <img :src="`${$filesRoot}/${file.path}`" class="image">
       </div>
     </div>
 

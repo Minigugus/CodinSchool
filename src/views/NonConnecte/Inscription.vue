@@ -26,18 +26,18 @@
         <template slot-scope="{ mutate, loading }">
           <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form" novalidate>
             <div class="two fields">
-              <form-champs v-model="form.nom.v" nom="Nom" id="nom" :err="form.nom.err"></form-champs>
-              <form-champs v-model="form.prenom.v" nom="Prénom" id="prenom" :err="form.prenom.err"></form-champs>
+              <form-champs v-model="form.nom.v" nom="Nom" id="nom" :err="form.nom.err" />
+              <form-champs v-model="form.prenom.v" nom="Prénom" id="prenom" :err="form.prenom.err" />
             </div>
-            <form-champs v-model="form.email.v" nom="Adresse email" type="email" id="email" :err="form.email.err"></form-champs>
-            <form-champs v-model="form.mdp.v" nom="Mot de passe" id="mdp" type="password" :err="form.mdp.err"></form-champs>
-            <form-champs v-model="form.mdp2.v" nom="Confirmation du mot de passe" id="mdp2" type="password" :err="form.mdp2.err"></form-champs>
-            <form-champs v-model.number="form.dateNaissance.v" type="number" nom="Année de naissance" id="dateNaissance" :err="form.dateNaissance.err"></form-champs>
+            <form-champs v-model="form.email.v" nom="Adresse email" type="email" id="email" :err="form.email.err" />
+            <form-champs v-model="form.mdp.v" nom="Mot de passe" id="mdp" type="password" :err="form.mdp.err" />
+            <form-champs v-model="form.mdp2.v" nom="Confirmation du mot de passe" id="mdp2" type="password" :err="form.mdp2.err" />
+            <form-champs v-model.number="form.dateNaissance.v" type="number" nom="Année de naissance" id="dateNaissance" :err="form.dateNaissance.err" />
 
             <button class="ui button" type="submit">S'inscrire</button>
           </form>
 
-          <Alerte ref="erreurs" typeAlerte="Erreur" />
+          <Alerte ref="erreurs" type-alerte="Erreur" />
         </template>
       </ApolloMutation>
 
@@ -60,7 +60,7 @@ import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
 export default {
-  name: 'inscription',
+  name: 'Inscription',
   components: {
     Alerte,
     FormChamps
