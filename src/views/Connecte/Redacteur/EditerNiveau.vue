@@ -8,9 +8,21 @@
       </router-link>
       <Alerte type-alerte="Erreur" :liste-msg="[erreurLoadingNiveau]" :fermable="false" />
     </div>
+    <!--/ Erreur de chargement de la page -->
 
     <!-- Ecran de chargement de la page -->
     <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
+    <!--/ Ecran de chargement de la page -->
+
+    <!-- Erreur de chargement de la page -->
+    <div v-else-if="niveauSupprime" class="ui text vertical segment container">
+      <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
+        <i class="left arrow icon"></i>
+        Retour à la liste des niveaux
+      </router-link>
+      <Alerte type-alerte="Succès" :liste-msg="['Le niveau et les exercices lui étant associés ont été supprimés.']" :fermable="false" />
+    </div>
+    <!--/ Erreur de chargement de la page -->
 
     <!-- Contenu de la page -->
     <div v-else>
@@ -190,6 +202,7 @@
       </div>
       <!--/ Bouton de suppression du niveau -->
     </div>
+    <!-- Contenu de la page -->
   </div>
 </template>
 
@@ -233,7 +246,8 @@ export default {
       },
 
       typeAlerte: 'Erreur',
-      modalConfirmationSuppression: false
+      modalConfirmationSuppression: false,
+      niveauSupprime: false
     }
   },
 
@@ -346,9 +360,7 @@ export default {
 
           // Appliquer la modification en cache
           store.writeQuery({ query: Niveaux, data })
-
-          // Redirection vers la liste des niveaux
-          this.$router.replace({ name: 'ListeNiveaux'})
+          this.niveauSupprime = true
         }})
     }
   }
@@ -356,89 +368,6 @@ export default {
 </script>
 
 <style scoped>
-.flip-list-move {
-  transition: transform 1s !important;
-}
-.ghost {
-  opacity: 0.5 !important;
-  background: #c8ebfb !important;
-}
-.liste-exercice {
-  margin: 20px 0px;
-}
-.exercice {
-  display: block;
-  border-bottom: 1px solid #cfcfcf;
-  background-color: #f3f3f3;
-  padding: 20px;
-}
-.exercice:first-child {
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-.exercice:last-child {
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-.exercice:last-of-type {
-  border-bottom: none;
-}
-.drag-icon {
-  line-height: 60px;
-  position: absolute;
-  padding-right: 20px;
-  cursor: move;
-}
-.contenu {
-  padding-left: 2.2em;
-}
-
-.titre-exercice {
-  font-size: 1.3em;
-  display: inline-block;
-  margin: 0;
-  font-family: Lato,'Helvetica Neue', Arial,Helvetica, sans-serif;
-  font-weight: 700;
-  color: rgba(0,0,0,.85);
-}
-.id-exercice {
-  font-size: 1em;
-  margin-left: 8px !important;
-  display: inline-block;
-  margin: 0;
-  font-family: Lato, 'Helvetica Neue', Arial,Helvetica, sans-serif;
-  font-weight: 700;
-  color: rgba(0, 0, 0, 0.377);
-}
-.description-exercice {
-  margin: .5em 0 .5em;
-  font-size: 1em;
-  line-height: 1em;
-  color: rgba(0,0,0,.6);
-}
-.editer {
-  position: relative;
-}
-.editer button {
-  position: absolute !important;
-  right: 0 !important;
-  margin-top: 15px !important;
-}
-
-
-.ui.divided.items>.item {
-  border-top: 1px solid rgba(34,36,38,.15);
-  background-color: #f3f3f3;
-  padding: 23px;
-}
-.ui.divided.items>.item:first-child {
-  border-top: none;
-}
-.ui.divided.items>.item:first-child, .ui.divided.items>.item:last-child {
-  margin: 0 !important;
-  padding: 25px !important;
-}
-
 .bgTransparent {
   background-color: transparent !important;
 }
