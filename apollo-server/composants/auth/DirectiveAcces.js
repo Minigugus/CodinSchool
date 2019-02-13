@@ -10,6 +10,7 @@ import { AuthentificationRequiseError, AccesInterditError } from './AuthErreurs'
 const TYPE_REQUIS = Symbol()
 const DEJA_PROTEGE = Symbol()
 
+// TODO : Réécrire cette classe pour la modification des Rôles.
 export default class DirectiveAcces extends SchemaDirectiveVisitor {
   visitObject(type) {
     this.assurerChampsProteges(type)

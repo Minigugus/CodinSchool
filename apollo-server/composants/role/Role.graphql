@@ -1,8 +1,12 @@
+enum Permission {
+	GESTION_ROLE
+}
+
 """
 Représente le Role d'un Utilisateur.
 """
-enum Role {
-	Etudiant
-	Redacteur
-	Administrateur
+type Role {
+	id: ID!
+	nom: String!
+	permissions: [Permission!]!
 }

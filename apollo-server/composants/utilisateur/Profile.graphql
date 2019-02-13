@@ -1,3 +1,7 @@
+enum Permission {
+	GESTION_UTILISATEUR
+}
+
 """
 Représente le profile d'un Utilisateur de CodinSchool.
 """
@@ -5,7 +9,7 @@ type Profile {
 	id: ID!
 	dateInscription: String!
 
-	role: Role!
+	roles: [Role!]!
 
 	nom: String
 	prenom: String
