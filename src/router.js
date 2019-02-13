@@ -94,6 +94,11 @@ export default new Router({
       path: '/profil',
       name: 'profil',
       component: () => import('@/views/Connecte/Profil.vue')
+    },
+    {
+      path: '/mentionsLegales',
+      name: 'MentionsLegales',
+      component: () => import('@/views/MentionsLegales.vue')
     }
   ].concat(PAGES_REDACTEUR)
 })
