@@ -67,13 +67,14 @@
         <div class="ui container">
           <div class="ui stackable inverted divided equal height stackable grid">
             <div class="three wide column">
-              <h4 class="ui inverted header">A Propos</h4>
+              <h4 class="ui inverted header"></h4>
               <div class="ui inverted link list">
                 <a href="#" class="item">Carte du Site</a>
                 <a href="#" class="item">Nous Contacter</a>
               </div>
             </div>
             <div class="seven wide column">
+              <router-link to="/mentions" exact-active-class="active" class="item blanc">Mentions Legales</router-link>
               <p>&copy; 2018 Codinschool</p>
             </div>
           </div>
@@ -125,6 +126,10 @@ export default {
 </script>
 
 <style>
+.blanc{
+  color :white !important;
+}
+
 .text-left {
   text-align: left !important;
 }

@@ -56,6 +56,11 @@ export default new Router({
       path: '/niveau/gerer',
       name: 'gestioncontenu',
       component: () => import('@/views/Connecte/GestionContenu.vue')
+    },
+    {
+      path: '/mentions',
+      name: 'mentions',
+      component: () => import('@/views/Mentions.vue')
     }
   ]
 })
