@@ -1,5 +1,9 @@
 #import * from "../exercice/Exercice.graphql"
 
+enum Permission {
+	GESTION_NIVEAU
+}
+
 """
 Représente un Niveau de CodinSchool.
 """
