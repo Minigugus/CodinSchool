@@ -39,7 +39,7 @@ import { setErreurInput } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
-  name: 'Mdpoublie',
+  name: 'MdpOublie',
   components: {
     Alerte
   },

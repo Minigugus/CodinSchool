@@ -140,7 +140,7 @@ export default {
       await onLogout(apolloClient)
 
       // On redirige le client vers la page d'accueil
-      this.$router.replace({ name: 'accueil' })
+      this.$router.replace({ name: 'Accueil' })
     }
   }
 }

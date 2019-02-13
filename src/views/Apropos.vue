@@ -45,7 +45,7 @@
 <script>
 
 export default {
-  name: 'Apropos'
+  name: 'APropos'
 }
 </script>
 

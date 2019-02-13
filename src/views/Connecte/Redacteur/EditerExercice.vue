@@ -57,7 +57,7 @@ import { fakeListeNiveau } from '@/functions'
 import Utilisateur from '@/mixins/Utilisateur'
 
 export default {
-  name: 'Editerexercice',
+  name: 'EditerExercice',
   mixins: [Utilisateur],
   props: {
     idNiveau: {

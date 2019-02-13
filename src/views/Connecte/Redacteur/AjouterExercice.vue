@@ -18,7 +18,7 @@
         }
       }"
       @error="chargerErreur"
-      @done="niveauCree"
+      @done="exerciceCree"
     >
       <template slot-scope="{ mutate, loading }">
         <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
@@ -55,7 +55,7 @@ import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
 export default {
-  name: 'Ajouterexercice',
+  name: 'AjouterExercice',
   components: {
     Alerte,
     FormChamps
@@ -84,7 +84,10 @@ export default {
     niveaux: {
       query: Niveaux,
       result({ data, loading }) {
-        if (!loading && data.niveaux.find(x => x.id === this.idNiveau)) this.champs.niveau.v = this.idNiveau
+        // Pendant le chargement des niveaux, vérifier si l'id de niveau passé
+        // en paramètre existe. Si oui, l'appliquer dans le champs <select>
+        if (!loading && data.niveaux.find(x => x.id === this.idNiveau))
+          this.champs.niveau.v = this.idNiveau
       }
     }
   },
@@ -100,7 +103,7 @@ export default {
           tousRemplis = false
         }
       }
-      if (this.champs.niveau.v === '') {
+      if (this.champs.niveau.v === '-') {
         this.champs.niveau.err.push('Veuillez sélectionner un niveau.')
         tousRemplis = false
       }
@@ -126,7 +129,7 @@ export default {
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
-    niveauCree({ data }) {
+    exerciceCree({ data }) {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
       this.$refs.erreurs.ajouterAlerte(`L'exercice "${data.creerExercice.id}"a été ajouté au niveau "${this.champs.niveau.v}".`)
