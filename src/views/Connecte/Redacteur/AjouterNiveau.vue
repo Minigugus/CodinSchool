@@ -1,36 +1,49 @@
 <template>
-  <div class="ui container segment stripe">
-    <h2 class="ui center aligned header">
-      <div class="content">
-        Ajouter un niveau
-      </div>
-    </h2>
+  <div class="ui container">
+    <!-- Fil d'ariane -->
+    <div class="ui large breadcrumb mb-2 mt-3">
+      <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+      <i class="right angle icon divider"></i>
+      <div class="active section">Ajouter un niveau</div>
+    </div>
+    <!--/ Fil d'ariane -->
 
-    <ApolloMutation
-      :mutation="require('@/graphql/Niveau/CreerNiveau.gql')"
-      :variables="{
-        niveau: {
-          id: champs.id.v,
-          titre: champs.titre.v,
-          introduction: champs.introduction.v
-        }
-      }"
-      @error="chargerErreur"
-      @done="niveauCree"
-    >
-      <template slot-scope="{ mutate, loading }">
-        <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-          <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
-          <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Structures de données" />
+    <div class="ui container segment stripe">
+      <h2 class="ui center aligned header">
+        <div class="content">
+          Ajouter un niveau
+        </div>
+      </h2>
 
-          <form-champs v-model="champs.introduction.v" tag="textarea" nom="Introduction" id="introduction" :err="champs.introduction.err" />
+      <!-- Formulaire d'ajout de niveau -->
+      <ApolloMutation
+        :mutation="require('@/graphql/Niveau/CreerNiveau.gql')"
+        :variables="{
+          niveau: {
+            id: champs.id.v,
+            titre: champs.titre.v,
+            introduction: champs.introduction.v
+          }
+        }"
 
-          <button class="ui button" type="submit">Ajouter le niveau</button>
-        </form>
+        @error="chargerErreur"
+        @done="niveauCree"
+      >
+        <template slot-scope="{ mutate, loading }">
+          <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
+            <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
+            <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Structures de données" />
 
-        <Alerte ref="erreurs" :type-alerte="typeAlerte" />
-      </template>
-    </ApolloMutation>
+            <form-champs v-model="champs.introduction.v" tag="textarea" nom="Introduction" id="introduction" :err="champs.introduction.err" />
+
+            <button class="ui button" type="submit">Ajouter le niveau</button>
+          </form>
+
+          <Alerte ref="erreurs" :type-alerte="typeAlerte" />
+        </template>
+      </ApolloMutation>
+    <!--/ Formulaire d'ajout de niveau -->
+    </div>
   </div>
 </template>
 
@@ -38,6 +51,7 @@
 import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 
 export default {
   name: 'AjouterNiveau',
@@ -55,6 +69,11 @@ export default {
       },
       typeAlerte: 'Erreur'
     }
+  },
+  apollo: {
+    // Chargement des niveaux si pas déjà en cache
+    // (Evite erreur si user recharge la page sans passer par la liste des niveaux)
+    niveaux: Niveaux
   },
   methods: {
     checkForm() {
@@ -91,10 +110,18 @@ export default {
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
-    niveauCree({ data }) {
+    niveauCree({ data: { creerNiveau: nouveauNiveau } }) {
+      const apolloClient = this.$apollo.provider.defaultClient
+      // Lire le cache pour récupérer le contenu actuel
+      const data = apolloClient.readQuery({ query: Niveaux })
+      data.niveaux.push(nouveauNiveau)
+
+      // Appliquer la modification en cache
+      apolloClient.writeQuery({ query: Niveaux, data })
+
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`Le niveau "${data.creerNiveau.id}" a été créé.`)
+      this.$refs.erreurs.ajouterAlerte(`Le niveau "${nouveauNiveau.id}" a été créé.`)
     }
   }
 }
