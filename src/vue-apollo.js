@@ -90,16 +90,16 @@ export function createProvider(options = {}, { router }) {
         // TODO: Le fix de la connexion a cassé cette partie (Redirection si non connecté)
         // Liste des pages qui ont besoin de connexion
         const besoinConnexion = [
-          'profil',
-          'ajouterexercice',
-          'listeniveaux',
-          'editerniveau',
-          'editerexercice'
+          'Profil',
+          'AjouterExercice',
+          'ListeNiveaux',
+          'EditerNiveau',
+          'EditerExercice'
         ]
         const res = besoinConnexion.some(x => router.currentRoute.name === x)
 
         // Rediriger vers la page de connexion si la page en cours a besoin de connexion
-        if (res) router.replace({ name: 'connexion' })
+        if (res) router.replace({ name: 'Connexion' })
       }
       else {
         console.log(

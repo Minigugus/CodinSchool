@@ -5,7 +5,7 @@
       <h1 class="ui center aligned header">Liste des niveaux</h1>
 
       <!-- Bouton de réorganisation des niveaux -->
-      <div class="reorganiser-niveau">
+      <div v-if="niveaux.length > 0" class="reorganiser-niveau">
         <transition name="fade" mode="out-in">
           <button v-if="!niveau.sontDraggable" key="reorganiser" @click="niveau.sontDraggable = true" class="ui button primary right labeled icon">
             <i class="right bars icon"></i>
@@ -24,6 +24,7 @@
         :list="niveaux"
         :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
         element="div"
+        class="liste-niveau"
       >
         <div v-for="aNiveau in niveaux" :key="aNiveau.id" class="niveau">
           <!-- Bouton d'édition d'un niveau -->
@@ -57,6 +58,15 @@
         </div>
       </draggable>
       <!--/ Liste des niveaux -->
+
+      <!-- Bouton d'ajout de niveau -->
+      <div class="text-center">
+        <router-link to="/redacteur/niveau/ajouterNiveau/" class="ui button right labeled icon text-center" tag="button">
+          <i class="plus icon"></i>
+          Ajouter un niveau
+        </router-link>
+      </div>
+      <!--/ Bouton d'ajout de niveau -->
     </div>
   </div>
 </template>
@@ -68,7 +78,7 @@ import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 import ReorganiserNiveaux from '@/graphql/Niveau/ReorganiserNiveaux.gql'
 
 export default {
-  name: 'Listeniveaux',
+  name: 'ListeNiveaux',
   components: {
     draggable
   },
@@ -121,9 +131,7 @@ export default {
   background: #c8ebfb !important;
 }
 .liste-niveau {
-  background-color: #f3f3f3 !important;
-  display: block;
-  border-radius: 12px;
+  margin: 20px 0;
 }
 .niveau {
   display: block;
@@ -144,7 +152,6 @@ export default {
 }
 .reorganiser-niveau {
   text-align: center;
-  padding-bottom: 10px;
 }
 .drag-icon {
   line-height: 60px;

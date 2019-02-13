@@ -123,7 +123,7 @@ export default {
 
       // On redirige le client vers la page de profil
       // TODO: Choisir la page où rediriger
-      this.$router.replace({ name: 'profil' })
+      this.$router.replace({ name: 'Profil' })
     }
   }
 }

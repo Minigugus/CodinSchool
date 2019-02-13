@@ -18,7 +18,7 @@ export default {
     Alerte
   },
   props: {
-    email: {
+    code: {
       type: String,
       required: true
     }
