@@ -14,6 +14,23 @@
 
     <!-- Contenu de la page -->
     <div v-else>
+      <!-- Modal de confirmation de suppression de niveau -->
+      <sui-modal v-model="modalConfirmationSuppression" class="bgTransparent">
+        <sui-modal-header>Supprimer le niveau "{{ niveau.titre }}"</sui-modal-header>
+        <sui-modal-content>
+          <sui-modal-description>
+            <sui-header>Êtes-vous sûr de vouloir supprimer ce niveau ?</sui-header>
+            <p>Supprimer un niveau efface également tous les exercices qui lui sont associés.</p>
+            <p>Cette action est irréversible.</p>
+          </sui-modal-description>
+        </sui-modal-content>
+        <sui-modal-actions>
+          <sui-button secondary @click.native="modalConfirmationSuppression = false">Annuler</sui-button>
+          <sui-button negative @click.native="supprimerNiveau">Valider la suppression</sui-button>
+        </sui-modal-actions>
+      </sui-modal>
+      <!--/ Modal de confirmation de suppression de niveau -->
+
       <!-- Fil d'ariane -->
       <div class="ui large breadcrumb">
         <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
@@ -154,13 +171,24 @@
         </draggable>
         <!--/ Liste des exercices du niveau -->
 
-        <div class="text-center">
+        <!-- Bouton d'ajout d'exercice -->
+        <div v-if="!exercice.sontDraggable" class="text-center">
           <router-link :to="'/redacteur/ajouterExercice/' + idNiveau" class="ui button right labeled icon text-center" tag="button">
             <i class="plus icon"></i>
             Ajouter un exercice
           </router-link>
         </div>
+        <!--/ Bouton d'ajout d'exercice -->
       </template>
+
+      <!-- Bouton de suppression du niveau -->
+      <div v-if="!exercice.sontDraggable" class="text-center mt-4">
+        <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
+          <i class="trash alternate icon"></i>
+          Supprimer le niveau
+        </button>
+      </div>
+      <!--/ Bouton de suppression du niveau -->
     </div>
   </div>
 </template>
@@ -173,9 +201,10 @@ import FormChamps from '@/components/FormChamps.vue'
 import Niveau from '@/graphql/Niveau/Niveau.gql'
 import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
+import SupprimerNiveau from '@/graphql/Niveau/SupprimerNiveau.gql'
 
 export default {
-  name: 'Editerniveau',
+  name: 'EditerNiveau',
   components: {
     draggable,
     Alerte,
@@ -203,7 +232,8 @@ export default {
         sontDraggable: false
       },
 
-      typeAlerte: 'Erreur'
+      typeAlerte: 'Erreur',
+      modalConfirmationSuppression: false
     }
   },
 
@@ -262,12 +292,9 @@ export default {
       // Mise à jour du cache de la liste des niveaux
       let listeData = apolloClient.readQuery({ query: Niveaux })
       const niveauModifie = listeData.niveaux.findIndex(x => x.id === this.idNiveau)
-      if (!isNaN(niveauModifie)) {
-        listeData.niveaux[niveauModifie].id = data.editerNiveau.id
-        apolloClient.writeQuery({
-          query: Niveaux,
-          data: listeData
-        })
+      if (niveauModifie !== -1) {
+        listeData.niveaux[niveauModifie] = data.editerNiveau
+        apolloClient.writeQuery({ query: Niveaux, data: listeData })
       }
 
       // Affichage d'une alerte de succès
@@ -275,7 +302,7 @@ export default {
       this.typeAlerte = 'Succès'
 
       // On modifie le props de l'idNiveau dans l'url
-      this.$router.replace({ name: 'editerniveau', params: { idNiveau: data.editerNiveau.id } })
+      this.$router.replace({ name: 'EditerNiveau', params: { idNiveau: data.editerNiveau.id } })
     },
 
     async validerReorganisation() {
@@ -299,6 +326,29 @@ export default {
 
           // Appliquer la modification en cache
           store.writeQuery({ query: Niveau, variables: { id: this.niveau.id }, data })
+        }})
+    },
+
+    async supprimerNiveau() {
+      const apolloClient = this.$apollo.provider.defaultClient
+
+      // Mise à jour du cache
+      await apolloClient.mutate({
+        mutation: SupprimerNiveau,
+        variables: {
+          id: this.niveau.id
+        },
+        update: (store) => {
+          // Lire le cache pour récupérer le contenu actuel
+          const data = store.readQuery({ query: Niveaux })
+          const index = data.niveaux.findIndex(x => x.id === this.niveau.id)
+          if (index !== -1) data.niveaux.splice(index, 1)
+
+          // Appliquer la modification en cache
+          store.writeQuery({ query: Niveaux, data })
+
+          // Redirection vers la liste des niveaux
+          this.$router.replace({ name: 'ListeNiveaux'})
         }})
     }
   }
@@ -387,5 +437,9 @@ export default {
 .ui.divided.items>.item:first-child, .ui.divided.items>.item:last-child {
   margin: 0 !important;
   padding: 25px !important;
+}
+
+.bgTransparent {
+  background-color: transparent !important;
 }
 </style>

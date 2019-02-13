@@ -63,7 +63,7 @@ module.exports = {
     'default-case': 2,
     'dot-notation': 2,
     'eqeqeq': 2,
-    'guard-for-in': 2,
+    'guard-for-in': 0,
     'no-alert': 2,
     'no-caller': 2,
     'no-div-regex': 2,
