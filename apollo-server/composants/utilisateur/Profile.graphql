@@ -10,6 +10,7 @@ type Profile {
 	dateInscription: String!
 
 	roles: [Role!]!
+	permissions: [Permission!]!
 
 	nom: String
 	prenom: String

@@ -1,1 +1,24 @@
 #import * from "./Role.graphql"
+
+type Mutation {
+
+  creerRole(role: CreationRole!): Role!
+	@acces(requis: [ GESTION_ROLE ])
+
+  editerRole(id: ID!, role: CreationRole!): Role!
+	@acces(requis: [ GESTION_ROLE ])
+
+  supprimerRole(id: ID!): ID!
+	@acces(requis: [ GESTION_ROLE ])
+
+}
+
+type CreationRole {
+  nom: String!
+  permissions: [Permission!]!
+}
+
+type EditionRole {
+  nom: String
+  permissions: [Permission!]
+}
