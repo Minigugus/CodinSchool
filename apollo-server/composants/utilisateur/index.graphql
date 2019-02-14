@@ -19,11 +19,11 @@ type Mutation {
 	editer(modifications: EditionUtilisateur): Query! @acces
 
 	creerUtilisateur(utilisateur: Inscription): Profile!
-	@acces(interdit: [ Etudiant, Redacteur ])
+	@acces(requis: [ GESTION_UTILISATEUR ])
 	editerUtilisateur(id: ID!, utilisateur: EditionUtilisateur): Profile!
-	@acces(interdit: [ Etudiant, Redacteur ])
+	@acces(requis: [ GESTION_UTILISATEUR ])
 	supprimerUtilisateur(id: ID!): Profile!
-	@acces(interdit: [ Etudiant, Redacteur ])
+	@acces(requis: [ GESTION_UTILISATEUR ])
 }
 
 """

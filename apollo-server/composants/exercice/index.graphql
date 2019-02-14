@@ -8,16 +8,16 @@ type Query {
 type Mutation {
 
   creerExercice(exercice: CreationExercice!): Exercice!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
   editerExercice(id: ID!, exercice: EditionExercice): Exercice!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
   reorganiserExercices(niveau: ID!, exercices: [ID!]!): [Exercice!]!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
   supprimerExercice(id: ID!): ID!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
 }
 

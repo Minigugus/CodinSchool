@@ -9,16 +9,16 @@ type Query @acces {
 type Mutation {
 
   creerNiveau(niveau: CreationNiveau!): Niveau!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_NIVEAU ])
 
   editerNiveau(id: ID!, niveau: EditionNiveau): Niveau!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_NIVEAU ])
 
   reorganiserNiveaux(niveaux: [ID!]!): [Niveau!]!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_NIVEAU ])
 
   supprimerNiveau(id: ID!): ID!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_NIVEAU ])
 
 }
 
