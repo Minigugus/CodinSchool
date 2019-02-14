@@ -13,12 +13,12 @@ type Mutation {
 
 }
 
-type CreationRole {
+input CreationRole {
   nom: String!
   permissions: [Permission!]!
 }
 
-type EditionRole {
+input EditionRole {
   nom: String
   permissions: [Permission!]
 }

@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
 import bdd from '../bdd'
 
-import roles from '../role'
+// import { Role } from '../role'
 
 export default bdd.define(
   'utilisateur',
@@ -13,12 +13,13 @@ export default bdd.define(
       defaultValue: Sequelize.UUIDV4
     },
 
-    role: {
-      allowNull: false,
-      type: Sequelize.ENUM,
-      defaultValue: roles[0],
-      values: roles
-    },
+    // TODO : Ajouter la relation N:M entre Profile et Role.
+    // role: {
+    //   allowNull: false,
+    //   type: Sequelize.ENUM,
+    //   defaultValue: roles[0],
+    //   values: roles
+    // },
 
     validationInscription: {
       allowNull: true,

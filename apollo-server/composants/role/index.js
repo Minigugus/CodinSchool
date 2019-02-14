@@ -1,3 +1,6 @@
-// TODO : Récupérer la liste des Permissions depuis le schéma GraphQL.
-// TODO : Réécrire cette classe pour la modification des Rôles.
-export default ['Etudiant', 'Redacteur', 'Administrateur']
+export { default as Permission } from './PermissionModele'
+
+export * from './RoleErreurs'
+export * from './RoleLogique'
+export { default as Role } from './RoleModele'
+export { default as resolvers } from './RoleResolvers'
