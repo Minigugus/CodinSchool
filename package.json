@@ -17,7 +17,6 @@
     "graphql-type-json": "^0.2.1",
     "jsonwebtoken": "^8.4.0",
     "lowdb": "^1.0.0",
-    "merge-graphql-schemas": "^1.5.8",
     "mkdirp": "^0.5.1",
     "nodemailer": "^5.0.0",
     "pg": "^7.7.1",
