@@ -1,50 +1,66 @@
 <template>
-  <div class="ui container segment stripe">
-    <h2 class="ui center aligned header">
-      <div class="content">
-        Ajouter un exercice
-      </div>
-    </h2>
-
-    <ApolloMutation
-      :mutation="require('@/graphql/Niveau/CreerExercice.gql')"
-      :variables="{
-        exercice: {
-          id: champs.id.v,
-          titre: champs.titre.v,
-          niveau: champs.niveau.v,
-          enonce: champs.enonce.v,
-          correction: champs.correction.v
-        }
-      }"
-      @error="chargerErreur"
-      @done="exerciceCree"
-    >
-      <template slot-scope="{ mutate, loading }">
-        <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-          <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
-          <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Les boucles" />
-
-          <div class="field" :class="{ error: champs.niveau.err.length > 0 }">
-            <label>Niveau</label>
-            <select class="ui dropdown" v-model="champs.niveau.v">
-              <option>-</option>
-              <option v-for="(aNiveau, index) in niveaux" :value="aNiveau.id" :key="'option-' + index">{{ aNiveau.titre }} (#{{ aNiveau.id }})</option>
-            </select>
-            <div v-for="(anError, index) in champs.niveau.err" :key="'erreur-niveau-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
-          </div>
-
-          <form-champs v-model="champs.enonce.v" nom="Enoncé" id="enonce" :err="champs.enonce.err"
-                       placeholder="Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne."
-          />
-          <form-champs v-model="champs.correction.v" tag="textarea" nom="Correction" id="correction" :err="champs.correction.err" />
-
-          <button class="ui button" type="submit">Ajouter l'exercice</button>
-        </form>
-
-        <Alerte ref="erreurs" :type-alerte="typeAlerte" />
+  <div class="ui container">
+    <!-- Fil d'ariane -->
+    <div class="ui large breadcrumb mb-2 mt-3">
+      <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+      <i class="right angle icon divider"></i>
+      <template v-if="idNiveau">
+        <router-link :to="'/redacteur/niveau/' + idNiveau" class="section">{{ idNiveau }}</router-link>
+        <i class="right arrow icon divider"></i>
       </template>
-    </ApolloMutation>
+      <div class="active section">Ajouter un exercice</div>
+    </div>
+    <!--/ Fil d'ariane -->
+
+    <div class="ui container segment stripe">
+      <h2 class="ui center aligned header">
+        <div class="content">
+          Ajouter un exercice
+        </div>
+      </h2>
+
+      <!-- Formulaire d'ajout d'exercice -->
+      <ApolloMutation
+        :mutation="require('@/graphql/Niveau/CreerExercice.gql')"
+        :variables="{
+          exercice: {
+            id: champs.id.v,
+            titre: champs.titre.v,
+            niveau: champs.niveau.v,
+            enonce: champs.enonce.v,
+            correction: champs.correction.v
+          }
+        }"
+        @error="chargerErreur"
+        @done="exerciceCree"
+      >
+        <template slot-scope="{ mutate, loading }">
+          <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
+            <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
+            <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Les boucles" />
+
+            <div class="field" :class="{ error: champs.niveau.err.length > 0 }">
+              <label>Niveau</label>
+              <select class="ui dropdown" v-model="champs.niveau.v">
+                <option>-</option>
+                <option v-for="(aNiveau, index) in niveaux" :value="aNiveau.id" :key="'option-' + index">{{ aNiveau.titre }} (#{{ aNiveau.id }})</option>
+              </select>
+              <div v-for="(anError, index) in champs.niveau.err" :key="'erreur-niveau-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
+            </div>
+
+            <form-champs v-model="champs.enonce.v" nom="Enoncé" id="enonce" :err="champs.enonce.err"
+                         placeholder="Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne."
+            />
+            <form-champs v-model="champs.correction.v" tag="textarea" nom="Correction" id="correction" :err="champs.correction.err" />
+
+            <button class="ui button" type="submit">Ajouter l'exercice</button>
+          </form>
+
+          <Alerte ref="erreurs" :type-alerte="typeAlerte" />
+        </template>
+      </ApolloMutation>
+    <!--/ Formulaire d'ajout d'exercice -->
+    </div>
   </div>
 </template>
 

@@ -14,15 +14,15 @@
     <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
-    <!-- Erreur de chargement de la page -->
+    <!-- Aleter de notification de niveau supprimé -->
     <div v-else-if="niveauSupprime" class="ui text vertical segment container">
       <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
-      <Alerte type-alerte="Succès" :liste-msg="['Le niveau et les exercices lui étant associés ont été supprimés.']" :fermable="false" />
+      <Alerte type-alerte="Succès" :liste-msg="[niveauSupprime]" :fermable="false" />
     </div>
-    <!--/ Erreur de chargement de la page -->
+    <!--/ Aleter de notification de niveau supprimé -->
 
     <!-- Contenu de la page -->
     <div v-else>
@@ -69,7 +69,7 @@
             niveau: {
               id: niveau.id,
               titre: niveau.titre,
-              introduction: niveau.introduction,
+              introduction: niveau.introduction
             }
           }"
           @error="chargerErreur"
@@ -154,7 +154,7 @@
             <!-- Bouton d'édition d'un exercice -->
             <transition name="slide-left">
               <div v-if="!exercice.sontDraggable" :key="'editer-' + aExercice.id" class="editer">
-                <router-link :to="`/redacteur/niveau/${niveau.id}/exercice/${aExercice.id}`" class="ui button primary right labeled icon disabled" tag="button">
+                <router-link :to="`/redacteur/exercice/${aExercice.id}`" class="ui button primary right labeled icon" tag="button">
                   <i class="right arrow icon"></i>
                   Editer
                 </router-link>
@@ -211,6 +211,7 @@ import draggable from 'vuedraggable'
 import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+
 import Niveau from '@/graphql/Niveau/Niveau.gql'
 import Niveaux from '@/graphql/Niveau/Niveaux.gql'
 import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
@@ -252,6 +253,7 @@ export default {
   },
 
   apollo: {
+    niveaux: Niveaux,
     niveau() {
       return {
         query: Niveau,
@@ -352,15 +354,18 @@ export default {
         variables: {
           id: this.niveau.id
         },
-        update: (store) => {
+        update: store => {
           // Lire le cache pour récupérer le contenu actuel
           const data = store.readQuery({ query: Niveaux })
           const index = data.niveaux.findIndex(x => x.id === this.niveau.id)
-          if (index !== -1) data.niveaux.splice(index, 1)
-
-          // Appliquer la modification en cache
-          store.writeQuery({ query: Niveaux, data })
-          this.niveauSupprime = true
+          if (index !== -1) {
+            data.niveaux.splice(index, 1)
+            // Appliquer la modification en cache
+            store.writeQuery({ query: Niveaux, data })
+            this.niveauSupprime = `Le niveau "${this.idNiveau}" et les exercices lui étant associés ont été supprimés.`
+            return
+          }
+          console.error('Impossible de supprimer le niveau.')
         }})
     }
   }
@@ -370,5 +375,87 @@ export default {
 <style scoped>
 .bgTransparent {
   background-color: transparent !important;
+}
+.flip-list-move {
+  transition: transform 1s !important;
+}
+.ghost {
+  opacity: 0.5 !important;
+  background: #c8ebfb !important;
+}
+.liste-exercice {
+  margin: 20px 0px;
+}
+.exercice {
+  display: block;
+  border-bottom: 1px solid #cfcfcf;
+  background-color: #f3f3f3;
+  padding: 20px;
+}
+.exercice:first-child {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+.exercice:last-child {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.exercice:last-of-type {
+  border-bottom: none;
+}
+.drag-icon {
+  line-height: 60px;
+  position: absolute;
+  padding-right: 20px;
+  cursor: move;
+}
+.contenu {
+  padding-left: 2.2em;
+}
+
+.titre-exercice {
+  font-size: 1.3em;
+  display: inline-block;
+  margin: 0;
+  font-family: Lato,'Helvetica Neue', Arial,Helvetica, sans-serif;
+  font-weight: 700;
+  color: rgba(0,0,0,.85);
+}
+.id-exercice {
+  font-size: 1em;
+  margin-left: 8px !important;
+  display: inline-block;
+  margin: 0;
+  font-family: Lato, 'Helvetica Neue', Arial,Helvetica, sans-serif;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.377);
+}
+.description-exercice {
+  margin: .5em 0 .5em;
+  font-size: 1em;
+  line-height: 1em;
+  color: rgba(0,0,0,.6);
+}
+.editer {
+  position: relative;
+}
+.editer button {
+  position: absolute !important;
+  right: 0 !important;
+  margin-top: 15px !important;
+}
+
+
+.ui.divided.items>.item {
+  border-top: 1px solid rgba(34,36,38,.15);
+  background-color: #f3f3f3;
+  padding: 23px;
+}
+.ui.divided.items>.item:first-child {
+  border-top: none;
+}
+.ui.divided.items>.item:first-child, .ui.divided.items>.item:last-child {
+  margin: 0 !important;
+  padding: 25px !important;
 }
 </style>

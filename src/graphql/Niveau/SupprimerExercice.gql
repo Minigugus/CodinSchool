@@ -1,5 +1,3 @@
-#import "./FragmentExercice.gql"
-
 mutation SuprimerExercice($id: ID!) {
   supprimerExercice(id: $id)
 }
