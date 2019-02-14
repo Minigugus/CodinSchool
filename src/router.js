@@ -15,27 +15,27 @@ const PAGES_REDACTEUR = [
     component: () => import('@/views/Connecte/Redacteur/ListeNiveaux.vue')
   },
   {
-    // Ajouter/Créer un niveau
+    // Créer un niveau
     path: '/redacteur/niveau/ajouterNiveau',
     name: 'AjouterNiveaux',
     component: () => import('@/views/Connecte/Redacteur/AjouterNiveau.vue')
   },
   {
-    // Consulter/Modifier un niveau
+    // Modifier un niveau
     path: '/redacteur/niveau/:idNiveau',
     name: 'EditerNiveau',
     component: () => import('@/views/Connecte/Redacteur/EditerNiveau.vue'),
     props: true
   },
   {
-    // Consulter/Modifier un exercice
-    path: '/redacteur/niveau/:idNiveau/exercice/:idExercice',
+    // Modifier un exercice
+    path: '/redacteur/exercice/:idExercice',
     name: 'EditerExercice',
     component: () => import('@/views/Connecte/Redacteur/EditerExercice.vue'),
     props: true
   },
   {
-    // Ajouter/Créer un exercice
+    // Créer un exercice
     path: '/redacteur/ajouterExercice/:idNiveau?',
     name: 'AjouterExercice',
     component: () => import('@/views/Connecte/Redacteur/AjouterExercice.vue'),
