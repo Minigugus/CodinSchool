@@ -5,7 +5,7 @@
       <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
       <i class="right angle icon divider"></i>
       <template v-if="idNiveau">
-        <router-link :to="'/redacteur/niveau/' + idNiveau" class="section">{{ idNiveau }}</router-link>
+        <router-link :to="'/redacteur/niveau/' + idNiveau" class="section">Niveau "{{ idNiveau }}"</router-link>
         <i class="right arrow icon divider"></i>
       </template>
       <div class="active section">Ajouter un exercice</div>
@@ -26,7 +26,7 @@
           exercice: {
             id: champs.id.v,
             titre: champs.titre.v,
-            niveau: champs.niveau.v,
+            niveauId: champs.niveau.v,
             enonce: champs.enonce.v,
             correction: champs.correction.v
           }
