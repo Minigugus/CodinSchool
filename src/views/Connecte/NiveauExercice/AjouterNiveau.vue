@@ -2,7 +2,7 @@
   <div class="ui container">
     <!-- Fil d'ariane -->
     <div class="ui large breadcrumb mb-2 mt-3">
-      <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+      <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
       <i class="right angle icon divider"></i>
       <div class="active section">Ajouter un niveau</div>
     </div>
@@ -17,7 +17,7 @@
 
       <!-- Formulaire d'ajout de niveau -->
       <ApolloMutation
-        :mutation="require('@/graphql/Niveau/CreerNiveau.gql')"
+        :mutation="require('@/graphql/NiveauExercice/CreerNiveau.gql')"
         :variables="{
           niveau: {
             id: champs.id.v,
@@ -51,7 +51,7 @@
 import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
-import Niveaux from '@/graphql/Niveau/Niveaux.gql'
+import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 
 export default {
   name: 'AjouterNiveau',

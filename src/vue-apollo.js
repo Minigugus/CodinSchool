@@ -87,14 +87,14 @@ export function createProvider(options = {}, { router }) {
     },
     errorHandler(error) {
       if (isUnauthorizedError(error)) {
-        // TODO: Le fix de la connexion a cassé cette partie (Redirection si non connecté)
         // Liste des pages qui ont besoin de connexion
         const besoinConnexion = [
-          'Profil',
           'AjouterExercice',
-          'ListeNiveaux',
+          'AjouterNiveau',
+          'EditerExercice',
           'EditerNiveau',
-          'EditerExercice'
+          'ListeNiveaux',
+          'Profil'
         ]
         const res = besoinConnexion.some(x => router.currentRoute.name === x)
 

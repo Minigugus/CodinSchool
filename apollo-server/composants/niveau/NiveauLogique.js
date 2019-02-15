@@ -37,7 +37,7 @@ export const editerNiveau = async (id, niveau) => {
 }
 
 export const supprimerNiveau = async id => {
-  const affecte = await Niveau.destroy({ where: { id } })
+  const affecte = await Niveau.destroy({ where: { id }, cascade: true })
   if (!affecte)
     throw new NiveauNonTrouveError(id)
   return id
