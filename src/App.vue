@@ -13,8 +13,8 @@
         </div>
         <div v-else key="menuConnecteMobile">
           <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
-          <router-link to="/redacteur/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
-          <router-link to="/redacteur/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
+          <router-link to="/NiveauExercice/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
+          <router-link to="/NiveauExercice/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
           <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
         </div>
       </div>
@@ -58,7 +58,7 @@
 
                       <sui-dropdown-header>Rédacteur</sui-dropdown-header>
 
-                      <router-link to="/redacteur/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
+                      <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
 
                       <sui-dropdown-divider />
 
@@ -88,14 +88,19 @@
         <div class="ui container">
           <div class="ui inverted divided equal height grid">
             <div class="height wide column">
-              <h4 class="ui inverted header">A Propos</h4>
+              <!-- <h4 class="ui inverted header">A Propos</h4> -->
               <div class="ui inverted link list">
-                <a href="#" class="item">Carte du Site</a>
-                <a href="#" class="item">Nous Contacter</a>
+                <li class="item">
+                  <a href="#" class="underlineHover ui blanc">Carte du Site</a>
+                </li>
+                <li class="item">
+                  <a href="#" class="underlineHover ui blanc">Nous Contacter</a>
+                </li>
               </div>
             </div>
-            <div class="height wide column">
-              <p>&copy; 2019 Codinschool</p>
+            <div class="seven wide column">
+              <router-link to="/mentionsLegales" exact-active-class="active" class="underlineHover blanc">Mentions Legales</router-link>
+              <p>&copy; 2018 Codinschool</p>
             </div>
           </div>
         </div>
@@ -297,5 +302,12 @@ export default {
 }
 .ui.inverted.segment{
   background-color: #568EA3 !important;
+}
+
+.blanc {
+  color: white !important;
+}
+.blanc-hover:hover {
+  color: white !important;
 }
 </style>
