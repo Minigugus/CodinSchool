@@ -114,6 +114,7 @@ export default {
       this.typeAlerte = 'Erreur'
       let tousRemplis = true
       for (const el in this.champs) {
+        this.champs[el].err = []
         if (this.champs[el].v === '') {
           this.champs[el].err.push('Champs vide.')
           tousRemplis = false
