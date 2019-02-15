@@ -13,8 +13,8 @@
         </div>
         <div v-else key="menuConnecteMobile">
           <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
-          <router-link to="/redacteur/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
-          <router-link to="/redacteur/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
+          <router-link to="/NiveauExercice/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
+          <router-link to="/NiveauExercice/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
           <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
         </div>
       </div>
@@ -58,7 +58,7 @@
 
                       <sui-dropdown-header>Rédacteur</sui-dropdown-header>
 
-                      <router-link to="/redacteur/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
+                      <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
 
                       <sui-dropdown-divider />
 

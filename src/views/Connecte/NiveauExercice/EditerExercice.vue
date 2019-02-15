@@ -2,7 +2,7 @@
   <div class="ui text vertical segment container">
     <!-- Erreur de chargement de la page -->
     <div v-if="erreurLoadingExercice" class="ui text vertical segment container">
-      <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
+      <router-link :to="`/NiveauExercice/niveau/liste`" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
@@ -16,7 +16,7 @@
 
     <!-- Aleter de notification d'exercice supprimé -->
     <div v-else-if="exerciceSupprime" class="ui text vertical segment container">
-      <router-link :to="`/redacteur/niveau/${exerciceSupprimeAppartientANiveau}`" class="ui button left labeled icon" tag="button">
+      <router-link :to="`/NiveauExercice/niveau/${exerciceSupprimeAppartientANiveau}`" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour au niveau {{ exerciceSupprimeAppartientANiveau }}
       </router-link>
@@ -44,9 +44,9 @@
 
       <!-- Fil d'ariane -->
       <div class="ui large breadcrumb">
-        <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+        <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
         <i class="right angle icon divider"></i>
-        <router-link :to="'/redacteur/niveau/' + exercice.niveau.id" class="section">Niveau "{{ exercice.niveau.id }}"</router-link>
+        <router-link :to="'/NiveauExercice/niveau/' + exercice.niveau.id" class="section">Niveau "{{ exercice.niveau.id }}"</router-link>
         <i class="right arrow icon divider"></i>
         <div class="active section">Exercice "{{ exercice.id }}"</div>
       </div>
@@ -60,7 +60,7 @@
       <!-- Formulaire d'édition de l'exercice -->
       <div class="ui container segment stripe">
         <ApolloMutation
-          :mutation="require('@/graphql/Niveau/EditerExercice.gql')"
+          :mutation="require('@/graphql/NiveauExercice/EditerExercice.gql')"
           :variables="{
             id: idExercice,
             exercice: {
@@ -83,7 +83,7 @@
                 :err="champs.exercice.id.err"
                 disabled
               />
-              <!-- https://github.com/Minigugus/CodinSchool/issues/20 -->
+              <!-- Champs id bloqué : https://github.com/Minigugus/CodinSchool/issues/20 -->
 
               <form-champs
                 v-model="exercice.titre"
@@ -148,9 +148,9 @@ import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
-import NiveauxExercices from '@/graphql/Niveau/NiveauxExercices.gql'
-import Exercice from '@/graphql/Niveau/Exercice.gql'
-import SupprimerExercice from '@/graphql/Niveau/SupprimerExercice.gql'
+import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
+import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
+import SupprimerExercice from '@/graphql/NiveauExercice/SupprimerExercice.gql'
 
 export default {
   name: 'EditerExercice',

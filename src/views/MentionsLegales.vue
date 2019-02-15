@@ -138,7 +138,7 @@
         (IP) de l'utilisateur.
       </p>
       <p>
-         En tout état de cause WARIN Bruno ne collecte des informations
+        En tout état de cause WARIN Bruno ne collecte des informations
         personnelles relatives à l'utilisateur que pour le besoin de certains
         services proposés par le site <a href="https://www.codinschool.fr/">https://www.codinschool.fr/</a> l’obligation ou non de fournir ces informations.
       </p>
