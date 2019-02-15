@@ -47,7 +47,7 @@
       <div class="ui large breadcrumb">
         <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
         <i class="right angle icon divider"></i>
-        <div class="active section">{{ niveau.id }}</div>
+        <div class="active section">Niveau "{{ niveau.id }}"</div>
       </div>
       <!--/ Fil d'ariane -->
 

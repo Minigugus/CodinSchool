@@ -46,9 +46,9 @@
       <div class="ui large breadcrumb">
         <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
         <i class="right angle icon divider"></i>
-        <router-link :to="'/redacteur/niveau/' + exercice.niveau.id" class="section">{{ exercice.niveau.id }}</router-link>
+        <router-link :to="'/redacteur/niveau/' + exercice.niveau.id" class="section">Niveau "{{ exercice.niveau.id }}"</router-link>
         <i class="right arrow icon divider"></i>
-        <div class="active section">{{ exercice.id }}</div>
+        <div class="active section">Exercice "{{ exercice.id }}"</div>
       </div>
       <!--/ Fil d'ariane -->
 
@@ -68,7 +68,7 @@
               titre: exercice.titre,
               enonce: exercice.enonce,
               correction: exercice.correction,
-              niveau: exercice.niveau.id
+              niveauId: exercice.niveau.id
             }
           }"
           @error="chargerErreur"

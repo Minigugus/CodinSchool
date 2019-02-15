@@ -3,8 +3,8 @@
 mutation CreerExercice($exercice: CreationExercice!) {
   creerExercice(exercice: $exercice) {
     ...exercice
-    # niveau {
-    #   id
-    # }
+    niveau {
+      id
+    }
   }
 }
