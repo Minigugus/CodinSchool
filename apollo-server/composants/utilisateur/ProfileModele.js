@@ -1,9 +1,9 @@
 import Sequelize from 'sequelize'
 import bdd from '../bdd'
 
-// import { Role } from '../role'
+import { Role } from '../role'
 
-export default bdd.define(
+const Profile = bdd.define(
   'utilisateur',
   {
     id: {
@@ -12,14 +12,6 @@ export default bdd.define(
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4
     },
-
-    // TODO : Ajouter la relation N:M entre Profile et Role.
-    // role: {
-    //   allowNull: false,
-    //   type: Sequelize.ENUM,
-    //   defaultValue: roles[0],
-    //   values: roles
-    // },
 
     validationInscription: {
       allowNull: true,
@@ -114,6 +106,40 @@ export default bdd.define(
     timestamps: true,
 
     createdAt: 'dateInscription',
-    updatedAt: false
+    updatedAt: false,
+
+    scopes: {
+      avecRoles: {
+        include: [ { model: Role, as: 'role' } ]
+      }
+    }
   }
 )
+
+Profile.belongsToMany(Role, { as: 'role', through: 'utilisateur_role', timestamps: false })
+Role.belongsToMany(Profile, { as: 'membre', through: 'utilisateur_role', timestamps: false })
+
+Object.defineProperty(Profile.prototype, 'roles', {
+  configurable: false,
+  enumerable: true,
+  get() {
+    return this.role
+  }
+})
+
+Object.defineProperty(Profile.prototype, 'permissions', {
+  configurable: false,
+  enumerable: true,
+  // eslint-ignore no-underscore-dangle
+  get() {
+    if (!this._permissions && this.roles)
+      this._permissions = this.roles.reduce((set, role) => {
+        role.permissions.forEach(set.add, set)
+        return set
+      }, new Set())
+    return this._permissions
+  }
+})
+
+export default Profile
+export const ProfileAvecRoles = Profile.scope('avecRoles')

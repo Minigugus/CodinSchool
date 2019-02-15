@@ -4,7 +4,12 @@
 type Query @acces {
 	moi: Profile!
 
+	utilisateurs: [Profile!]!
+	@acces(requis: [ GESTION_UTILISATEUR ])
+
 	utilisateur(id: ID!): Profile
+	@acces(requis: [ GESTION_UTILISATEUR ])
+
 }
 
 type Mutation {

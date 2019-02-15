@@ -2,6 +2,7 @@ import uuidv4 from 'uuid/v4'
 import { hasher, comparer } from '../auth'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
 import Profile from './ProfileModele'
+import { Role } from '../role'
 
 import { activationCompte as mailActivationCompte, nouveauMdp as mailNouveauMdp } from '../mail'
 
@@ -14,6 +15,7 @@ import {
   ValidationEchoueeError
 } from './ProfileErreurs'
 
+export const recupererTous = () => Profile.findAll()
 export const recupererParID = id => Profile.findByPk(id)
 export const recupererParEmail = email =>
   Profile.findOne({ where: { emailPrimaire: { in: [email.toLowerCase()] } } })
@@ -35,8 +37,9 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
       motDePasse: await hasher(motDePasse),
       nom,
       prenom,
-      dateNaissance
-    })
+      dateNaissance,
+      role: (await Role.findAll()).filter(x => x.parDefaut)
+    }, { include: [ { model: Role, as: 'role' } ] })
     try {
       await mailActivationCompte(
         utilisateur.emailPrimaire,

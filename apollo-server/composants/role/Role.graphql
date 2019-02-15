@@ -3,10 +3,20 @@ enum Permission {
 }
 
 """
-Représente le Role d'un Utilisateur.
+Présente le Role d'un Utilisateur.
 """
 type Role {
 	id: ID!
 	nom: String!
+}
+
+"""
+Décrit un Role de CodinSchool.
+"""
+type DefinitionRole { # @acces(requis: [ GESTION_ROLE ])
+	id: ID!
+	nom: String!
 	permissions: [Permission!]!
+	parDefaut: Boolean!
+	membres: [Profile!]!
 }

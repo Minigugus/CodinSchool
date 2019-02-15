@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import { parse, Kind, buildASTSchema, printSchema } from 'graphql'
+import { parse, Kind, buildASTSchema, print } from 'graphql'
 
 /**
  * Importe un schéma GraphQL récursivement en fusionant les types de même nom.
@@ -32,12 +32,12 @@ const importerSchema = (fichier, dossier = __dirname) => {
   }
   const definitionsParNom = new Map()
   const fusionDirectives = (actuel, nouveau) => {
-    const directives = new Map(actuel.directives.map(x => [ x.name.value, x ]))
-    for (let directive of nouveau.directives)
-      if (!directives.has(directive.name.value))
-        directives.set(directive.name.value, directive)
-      else
-        console.warn(`La directive GraphQL est définie plusieurs fois sur le type « ${nouveau.name.value} ».`)
+    actuel.directives = nouveau.directives.reduce((arr, directive) => {
+      const nom = directive.name.value
+      if (!~arr.findIndex(_directive => _directive.name.value === nom))
+        arr.push(directive)
+      return arr
+    }, actuel.directives)
   }
   const fusionChamps = (actuel, nouveau) => {
     actuel.fields.push(...nouveau.fields)
@@ -64,28 +64,32 @@ const importerSchema = (fichier, dossier = __dirname) => {
   const regrouperDefinitions = sources => {
     for (let source of sources)
       if (source.length)
-        for (let definition of parse(source).definitions)
-          if (definitionsParNom.has(definition.name.value))
+        for (let definition of parse(source, { noLocation: true }).definitions)
+          if (definition.name && definitionsParNom.has(definition.name.value))
             if (fusions[definition.kind])
               fusions[definition.kind](definitionsParNom.get(definition.name.value), definition)
             else
               console.warn(`Le type GraphQL « ${definition.kind} » ne peut être fusionné.`)
           else
-            definitionsParNom.set(definition.name.value, definition)
+            definitionsParNom.set(definition.name ? definition.name.value : definition, definition)
   }
   const recreerDocument = definitions => ({
     kind: 'Document',
-    definitions,
+    definitions: [
+      ...definitions
+    ],
     loc: { start: 0, end: 0 }
   })
 
   importer(fichier, dossier)
   regrouperDefinitions(charge.values())
-  const document = recreerDocument([...definitionsParNom.values()].filter(x=>x))
+  const document = recreerDocument([...definitionsParNom.values()])
 
-  return buildASTSchema(document)
+  return document
 }
 
-export const schema = importerSchema('schema.graphql')
+const document = importerSchema('schema.graphql')
 
-export default printSchema(schema)
+export const schema = buildASTSchema(document)
+
+export default print(document)
