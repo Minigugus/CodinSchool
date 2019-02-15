@@ -1,0 +1,3 @@
+mutation SuprimerExercice($id: ID!) {
+  supprimerNiveau(id: $id)
+}

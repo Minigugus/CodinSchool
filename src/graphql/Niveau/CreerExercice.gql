@@ -1,0 +1,10 @@
+#import "./FragmentExercice.gql"
+
+mutation CreerExercice($exercice: CreationExercice!) {
+  creerExercice(exercice: $exercice) {
+    ...exercice
+    niveau {
+      id
+    }
+  }
+}

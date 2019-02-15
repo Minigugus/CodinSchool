@@ -1,0 +1,15 @@
+#import * from "../exercice/Exercice.graphql"
+
+"""
+Représente un Niveau de CodinSchool.
+"""
+type Niveau {
+	id: ID!
+  titre: String!
+  introduction: String
+
+	dateCreation: String!
+  position: Int!
+
+	exercices: [Exercice!]
+}

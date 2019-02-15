@@ -1,0 +1,7 @@
+#import "./FragmentExercice.gql"
+
+mutation ReorganiserExercices($niveau: ID!, $exercices: [ID!]!) {
+  reorganiserExercices(niveau: $niveau, exercices: $exercices) {
+    ...exercice
+  }
+}

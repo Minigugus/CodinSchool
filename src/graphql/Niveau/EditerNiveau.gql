@@ -1,0 +1,11 @@
+#import "./FragmentNiveau.gql"
+#import "./FragmentExercice.gql"
+
+mutation EditerNiveau($id: ID!, $niveau: EditionNiveau!) {
+  editerNiveau(id: $id, niveau: $niveau) {
+    ...niveau
+    exercices {
+      ...exercice
+    }
+  }
+}

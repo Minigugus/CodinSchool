@@ -11,27 +11,33 @@ const PAGES_REDACTEUR = [
   {
     // Lister/Réorganiser les niveaux
     path: '/redacteur/niveau/liste',
-    name: 'listeniveaux',
+    name: 'ListeNiveaux',
     component: () => import('@/views/Connecte/Redacteur/ListeNiveaux.vue')
   },
   {
-    // Consulter/Modifier un niveau
+    // Créer un niveau
+    path: '/redacteur/niveau/ajouterNiveau',
+    name: 'AjouterNiveaux',
+    component: () => import('@/views/Connecte/Redacteur/AjouterNiveau.vue')
+  },
+  {
+    // Modifier un niveau
     path: '/redacteur/niveau/:idNiveau',
-    name: 'editerniveau',
+    name: 'EditerNiveau',
     component: () => import('@/views/Connecte/Redacteur/EditerNiveau.vue'),
     props: true
   },
   {
-    // Consulter/Modifier un exercice
-    path: '/redacteur/niveau/:idNiveau/exercice/:idExercice',
-    name: 'editerexercice',
+    // Modifier un exercice
+    path: '/redacteur/exercice/:idExercice',
+    name: 'EditerExercice',
     component: () => import('@/views/Connecte/Redacteur/EditerExercice.vue'),
     props: true
   },
   {
-    // Ajouter/Créer un exercice
-    path: '/redacteur/niveau/:idNiveau/ajouterExercice',
-    name: 'ajouterexercice',
+    // Créer un exercice
+    path: '/redacteur/ajouterExercice/:idNiveau?',
+    name: 'AjouterExercice',
     component: () => import('@/views/Connecte/Redacteur/AjouterExercice.vue'),
     props: true
   }
@@ -42,57 +48,57 @@ export default new Router({
     {
       // Page d'accueil
       path: '/',
-      name: 'accueil',
+      name: 'Accueil',
       component: Accueil
     },
     {
       // A propos de CodinSchool
       path: '/aPropos',
-      name: 'apropos',
+      name: 'APropos',
       component: () => import('@/views/Apropos.vue')
     },
     {
       // Page d'aide sur le langage C
       path: '/langageC',
-      name: 'langagec',
+      name: 'LangageC',
       component: () => import('@/views/LangageC.vue')
     },
     {
       // Inscription
       path: '/inscription',
-      name: 'inscription',
+      name: 'Inscription',
       component: () => import('@/views/NonConnecte/Inscription.vue')
     },
     {
       // Connexion
       path: '/connexion',
-      name: 'connexion',
+      name: 'Connexion',
       component: () => import('@/views/NonConnecte/Connexion.vue')
     },
     {
       // Demande de réinitialisation de mot de passe
       path: '/mdpOublie',
-      name: 'mdpoublie',
+      name: 'MdpOublie',
       component: () => import('@/views/NonConnecte/MdpOublie.vue')
     },
     {
       // Réinitialisation de mot de passe
       path: '/resetMdp/:email/:code',
-      name: 'mdpreset',
+      name: 'MdpReset',
       component: () => import('@/views/NonConnecte/MdpReset.vue'),
       props: true
     },
     {
       // Activation de compte
       path: '/activation/:code',
-      name: 'activation',
+      name: 'Activation',
       component: () => import('@/views/NonConnecte/Activation.vue'),
       props: true
     },
     {
       // Profil d'utilisateur
       path: '/profil',
-      name: 'profil',
+      name: 'Profil',
       component: () => import('@/views/Connecte/Profil.vue')
     },
     {

@@ -1,0 +1,7 @@
+#import "./FragmentNiveau.gql"
+
+mutation ReorganiserNiveaux($niveaux: [ID!]!) {
+  reorganiserNiveaux(niveaux: $niveaux) {
+    ...niveau
+  }
+}
