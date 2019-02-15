@@ -1,3 +1,5 @@
 #import * from "./composants/role/index.graphql"
 #import * from "./composants/auth/index.graphql"
+#import * from "./composants/niveau/index.graphql"
+#import * from "./composants/exercice/index.graphql"
 #import * from "./composants/utilisateur/index.graphql"

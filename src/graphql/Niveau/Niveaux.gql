@@ -1,0 +1,7 @@
+#import "./FragmentNiveau.gql"
+
+query Niveaux {
+  niveaux {
+    ...niveau
+  }
+}

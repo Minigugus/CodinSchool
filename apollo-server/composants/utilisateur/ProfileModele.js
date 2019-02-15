@@ -3,7 +3,7 @@ import bdd from '../bdd'
 
 import roles from '../role'
 
-const Profile = bdd.define(
+export default bdd.define(
   'utilisateur',
   {
     id: {
@@ -53,10 +53,11 @@ const Profile = bdd.define(
       validate: {
         is: {
           args: /(?:\w|[\- ])+/gi,
-          msg: 'Ce champ ne peut contenir que des lettres minuscules ou majuscules, des tirets (-) et des espaces.'
+          msg:
+            'Ce champ ne peut contenir que des lettres minuscules ou majuscules, des tirets (-) et des espaces.'
         },
         len: {
-          args: [ 2, 50 ],
+          args: [2, 50],
           msg: 'Ce champ doit contenir entre 2 et 20 caractères.'
         }
       }
@@ -67,10 +68,11 @@ const Profile = bdd.define(
       validate: {
         is: {
           args: /(?:\w|[\- ])+/gi,
-          msg: 'Ce champ ne peut contenir que des lettres minuscules ou majuscules, des tirets (-) et des espaces.'
+          msg:
+            'Ce champ ne peut contenir que des lettres minuscules ou majuscules, des tirets (-) et des espaces.'
         },
         len: {
-          args: [ 2, 50 ],
+          args: [2, 50],
           msg: 'Ce champ doit contenir entre 2 et 20 caractères.'
         }
       }
@@ -114,5 +116,3 @@ const Profile = bdd.define(
     updatedAt: false
   }
 )
-
-export default Profile

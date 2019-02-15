@@ -19,7 +19,7 @@ export default new ApolloServer({
   context,
   dataSources,
   schemaDirectives: directives,
-  mocks: (MODE_DEVELOPPEMENT && ACTIVER_MOCKS ? mocks : false),
+  mocks: MODE_DEVELOPPEMENT && ACTIVER_MOCKS ? mocks : false,
   resolvers,
   server,
   typeDefs,

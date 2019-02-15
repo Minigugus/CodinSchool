@@ -4,6 +4,7 @@ import router from './router'
 import { createProvider } from './vue-apollo'
 import SuiVue from 'semantic-ui-vue'
 import 'semantic-ui-css/semantic.min.css'
+import './bootstrap-margin-padding.no-responsive.min.css'
 
 Vue.config.productionTip = false
 Vue.use(SuiVue)

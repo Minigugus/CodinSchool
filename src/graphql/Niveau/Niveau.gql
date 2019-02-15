@@ -1,0 +1,11 @@
+#import "./FragmentNiveau.gql"
+#import "./FragmentExercice.gql"
+
+query Niveau($id: ID!) {
+  niveau (id: $id) {
+    ...niveau
+    exercices {
+      ...exercice
+    }
+  }
+}

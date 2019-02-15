@@ -7,7 +7,7 @@
     </h2>
 
     <ApolloMutation
-      :mutation="require('@/graphql/ResetMdp.gql')"
+      :mutation="require('@/graphql/Utilisateur/ResetMdp.gql')"
       :variables="{
         email,
         code,
@@ -47,7 +47,7 @@
         </form>
       </template>
 
-      <Alerte ref="notifs" :typeAlerte="typeAlerte" :fermable="typeAlerte !== 'Succès'" />
+      <Alerte ref="notifs" :type-alerte="typeAlerte" :fermable="typeAlerte !== 'Succès'" />
     </ApolloMutation>
   </div>
 </template>
@@ -57,9 +57,19 @@ import { setErreurInput } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
 
 export default {
-  name: 'mdpoublie',
+  name: 'MdpReset',
   components: {
     Alerte
+  },
+  props: {
+    email: {
+      type: String,
+      required: true
+    },
+    code: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
@@ -68,7 +78,6 @@ export default {
       typeAlerte: 'Erreur'
     }
   },
-  props: ['email', 'code'],
   methods: {
     // Afficher une alerte
     ajouterNotif(...str) {
