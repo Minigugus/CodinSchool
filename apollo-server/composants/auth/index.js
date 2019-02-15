@@ -1,7 +1,7 @@
 // import Sequelize from 'sequelize'
 import { validerJeton } from './AuthJWT'
-import { recupererParID } from '../utilisateur'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
+import { ProfileAvecRoles } from '../utilisateur/ProfileModele'
 
 export * from './AuthJWT'
 export * from './AuthMDP'
@@ -15,7 +15,7 @@ export default async jeton => {
     jeton = jeton.slice(7)
     const decode = await validerJeton(jeton)
     if (decode && !('id' in decode)) return null
-    const utilisateur = await recupererParID(decode.id)
+    const utilisateur = await ProfileAvecRoles.findByPk(decode.id)
     if (!utilisateur) return null
     return utilisateur
   }
