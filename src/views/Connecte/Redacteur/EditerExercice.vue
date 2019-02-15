@@ -81,7 +81,9 @@
                 nom="Identifiant"
                 id="id"
                 :err="champs.exercice.id.err"
+                disabled
               />
+              <!-- https://github.com/Minigugus/CodinSchool/issues/20 -->
 
               <form-champs
                 v-model="exercice.titre"

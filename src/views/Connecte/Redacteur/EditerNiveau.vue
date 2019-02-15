@@ -82,8 +82,9 @@
                 nom="Identifiant"
                 id="id"
                 :err="champs.niveau.id.err"
-                :disabled="exercice.sontDraggable"
+                disabled
               />
+              <!-- :disabled="exercice.sontDraggable" https://github.com/Minigugus/CodinSchool/issues/20 -->
 
               <form-champs
                 v-model="niveau.titre"
