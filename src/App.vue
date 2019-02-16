@@ -51,25 +51,30 @@
                 <div v-else key="menuConnecte" class="right menu">
                   <sui-dropdown text="Gestion" :item="true">
                     <sui-dropdown-menu>
-                      <sui-dropdown-header>Etudiant</sui-dropdown-header>
-                      <sui-dropdown-item :disabled="true">Liste des exercices</sui-dropdown-item>
+                      <!-- Visible par les permissions "GESTION_NIVEAU" ou "GESTION_EXERCICE" -->
+                      <template v-if="moi.permissions.some(x => x === 'GESTION_NIVEAU' || x === 'GESTION_EXERCICE')">
+                        <sui-dropdown-header>Gestion de contenu</sui-dropdown-header>
 
-                      <sui-dropdown-divider />
+                        <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Liste des niveaux</router-link>
+                        <router-link to="/NiveauExercice/niveau/ajouterNiveau" class="item" exact-active-class="active">Ajouter un niveau</router-link>
+                        <router-link to="/NiveauExercice/ajouterExercice" class="item" exact-active-class="active">Ajouter un exercice</router-link>
+                      </template>
+                      <!--/ Visible par les permissions "GESTION_NIVEAU" ou "GESTION_EXERCICE" -->
 
-                      <sui-dropdown-header>Rédacteur</sui-dropdown-header>
+                      <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
+                      <template v-if="moi.permissions.some(x => x === 'GESTION_UTILISATEUR' || x === 'GESTION_ROLE')">
+                        <sui-dropdown-divider />
 
-                      <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
-
-                      <sui-dropdown-divider />
-
-                      <sui-dropdown-header>Administrateur</sui-dropdown-header>
-                      <sui-dropdown-item :disabled="true">Gérer les utilisateurs</sui-dropdown-item>
-                      <sui-dropdown-item :disabled="true">Gérer les rôles</sui-dropdown-item>
+                        <sui-dropdown-header>Administration</sui-dropdown-header>
+                        <sui-dropdown-item v-if="moi.permissions.includes('GESTION_UTILISATEUR')" disabled>Gérer les utilisateurs</sui-dropdown-item>
+                        <router-link v-if="moi.permissions.includes('GESTION_ROLE')" to="/Administration/gererRoles" class="item" exact-active-class="active">Gérer les rôles</router-link>
+                      </template>
+                      <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
                     </sui-dropdown-menu>
                   </sui-dropdown>
 
                   <router-link to="/profil" class="item" exact-active-class="active">Profil</router-link>
-                  <a @click="deconnexion" class="item" exact-active-class="active">Se déconnecter</a>
+                  <a @click.prevent="deconnexion" class="item" exact-active-class="active">Se déconnecter</a>
                 </div>
               </transition>
             </template>
@@ -100,7 +105,7 @@
             </div>
             <div class="seven wide column">
               <router-link to="/mentionsLegales" exact-active-class="active" class="underlineHover blanc">Mentions Legales</router-link>
-              <p>&copy; 2018 Codinschool</p>
+              <p>&copy; {{ new Date().getFullYear() }} Codinschool</p>
             </div>
           </div>
         </div>
