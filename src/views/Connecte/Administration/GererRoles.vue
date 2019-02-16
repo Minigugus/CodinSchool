@@ -216,6 +216,20 @@ export default {
         mutation: SupprimerRole,
         variables: {
           id: aRole.id
+        },
+        update: (store, { data: { supprimerRole: idRoleSupprime } }) => {
+          const oldData = store.readQuery({ query: Roles })
+          const index = oldData.roles.findIndex(x => x.id === idRoleSupprime)
+          if (index !== -1) {
+            oldData.roles.splice(index, 1)
+            store.writeQuery({ query: Roles, data: oldData })
+
+            this.modalConfirmationSuppression = false
+            this.suppressionRoleCible = null
+            this.$refs.erreurs.viderAlerte()
+            this.typeAlerte = 'Succès'
+            this.$refs.erreurs.ajouterAlerte('Le rôle a été supprimé.')
+          }
         }
       })
     }
@@ -229,5 +243,8 @@ export default {
 }
 th[title] {
   cursor: help !important;
+}
+.bgTransparent {
+  background-color: transparent !important;
 }
 </style>
