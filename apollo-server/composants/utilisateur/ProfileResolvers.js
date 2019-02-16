@@ -1,5 +1,5 @@
 import { creerJeton } from '../auth'
-import { recupererTous, recupererParID, inscrire, authentifier, activerCompte, demandeResetMdp, resetMdp } from './ProfileLogique'
+import { recupererTous, recupererParID, inscrire, authentifier, activerCompte, demandeResetMdp, resetMdp, editerProfile, creerProfile, supprimerProfile } from './ProfileLogique'
 
 export default {
   Query: {
@@ -34,17 +34,31 @@ export default {
     },
     reinitialisationMotDePasse(_, { email, code, motDePasse }) {
       return resetMdp(email, code, motDePasse)
+    },
+
+    editer(_, { modifications }, { utilisateur }) {
+      return editerProfile(utilisateur.id, modifications)
+    },
+
+    creerUtilisateur(_, { utilisateur }) {
+      return creerProfile(utilisateur)
+    },
+    editerUtilisateur(_, { id, modifications }) {
+      return editerProfile(id, modifications)
+    },
+    supprimerUtilisateur(_, { id }) {
+      return supprimerProfile(id)
     }
   },
 
   Profile: {
     async roles(profile) {
-      if (!profile.roles)
+      if (!profile.role)
         profile.role = await profile.getRole()
-      return profile.roles
+      return profile.role
     },
     async permissions(profile) {
-      if (!profile.roles)
+      if (!profile.role)
         profile.role = await profile.getRole()
       return [...profile.permissions]
     }

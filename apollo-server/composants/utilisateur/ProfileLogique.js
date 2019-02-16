@@ -12,7 +12,8 @@ import {
   CodeInvalideError,
   CodeOuEmailInvalideError,
   CompteNonActiveError,
-  ValidationEchoueeError
+  ValidationEchoueeError,
+  UtilisateurNonTrouveError
 } from './ProfileErreurs'
 
 export const recupererTous = () => Profile.findAll()
@@ -22,36 +23,27 @@ export const recupererParEmail = email =>
 export const recupererParValidation = validation =>
   Profile.findOne({ where: { validationInscription: { in: [validation] } } })
 
-export const authentifier = async (email, motDePasse) => {
-  const utilisateur = await recupererParEmail(email)
-  if (utilisateur && (await comparer(motDePasse, utilisateur.motDePasse)))
-    if (!utilisateur.validationInscription) return utilisateur
-    else throw new CompteNonActiveError(utilisateur.id)
-  throw new IdentifiantsNonReconnusError(email)
-}
-
-export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }) => {
+export const creerProfile = async ({ email, motDePasse, nom, prenom, dateNaissance }, validation = false) => {
   try {
-    const utilisateur = await Profile.create({
+    const options = {
       emailPrimaire: email.toLowerCase(),
       motDePasse: await hasher(motDePasse),
       nom,
       prenom,
-      dateNaissance,
-      role: (await Role.findAll()).filter(x => x.parDefaut)
-    }, { include: [ { model: Role, as: 'role' } ] })
+      dateNaissance
+    }
+    if (!validation)
+      options.validationInscription = null
+    const profile = await Profile.create(options)
     try {
-      await mailActivationCompte(
-        utilisateur.emailPrimaire,
-        `${utilisateur.prenom} ${utilisateur.nom}`,
-        utilisateur.validationInscription
-      )
-      return utilisateur
+      const roles = (await Role.findAll()).filter(role => role.parDefaut).map(role => role.id)
+      if (roles.length)
+        await profile.setRole(roles)
+      return profile
     }
     catch (err) {
-      // Suppresion du compte pour libérer l'adresse mail
-      await utilisateur.destroy()
-      throw new ErreurInattendueError('AUTH_INSCRIRE_MAIL_ACTIVATION', { err })
+      await profile.destroy()
+      throw err
     }
   }
   catch (err) {
@@ -72,7 +64,48 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
           message: erreur.message
         }))
       )
-    throw new ErreurInattendueError('AUTH_INSCRIRE', { err, message: err.message })
+    throw new ErreurInattendueError('AUTH_CREER_PROFILE', { err, message: err.message })
+  }
+}
+
+export const editerProfile = async (id, profile) => {
+  if (Object.keys(profile).length) {
+    const affecte = await Profile.update(profile, { where: { id } })
+    if (!affecte[0])
+      throw new UtilisateurNonTrouveError(id)
+  }
+  return Profile.findByPk(id)
+}
+
+export const supprimerProfile = async id => {
+  const affecte = await Profile.destroy({ where: { id } })
+  if (!affecte)
+    throw new UtilisateurNonTrouveError(id)
+  return id
+}
+
+export const authentifier = async (email, motDePasse) => {
+  const utilisateur = await recupererParEmail(email)
+  if (utilisateur && (await comparer(motDePasse, utilisateur.motDePasse)))
+    if (!utilisateur.validationInscription) return utilisateur
+    else throw new CompteNonActiveError(utilisateur.id)
+  throw new IdentifiantsNonReconnusError(email)
+}
+
+export const inscrire = async (profile) => {
+  const utilisateur = await creerProfile(profile, true)
+  try {
+    await mailActivationCompte(
+      utilisateur.emailPrimaire,
+      `${utilisateur.prenom} ${utilisateur.nom}`,
+      utilisateur.validationInscription
+    )
+    return utilisateur
+  }
+  catch (err) {
+    // Suppresion du compte pour libérer l'adresse mail
+    await utilisateur.destroy()
+    throw new ErreurInattendueError('AUTH_INSCRIRE_MAIL_ACTIVATION', { err })
   }
 }
 
