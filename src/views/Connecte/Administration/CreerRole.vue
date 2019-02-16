@@ -87,6 +87,7 @@ import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
+import Roles from '@/graphql/Administration/Roles.gql'
 import Permissions from '@/graphql/Administration/Permissions.gql'
 
 export default {
@@ -97,6 +98,7 @@ export default {
   },
   mixins: [Utilisateur],
   apollo: {
+    roles: Roles,
     permissions: {
       query: Permissions,
       update({__type: { enumValues } }) {
@@ -159,10 +161,15 @@ export default {
       return tousRemplis
     },
 
-    roleCree({ data }) {
+    roleCree({ data: { creerRole: nouveauRole } }) {
+      // Mise à jour du cache
+      const apolloClient = this.$apollo.provider.defaultClient
+      const oldData = apolloClient.readQuery({ query: Roles })
+      oldData.roles.push(nouveauRole)
+      apolloClient.writeQuery({ query: Roles, data: oldData })
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`Le rôle "${data.creerRole.id}" a été ajouté.`)
+      this.$refs.erreurs.ajouterAlerte(`Le rôle "${nouveauRole.nom}" a été ajouté.`)
     }
   }
 }
