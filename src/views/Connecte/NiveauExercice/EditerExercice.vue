@@ -243,7 +243,6 @@ export default {
     async supprimerExercice() {
       const apolloClient = this.$apollo.provider.defaultClient
 
-      // Mise à jour du cache
       await apolloClient.mutate({
         mutation: SupprimerExercice,
         variables: {

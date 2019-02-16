@@ -1,0 +1,7 @@
+#import "./FragmentRole.gql"
+
+mutation CreerRole($role: CreationRole!) {
+  creerRole(role: $role) {
+    ...role
+  }
+}
