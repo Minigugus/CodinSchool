@@ -68,6 +68,7 @@
                         <sui-dropdown-header>Administration</sui-dropdown-header>
                         <sui-dropdown-item v-if="moi.permissions.includes('GESTION_UTILISATEUR')" disabled>Gérer les utilisateurs</sui-dropdown-item>
                         <router-link v-if="moi.permissions.includes('GESTION_ROLE')" to="/Administration/gererRoles" class="item" exact-active-class="active">Gérer les rôles</router-link>
+                        <router-link v-if="moi.permissions.includes('GESTION_ROLE')" to="/Administration/creerRole" class="item" exact-active-class="active">Créer un rôle</router-link>
                       </template>
                       <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
                     </sui-dropdown-menu>
