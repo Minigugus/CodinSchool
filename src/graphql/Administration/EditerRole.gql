@@ -1,0 +1,7 @@
+#import "./FragmentRole.gql"
+
+mutation EditerRole($id: ID!, $role: EditionRole!) {
+  editerRole(id: $id, role: $role) {
+    ...role
+  }
+}

@@ -4,7 +4,11 @@ fragment utilisateur on Profile {
   prenom
   emailPrimaire
   dateInscription
-  role
+  roles {
+    id
+    nom
+  }
+  permissions
   dateNaissance
   adresse
   codePostal
