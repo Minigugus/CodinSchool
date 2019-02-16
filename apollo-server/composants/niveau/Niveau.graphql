@@ -1,6 +1,9 @@
 #import * from "../exercice/Exercice.graphql"
 
 enum Permission {
+	"""
+	Gestion des Niveaux - Permet l'édition de tous les Niveaux de CodinSchool.
+	"""
 	GESTION_NIVEAU
 }
 

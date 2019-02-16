@@ -22,6 +22,11 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
     champ[TYPE_REQUIS] = this.args.requis
   }
 
+  visitInputFieldDefinition(champ, details) {
+    this.assurerChampsProteges(details.objectType)
+    champ[TYPE_REQUIS] = this.args.requis
+  }
+
   assurerChampsProteges(type) {
     if (!type[DEJA_PROTEGE]) {
       type[DEJA_PROTEGE] = true

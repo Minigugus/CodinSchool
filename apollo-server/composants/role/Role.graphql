@@ -1,4 +1,7 @@
 enum Permission {
+	"""
+	Gestion des Roles - Permet l'édition des Roles de CodinSchool.
+	"""
 	GESTION_ROLE
 }
 

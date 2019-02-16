@@ -132,8 +132,8 @@ Object.defineProperty(Profile.prototype, 'permissions', {
   enumerable: true,
   // eslint-ignore no-underscore-dangle
   get() {
-    if (!this._permissions && this.roles)
-      this._permissions = this.roles.reduce((set, role) => {
+    if (!this._permissions && this.role)
+      this._permissions = this.role.reduce((set, role) => {
         role.permissions.forEach(set.add, set)
         return set
       }, new Set())

@@ -1,4 +1,7 @@
 enum Permission {
+	"""
+	Gestion des Utilisateurs - Permet l'édition du profil de tous les Utilisateurs de CodinSchool.
+	"""
 	GESTION_UTILISATEUR
 }
 

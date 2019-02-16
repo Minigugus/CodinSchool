@@ -2,4 +2,4 @@
 
 directive @acces(
   requis: [Permission!] = []
-) on OBJECT | FIELD_DEFINITION
+) on OBJECT | FIELD_DEFINITION | INPUT_FIELD_DEFINITION

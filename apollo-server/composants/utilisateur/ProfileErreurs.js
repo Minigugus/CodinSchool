@@ -43,3 +43,9 @@ export class ValidationEchoueeError extends CodinSchoolError {
     super('VALIDATION_ECHOUEE', 'Un ou plusieurs champs sont invalides.', { champs })
   }
 }
+
+export class UtilisateurNonTrouveError extends CodinSchoolError {
+  constructor(id) {
+    super('UTILISATEUR_NON_TROUVE', `L'Utilisateur « ${id} » n'a pas été trouvé.`, { id })
+  }
+}
