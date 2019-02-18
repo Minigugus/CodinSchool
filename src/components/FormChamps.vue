@@ -5,18 +5,28 @@
       v-if="tag === 'input'"
       :type="type"
       :id="id"
-      :value="value"
+      v-model="localValue"
       @input="$emit('input', $event.target.value)"
       :placeholder="placeholder"
-    >
+    />
 
     <textarea
       v-else-if="tag === 'textarea'"
       :id="id"
-      :value="value"
+      v-model="localValue"
       @input="$emit('input', $event.target.value)"
       :placeholder="placeholder"
-    ></textarea>
+    />
+
+    <vue-editor
+      v-else-if="tag === 'texteditor'"
+      :id="id"
+      v-model="localValue"
+      @input="$emit('input', $event)"
+      use-markdown-shortcuts
+      :editor-options="editorSettings"
+    />
+
 
     <div v-for="(anError, index) in err" :key="id + '-' + index" class="ui basic red pointing prompt label transition">
       {{ anError }}
@@ -25,9 +35,15 @@
 </template>
 
 <script>
+import hljs from 'highlight.js'
+import 'highlight.js/styles/atom-one-dark-reasonable.css'
+import { VueEditor } from 'vue2-editor'
 
 export default {
   name: 'FormChamps',
+  components: {
+    VueEditor
+  },
   props: {
     value: {
       type: [String, Number, Boolean],
@@ -70,6 +86,21 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    }
+  },
+
+  data() {
+    return {
+      localValue: this.value,
+
+      editorSettings: {
+        modules: {
+          syntax: {
+            highlight: text => hljs.highlightAuto(text).value
+          }
+        },
+        placeholder: this.placeholder
+      }
     }
   }
 }
