@@ -48,7 +48,7 @@ export default {
     value: {
       type: [String, Number, Boolean],
       required: false,
-      default: 'text'
+      default: ''
     },
     tag: {
       type: String,
