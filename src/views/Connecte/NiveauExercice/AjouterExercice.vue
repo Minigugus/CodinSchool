@@ -66,6 +66,8 @@
       </ApolloMutation>
     <!--/ Formulaire d'ajout d'exercice -->
     </div>
+
+    <editeur-code v-model="vvvv" langage-mime-type="application/javascript" />
   </div>
 </template>
 
@@ -76,11 +78,15 @@ import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
+
+import EditeurCode from '@/components/EditeurCode.vue'
+
 export default {
   name: 'AjouterExercice',
   components: {
     Alerte,
-    FormChamps
+    FormChamps,
+    EditeurCode
   },
   mixins: [Utilisateur],
   props: {
@@ -92,6 +98,7 @@ export default {
   },
   data() {
     return {
+      vvvv: '',
       champs: {
         id: { v: '', err: [] },
         titre: { v: '', err: [] },
