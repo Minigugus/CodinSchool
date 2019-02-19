@@ -56,7 +56,7 @@
               :err="champs.enonce.err"
             />
 
-            <form-champs v-model="champs.correction.v" tag="textarea" nom="Correction" id="correction" :err="champs.correction.err" />
+            <form-champs v-model="champs.correction.v" tag="codeeditor" nom="Correction" id="correction" :err="champs.correction.err" />
 
             <button class="ui button" type="submit">Ajouter l'exercice</button>
           </form>
@@ -66,8 +66,6 @@
       </ApolloMutation>
     <!--/ Formulaire d'ajout d'exercice -->
     </div>
-
-    <editeur-code v-model="vvvv" langage-mime-type="application/javascript" />
   </div>
 </template>
 
@@ -78,15 +76,11 @@ import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
-
-import EditeurCode from '@/components/EditeurCode.vue'
-
 export default {
   name: 'AjouterExercice',
   components: {
     Alerte,
-    FormChamps,
-    EditeurCode
+    FormChamps
   },
   mixins: [Utilisateur],
   props: {

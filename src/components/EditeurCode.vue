@@ -17,6 +17,7 @@ import 'codemirror/theme/monokai.css'
 
 // TODO: Dynamic module injection ??? Voir functions.js qui contient les URI vers les modules.
 // import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/clike/clike.js'
 
 // const importModule = uri => import('' + uri)
 
@@ -52,7 +53,7 @@ export default {
   async mounted() {
     const res = mimes.find(x => x.text === this.langageMimeType)
     if (res) {
-      console.log(res)
+      // console.log(res)
       // await importModule(res.value)
       this.pret = true
     }

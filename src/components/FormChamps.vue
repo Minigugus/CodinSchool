@@ -27,6 +27,12 @@
       :editor-options="editorSettings"
     />
 
+    <editeur-code
+      v-else-if="tag === 'codeeditor'"
+      v-model="localValue"
+      langage-mime-type="text/x-csrc"
+      @input="$emit('input', $event)"
+    />
 
     <div v-for="(anError, index) in err" :key="id + '-' + index" class="ui basic red pointing prompt label transition">
       {{ anError }}
@@ -38,11 +44,13 @@
 import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark-reasonable.css'
 import { VueEditor } from 'vue2-editor'
+import EditeurCode from '@/components/EditeurCode.vue'
 
 export default {
   name: 'FormChamps',
   components: {
-    VueEditor
+    VueEditor,
+    EditeurCode
   },
   props: {
     value: {
