@@ -1,5 +1,6 @@
 <template>
-  <div v-if="pret" class="ui container">
+  <div v-if="loading" class="ui active centered inline loader"></div>
+  <div v-else class="ui container">
     <codemirror
       v-model="localValue"
       :options="cmOptions"
@@ -9,17 +10,11 @@
 </template>
 
 <script>
-import { mimes } from '@/functions'
-
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
 
-// TODO: Dynamic module injection ??? Voir functions.js qui contient les URI vers les modules.
-// import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/mode/clike/clike.js'
-
-// const importModule = uri => import('' + uri)
+import { loadCodeMirrorModule } from '@/codeMirrorLanguagesLoader'
 
 export default {
   name: 'EditeurCode',
@@ -31,33 +26,47 @@ export default {
       type: String,
       required: true
     },
-    langageMimeType: {
+    langageName: {
       type: String,
       required: true
     }
   },
   data() {
     return {
-      pret: false,
+      loading: true,
 
       localValue: this.value,
       cmOptions: {
         tabSize: 2,
-        mode: this.langageMimeType,
+        mode: null,
         theme: 'monokai',
         lineNumbers: true,
         line: true
       }
     }
   },
-  async mounted() {
-    const res = mimes.find(x => x.text === this.langageMimeType)
-    if (res) {
-      // console.log(res)
-      // await importModule(res.value)
-      this.pret = true
+
+  watch: {
+    langageName() {
+      this.loadLangageName()
     }
-    else console.error('Le mime type indiqué pour l\'éditeur de code n\'existe pas.')
+  },
+  mounted() {
+    this.loadLangageName()
+  },
+
+  methods: {
+    async loadLangageName() {
+      this.loading = true
+      try {
+        const language = await loadCodeMirrorModule(this.langageName)
+        this.cmOptions.mode = language.codeMirrorMode
+        this.loading = false
+      }
+      catch (err) {
+        console.error('Le langage de code indiqué pour l\'éditeur de code n\'a pas été trouvé.')
+      }
+    }
   }
 }
 </script>
