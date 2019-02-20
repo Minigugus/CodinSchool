@@ -56,7 +56,14 @@
               :err="champs.enonce.err"
             />
 
-            <form-champs v-model="champs.correction.v" tag="codeeditor" nom="Correction" id="correction" :err="champs.correction.err" />
+            <form-champs
+              v-model="champs.correction.v"
+              tag="codeeditor"
+              nom="Correction"
+              id="Correction"
+              type="JavaScript"
+              :err="champs.correction.err"
+            />
 
             <button class="ui button" type="submit">Ajouter l'exercice</button>
           </form>
@@ -92,7 +99,6 @@ export default {
   },
   data() {
     return {
-      vvvv: '',
       champs: {
         id: { v: '', err: [] },
         titre: { v: '', err: [] },
