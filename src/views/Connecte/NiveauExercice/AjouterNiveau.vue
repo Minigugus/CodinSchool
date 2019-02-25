@@ -48,9 +48,12 @@
 </template>
 
 <script>
-import Utilisateur from '@/mixins/Utilisateur'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 
 export default {
@@ -59,7 +62,6 @@ export default {
     Alerte,
     FormChamps
   },
-  mixins: [Utilisateur],
   data() {
     return {
       champs: {
@@ -71,6 +73,15 @@ export default {
     }
   },
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result({ loading, data }) {
+        if (loading) return
+        // Vérification que l'utilisateur possède les permissions requises par la route
+        const permissionsRequises = ['GESTION_NIVEAU', 'GESTION_EXERCICE']
+        checkPermissions(data.moi.permissions, permissionsRequises, this.$router)
+      }
+    },
     // Chargement des niveaux si pas déjà en cache
     // (Evite erreur si user recharge la page sans passer par la liste des niveaux)
     niveaux: Niveaux

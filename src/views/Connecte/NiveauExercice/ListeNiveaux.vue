@@ -72,8 +72,11 @@
 </template>
 
 <script>
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import draggable from 'vuedraggable'
-import Utilisateur from '@/mixins/Utilisateur'
+
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 import ReorganiserNiveaux from '@/graphql/NiveauExercice/ReorganiserNiveaux.gql'
 
@@ -82,7 +85,6 @@ export default {
   components: {
     draggable
   },
-  mixins: [Utilisateur],
   data() {
     return {
       niveau: {
@@ -92,6 +94,15 @@ export default {
   },
 
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result({ loading, data }) {
+        if (loading) return
+        // Vérification que l'utilisateur possède les permissions requises par la route
+        const permissionsRequises = ['GESTION_NIVEAU', 'GESTION_EXERCICE']
+        checkPermissions(data.moi.permissions, permissionsRequises, this.$router)
+      }
+    },
     niveaux: Niveaux
   },
 
