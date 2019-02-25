@@ -144,7 +144,9 @@
 </template>
 
 <script>
-import Utilisateur from '@/mixins/Utilisateur'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
@@ -158,7 +160,6 @@ export default {
     Alerte,
     FormChamps
   },
-  mixins: [Utilisateur],
   props: {
     idExercice: {
       type: String,
@@ -186,6 +187,15 @@ export default {
     }
   },
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result({ loading, data }) {
+        if (loading) return
+        // Vérification que l'utilisateur possède les permissions requises par la route
+        const permissionsRequises = ['GESTION_NIVEAU', 'GESTION_EXERCICE']
+        checkPermissions(data.moi.permissions, permissionsRequises, this.$router)
+      }
+    },
     niveaux: NiveauxExercices,
     exercice() {
       return {
