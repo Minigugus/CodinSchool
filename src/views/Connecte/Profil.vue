@@ -8,7 +8,6 @@
 <script>
 import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 
-
 export default {
   name: 'Profil',
   apollo: {
