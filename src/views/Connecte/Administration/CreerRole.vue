@@ -101,12 +101,7 @@ export default {
   apollo: {
     moi: {
       query: Utilisateur,
-      result({ loading, data }) {
-        if (loading) return
-        // Vérification que l'utilisateur possède les permissions requises par la route
-        const permissionsRequises = ['GESTION_ROLE']
-        checkPermissions(data.moi.permissions, permissionsRequises, this.$router)
-      }
+      result: checkPermissions(['GESTION_ROLE'])
     },
     roles: Roles,
     permissions: {
