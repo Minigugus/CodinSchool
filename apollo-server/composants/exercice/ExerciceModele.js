@@ -18,7 +18,7 @@ const Exercice = bdd.define(
     enonce: {
       allowNull: false,
       defaultValue: '',
-      type: Sequelize.STRING
+      type: Sequelize.STRING(2000)
     },
 
     position: {
@@ -29,7 +29,7 @@ const Exercice = bdd.define(
     correction: {
       allowNull: false,
       defaultValue: '',
-      type: Sequelize.STRING
+      type: Sequelize.STRING(20000)
     }
   },
   {

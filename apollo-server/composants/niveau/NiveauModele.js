@@ -20,7 +20,7 @@ const Niveau = bdd.define(
     introduction: {
       allowNull: false,
       defaultValue: '',
-      type: Sequelize.STRING
+      type: Sequelize.STRING(5000)
     },
 
     position: {
