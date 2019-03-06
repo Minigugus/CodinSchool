@@ -1,0 +1,7 @@
+#import "@/graphql/Utilisateur/FragmentUtilisateur.gql"
+
+mutation EditerUtilisateur($id: ID!, $modifications: EditionProfilePrivilegie!) {
+  editerUtilisateur(id: $id, modifications: $modifications) {
+    ...utilisateur
+  }
+}
