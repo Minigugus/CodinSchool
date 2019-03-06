@@ -11,5 +11,12 @@ export default [
     path: '/Administration/creerRole',
     name: 'CreerRole',
     component: () => import('@/views/Connecte/Administration/CreerRole.vue')
+  },
+
+  {
+    // Editer les utilisateurs de l'application
+    path: '/Administration/gererUtilisateurs',
+    name: 'GererUtilisateurs',
+    component: () => import('@/views/Connecte/Administration/GererUtilisateurs.vue')
   }
 ]

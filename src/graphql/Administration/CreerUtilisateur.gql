@@ -1,0 +1,7 @@
+#import "@/graphql/Utilisateur/FragmentUtilisateur.gql"
+
+mutation CreerUtilisateur($utilisateur: Inscription!) {
+  creerUtilisateur(utilisateur: $utilisateur) {
+    ...utilisateur
+  }
+}
