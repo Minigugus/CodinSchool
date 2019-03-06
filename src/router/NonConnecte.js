@@ -1,6 +1,6 @@
 import Accueil from '@/views/Accueil.vue'
 
-/** Liste des pages qui ne nécessitent pas de connexion `/` */
+/** Liste des pages qui ne nécessitent pas de connexion */
 export default [
   {
     // Page d'accueil
@@ -51,12 +51,6 @@ export default [
     name: 'Activation',
     component: () => import('@/views/NonConnecte/Activation.vue'),
     props: true
-  },
-  {
-    // Profil d'utilisateur
-    path: '/profil',
-    name: 'Profil',
-    component: () => import('@/views/Connecte/Profil.vue')
   },
   {
     path: '/mentionsLegales',

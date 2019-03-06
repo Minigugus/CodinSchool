@@ -30,7 +30,7 @@ const setErreurInput = (activerErreur, ...id) =>
  */
 const checkPermissions = (permissionsRequises, routeRedirection = 'Profil') =>
   function ({ loading, data }) {
-    if (loading && !permissionsRequises.every(x => data.moi.permissions.includes(x)))
+    if (!loading && !permissionsRequises.every(x => data.moi.permissions.includes(x)))
       this.$router.replace({ name: routeRedirection })
   }
 
