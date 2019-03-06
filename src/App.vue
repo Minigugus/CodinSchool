@@ -49,15 +49,14 @@
                   <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
                 </div>
                 <div v-else key="menuConnecte" class="right menu">
+                  <!-- Menu principal de gestion -->
                   <sui-dropdown text="Gestion" :item="true">
                     <sui-dropdown-menu>
                       <!-- Visible par les permissions "GESTION_NIVEAU" et "GESTION_EXERCICE" -->
                       <template v-if="possedePermission(['GESTION_NIVEAU', 'GESTION_EXERCICE'], 'AND')">
                         <sui-dropdown-header>Gestion de contenu</sui-dropdown-header>
 
-                        <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Liste des niveaux</router-link>
-                        <router-link to="/NiveauExercice/niveau/ajouterNiveau" class="item" exact-active-class="active">Ajouter un niveau</router-link>
-                        <router-link to="/NiveauExercice/ajouterExercice" class="item" exact-active-class="active">Ajouter un exercice</router-link>
+                        <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
                       </template>
                       <!--/ Visible par les permissions "GESTION_NIVEAU" et "GESTION_EXERCICE" -->
 
@@ -66,16 +65,22 @@
                         <sui-dropdown-divider />
 
                         <sui-dropdown-header>Administration</sui-dropdown-header>
-                        <sui-dropdown-item v-if="possedePermission(['GESTION_UTILISATEUR'])" disabled>Gérer les utilisateurs</sui-dropdown-item>
+                        <sui-dropdown-item v-if="possedePermission(['GESTION_UTILISATEUR'])" to="/Administration/gererUtilisateurs">Gérer les utilisateurs</sui-dropdown-item>
                         <router-link v-if="possedePermission(['GESTION_ROLE'])" to="/Administration/gererRoles" class="item" exact-active-class="active">Gérer les rôles</router-link>
-                        <router-link v-if="possedePermission(['GESTION_ROLE'])" to="/Administration/creerRole" class="item" exact-active-class="active">Créer un rôle</router-link>
                       </template>
                       <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
                     </sui-dropdown-menu>
                   </sui-dropdown>
+                  <!-- /Menu principal de gestion -->
 
-                  <router-link to="/profil" class="item" exact-active-class="active">Profil</router-link>
-                  <a @click.prevent="deconnexion" class="item" exact-active-class="active">Se déconnecter</a>
+                  <!-- Menu personnel de l'utilisateur -->
+                  <sui-dropdown :text="moi.prenom + ' ' + moi.nom" :item="true">
+                    <sui-dropdown-menu>
+                      <router-link to="/profil" class="item" exact-active-class="active">Mon profil</router-link>
+                      <sui-dropdown-item @click.prevent="deconnexion">Se déconnecter</sui-dropdown-item>
+                    </sui-dropdown-menu>
+                  </sui-dropdown>
+                  <!--/ Menu personnel de l'utilisateur -->
                 </div>
               </transition>
             </template>
