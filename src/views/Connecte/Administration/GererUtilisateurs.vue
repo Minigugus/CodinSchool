@@ -1,128 +1,89 @@
 <template>
   <div class="ui container">
     <!-- Ecran de chargement de la page -->
-    <div v-if="$apollo.queries.permissions.loading && $apollo.queries.roles.loading" class="ui text vertical segment container loading"></div>
+    <div v-if="$apollo.queries.utilisateurs.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
     <!-- Contenu de la page -->
     <div v-else class="ui container">
-      <!-- Modal de confirmation de suppression de rôle -->
+      <!-- Modal de confirmation de suppression d'utilisateur -->
       <sui-modal v-model="modalConfirmationSuppression" class="bgTransparent">
-        <template v-if="suppressionRoleCible">
-          <sui-modal-header>Supprimer le rôle "{{ suppressionRoleCible ? suppressionRoleCible.nom : '' }}"</sui-modal-header>
+        <template v-if="suppressionUtilisateurCible">
+          <sui-modal-header>
+            Supprimer l'utilisateur "{{
+              suppressionUtilisateurCible
+                ? suppressionUtilisateurCible.prenom + ' ' + suppressionUtilisateurCible.nom
+                : ''
+            }}" ?
+          </sui-modal-header>
           <sui-modal-content>
             <sui-modal-description>
-              <sui-header>Êtes-vous sûr de vouloir supprimer ce rôle ?</sui-header>
-              <p>L'ensemble des utilisateurs possédant ce rôle n'auront plus accès aux permissions qui lui sont associées.</p>
+              <sui-header>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</sui-header>
+              <p>L'utilisateur n'aura plus accès à la plateforme. Tous ses travaux seront supprimés.</p>
               <p>Cette action est irréversible.</p>
-
-              <div v-if="moi.roles.find(x => x.id === suppressionRoleCible.id)" class="mt-5">
-                <h2>
-                  <i class="exclamation triangle icon"></i> Attention !
-                </h2>
-                <h3>
-                  Vous possédez le rôle à supprimer. Vérifiez que vous garderez la permission "GESTION_ROLE" après suppression
-                  avec un autre de vos rôles. Dans le cas contraire vous n'aurez plus la possibilité d'éditer les rôles.
-                </h3>
-              </div>
             </sui-modal-description>
           </sui-modal-content>
           <sui-modal-actions>
             <sui-button secondary @click.native="modalConfirmationSuppression = false">Annuler</sui-button>
-            <sui-button negative @click.native="supprimerRole(suppressionRoleCible)">Valider la suppression</sui-button>
+            <sui-button negative @click.native="supprimerUtilisateur(suppressionUtilisateurCible)">Valider la suppression</sui-button>
           </sui-modal-actions>
         </template>
       </sui-modal>
-      <!--/ Modal de confirmation de suppression de rôle -->
+      <!--/ Modal de confirmation de suppression d'utilisateur -->
 
       <h2 class="ui center aligned header">
         <div class="content">
-          Gestion des rôles
+          Gestion des utilisateurs
         </div>
       </h2>
 
-      <!-- Tableau de gestion des rôles -->
+      <!-- Tableau de gestion des utilisateurs -->
       <table class="ui celled table table-center">
         <thead>
           <tr>
             <th>Effacer</th>
             <th>id</th>
-            <th>Rôle</th>
-            <!-- TODO: Placer des messages d'explication en title -->
-            <th title="Un message d'explication (TODO)">Par défaut</th>
-
-            <th v-for="(aPermission, index) in permissions" :key="'permission-' + index">
-              {{ aPermission }}
-            </th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Date d'inscription</th>
+            <th>Rôles</th>
+            <th>Editer</th>
           </tr>
         </thead>
         <tbody>
-          <!-- Liste des rôles et leur permission associée -->
-          <ApolloMutation
-            v-for="aRole in roles" :key="'role-' + aRole.id" tag="tr"
-            :mutation="require('@/graphql/Administration/EditerRole.gql')"
-            :variables="{
-              id: aRole.id,
-              role: {
-                id: aRole.id,
-                nom: aRole.nom,
-                parDefaut: aRole.parDefaut,
-                permissions: aRole.permissions
-              }
-            }"
-            @error="chargerErreur"
-            @done="cacheRole"
-          >
-            <!-- TODO: Alerte de notification de succès -->
-            <!-- TODO: Loading de l'édition de rôle -->
-            <template slot-scope="{ mutate }">
-              <td>
-                <!-- Bouton de suppression de rôle -->
-                <button @click="demandeSuppression(aRole)" class="ui icon button negative tiny">
-                  <i class="trash alternate icon"></i>
-                </button>
-                <!--/ Bouton de suppression de rôle -->
-              </td>
-              <td>{{ aRole.id }}</td>
-              <td>
-                <div class="ui small input">
-                  <input
-                    v-model="aRole.nom"
-                    @blur="checkVide($event) && mutate()"
-                    type="text"
-                    class="ui input text-center"
-                    placeholder="Nom du rôle"
-                  />
-                </div>
-              </td>
-              <td>
-                <input type="checkbox" v-model="aRole.parDefaut" @change="mutate()" />
-              </td>
-              <td
-                v-for="(aPermission, index) in permissions"
-                :key="`role-${aRole.id}-permission-${index}`"
-              >
-                <input
-                  type="checkbox"
-                  :checked="possedePermission(aRole, aPermission)"
-                  @change="togglePermission(aRole, aPermission)"
-                />
-              </td>
-            </template>
-          </ApolloMutation>
-          <!--/ Liste des rôles et leur permission associée -->
+          <tr v-for="aUser in utilisateurs" :key="'user-' + aUser.id">
+            <td>
+              <!-- Bouton de suppression d'utilisateur -->
+              <button @click="demandeSuppression(aUser)" class="ui icon button negative tiny">
+                <i class="trash alternate icon"></i>
+              </button>
+              <!--/ Bouton de suppression d'utilisateur -->
+            </td>
+            <td>{{ aUser.id.slice(0, 8) }}...</td>
+            <td>{{ aUser.prenom + ' ' + aUser.nom }}</td>
+            <td>{{ aUser.emailPrimaire }}</td>
+            <td>{{ aUser.dateInscription }}</td>
+            <td>{{ aUser.roles.map(x => x.nom).join(', ') }}</td>
+            <td>
+              <!-- Bouton de redirection vers page d'édition d'utilisateur -->
+              <button @click="demandeSuppression(aUser)" class="ui icon button negative tiny">
+                <i class="pen icon"></i>
+              </button>
+              <!--/ Bouton de redirection vers page d'édition d'utilisateur -->
+            </td>
+          </tr>
         </tbody>
       </table>
-      <!--/ Tableau de gestion des rôles -->
+      <!--/ Tableau de gestion des utilisateurs -->
 
-      <!-- Bouton d'ajout de rôle -->
+      <!-- Bouton d'ajout d'utilisateur -->
       <div class="text-center">
-        <router-link to="/Administration/creerRole/" class="ui button right labeled icon text-center" tag="button">
+        <router-link to="/Administration/creerUtilisateur/" class="ui button right labeled icon text-center" tag="button">
           <i class="plus icon"></i>
-          Créer un rôle
+          Créer un utilisateur
         </router-link>
       </div>
-      <!--/ Bouton d'ajout de rôle -->
+      <!--/ Bouton d'ajout d'utilisateur -->
 
       <Alerte ref="erreurs" :type-alerte="typeAlerte" />
     </div>
@@ -136,10 +97,8 @@ import { checkPermissions } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
 
-import Permissions from '@/graphql/Administration/Permissions.gql'
-import Roles from '@/graphql/Administration/Roles.gql'
-import EditerRole from '@/graphql/Administration/EditerRole.gql'
-import SupprimerRole from '@/graphql/Administration/SupprimerRole.gql'
+import Utilisateurs from '@/graphql/Administration/Utilisateurs.gql'
+import SupprimerUtilisateur from '@/graphql/Administration/SupprimerUtilisateur.gql'
 
 export default {
   name: 'GererUtilisateurs',
@@ -151,25 +110,16 @@ export default {
       query: Utilisateur,
       result: checkPermissions(['GESTION_UTILISATEUR'])
     },
-    permissions: {
-      query: Permissions,
-      update({__type: { enumValues } }) {
-        return enumValues.map(x => x.name)
-      }
-    },
-    roles: Roles
+    utilisateurs: Utilisateurs
   },
   data() {
     return {
       modalConfirmationSuppression: false,
-      suppressionRoleCible: null,
+      suppressionUtilisateurCible: null,
       typeAlerte: 'Erreur'
     }
   },
   methods: {
-    // Savoir si un rôle possède une permission
-    possedePermission: (role, permission) => role.permissions.includes(permission),
-
     // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
     chargerErreur(errorObject) {
       const { gqlError } = errorObject
@@ -181,83 +131,35 @@ export default {
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
-    // Vérifier que le champs n'est pas vide
-    checkVide({ srcElement: { value } }) {
-      if (value === '') {
-        // Affichage de l'erreur dans l'alerte
-        this.$refs.erreurs.viderAlerte()
-        this.typeAlerte = 'Erreur'
-        this.$refs.erreurs.ajouterAlerte('Le champs ne peut pas être vide.')
-        return false
-      }
-      return true
-    },
-
-    // Afficher la modal de confirmation de suppression de rôle
-    demandeSuppression(aRole) {
+    // Afficher la modal de confirmation de suppression d'utilisateur
+    demandeSuppression(aUser) {
       this.modalConfirmationSuppression = true
-      this.suppressionRoleCible = aRole
-    },
-
-    async togglePermission(aRole, aPermission) {
-      const role = this.roles.find(x => x.id === aRole.id)
-
-      const apolloClient = this.$apollo.provider.defaultClient
-      await apolloClient.mutate({
-        mutation: EditerRole,
-        variables: {
-          id: role.id,
-          role: {
-            id: role.id,
-            nom: role.nom,
-            parDefaut: role.parDefaut,
-            permissions: this.possedePermission(role, aPermission)
-              ? role.permissions.filter(x => x !== aPermission)
-              : role.permissions.concat(aPermission)
-          }
-        },
-        update: (_, gqlResponse) => this.cacheRole(gqlResponse)
-      })
+      this.suppressionUtilisateurCible = aUser
     },
 
     // Supprimer un rôle
-    async supprimerRole(aRole) {
+    async supprimerUtilisateur(aUser) {
       const apolloClient = this.$apollo.provider.defaultClient
       await apolloClient.mutate({
-        mutation: SupprimerRole,
+        mutation: SupprimerUtilisateur,
         variables: {
-          id: aRole.id
+          id: aUser.id
         },
-        update: (store, { data: { supprimerRole: idRoleSupprime } }) => {
-          const oldData = store.readQuery({ query: Roles })
-          const index = oldData.roles.findIndex(x => x.id === idRoleSupprime)
+        update: (store, { data: { supprimerUtilisateur: idUtilisateurSupprime } }) => {
+          const oldData = store.readQuery({ query: Utilisateurs })
+          const index = oldData.utilisateurs.findIndex(x => x.id === idUtilisateurSupprime)
           if (index !== -1) {
-            oldData.roles.splice(index, 1)
-            store.writeQuery({ query: Roles, data: oldData })
+            oldData.utilisateurs.splice(index, 1)
+            store.writeQuery({ query: Utilisateurs, data: oldData })
 
             this.modalConfirmationSuppression = false
-            this.suppressionRoleCible = null
+            this.suppressionUtilisateurCible = null
             this.$refs.erreurs.viderAlerte()
             this.typeAlerte = 'Succès'
-            this.$refs.erreurs.ajouterAlerte('Le rôle a été supprimé.')
+            this.$refs.erreurs.ajouterAlerte('L\'utilisateur a été supprimé.')
           }
         }
       })
-    },
-
-    // Mise à jour du rôle en cache
-    cacheRole({ data: { editerRole: roleModif } }) {
-      const apolloClient = this.$apollo.provider.defaultClient
-      const data = apolloClient.readQuery({ query: Roles })
-      const index = data.roles.findIndex(x => x.id === roleModif.id)
-      if (index !== -1) {
-        data.roles[index] = roleModif
-        apolloClient.writeQuery({ query: Roles, data })
-
-        this.$refs.erreurs.viderAlerte()
-        this.typeAlerte = 'Succès'
-        this.$refs.erreurs.ajouterAlerte(`Le rôle "${roleModif.nom}" a été modifié.`)
-      }
     }
   }
 }

@@ -65,7 +65,7 @@
                         <sui-dropdown-divider />
 
                         <sui-dropdown-header>Administration</sui-dropdown-header>
-                        <sui-dropdown-item v-if="possedePermission(['GESTION_UTILISATEUR'])" to="/Administration/gererUtilisateurs">Gérer les utilisateurs</sui-dropdown-item>
+                        <router-link v-if="possedePermission(['GESTION_UTILISATEUR'])" to="/Administration/gererUtilisateurs" class="item" exact-active-class="active">Gérer les utilisateurs</router-link>
                         <router-link v-if="possedePermission(['GESTION_ROLE'])" to="/Administration/gererRoles" class="item" exact-active-class="active">Gérer les rôles</router-link>
                       </template>
                       <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
