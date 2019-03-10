@@ -61,7 +61,7 @@
               tag="codeeditor"
               nom="Correction"
               id="Correction"
-              type="JavaScript"
+              type="C"
               :err="champs.correction.err"
             />
 

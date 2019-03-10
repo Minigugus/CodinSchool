@@ -60,7 +60,7 @@ export default {
       this.loading = true
       try {
         const language = await loadCodeMirrorModule(this.langageName)
-        this.cmOptions.mode = language.codeMirrorMode
+        this.cmOptions.mode = language.mimetypes[0] || null
         this.loading = false
       }
       catch (err) {
