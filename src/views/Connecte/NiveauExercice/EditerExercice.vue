@@ -2,7 +2,7 @@
   <div class="ui text vertical segment container">
     <!-- Erreur de chargement de la page -->
     <div v-if="erreurLoadingExercice" class="ui text vertical segment container">
-      <router-link :to="`/NiveauExercice/niveau/liste`" class="ui button left labeled icon" tag="button">
+      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
@@ -14,7 +14,7 @@
     <div v-else-if="!erreurLoadingExercice && $apollo.queries.exercice.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
-    <!-- Aleter de notification d'exercice supprimé -->
+    <!-- Alerte de notification d'exercice supprimé -->
     <div v-else-if="exerciceSupprime" class="ui text vertical segment container">
       <router-link :to="`/NiveauExercice/niveau/${exerciceSupprimeAppartientANiveau}`" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
@@ -22,7 +22,7 @@
       </router-link>
       <Alerte type-alerte="Succès" :liste-msg="[exerciceSupprime]" :fermable="false" />
     </div>
-    <!--/ Aleter de notification d'exercice supprimé -->
+    <!--/ Alerte de notification d'exercice supprimé -->
 
     <!-- Contenu de la page -->
     <div v-else>
@@ -46,7 +46,7 @@
       <div class="ui large breadcrumb">
         <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
         <i class="right angle icon divider"></i>
-        <router-link :to="'/NiveauExercice/niveau/' + exercice.niveau.id" class="section">Niveau "{{ exercice.niveau.id }}"</router-link>
+        <router-link :to="`/NiveauExercice/niveau/${exercice.niveau.id}`" class="section">Niveau "{{ exercice.niveau.id }}"</router-link>
         <i class="right arrow icon divider"></i>
         <div class="active section">Exercice "{{ exercice.id }}"</div>
       </div>
