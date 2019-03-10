@@ -1,5 +1,3 @@
-#import "@/graphql/Utilisateur/FragmentUtilisateur.gql"
-
 mutation SupprimerUtilisateur($id: ID!) {
   supprimerUtilisateur(id: $id)
 }

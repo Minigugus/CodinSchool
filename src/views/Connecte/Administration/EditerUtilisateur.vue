@@ -55,7 +55,7 @@
         <h3>"{{ utilisateur.prenom + ' ' + utilisateur.nom }}"</h3>
       </h1>
 
-      <!-- Formulaire d'édition de l'exercice -->
+      <!-- Formulaire d'édition de l'utilisateur -->
       <div class="ui container segment stripe">
         <ApolloMutation
           :mutation="require('@/graphql/Administration/EditerUtilisateur.gql')"
@@ -246,16 +246,16 @@
           </template>
         </ApolloMutation>
       </div>
-      <!--/ Formulaire d'édition de l'exercice -->
+      <!--/ Formulaire d'édition de l'utilisateur -->
 
-      <!-- Bouton de suppression du niveau -->
+      <!-- Bouton de suppression de l'utilisateur -->
       <div class="text-center mt-4">
         <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
           <i class="trash alternate icon"></i>
           Supprimer l'utilisateur
         </button>
       </div>
-      <!--/ Bouton de suppression du niveau -->
+      <!--/ Bouton de suppression de l'utilisateur -->
     </div>
   </div>
 </template>
@@ -415,7 +415,7 @@ export default {
           try {
             // Lire le cache pour récupérer le contenu actuel
             const data = store.readQuery({ query: Utilisateurs })
-            const indexUser = data.niveaux.findIndex(x => x.id === this.utilisateur.id)
+            const indexUser = data.utilisateurs.findIndex(x => x.id === this.utilisateur.id)
             if (indexUser !== -1) {
               data.utilisateurs.splice(indexUser, 1)
               this.modalConfirmationSuppression = false
