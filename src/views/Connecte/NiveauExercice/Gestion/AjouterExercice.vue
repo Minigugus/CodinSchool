@@ -5,7 +5,7 @@
       <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
       <i class="right angle icon divider"></i>
       <template v-if="idNiveau">
-        <router-link :to="'/NiveauExercice/niveau/' + idNiveau" class="section">Niveau "{{ idNiveau }}"</router-link>
+        <router-link :to="`/NiveauExercice/niveau/${idNiveau}`" class="section">Niveau "{{ idNiveau }}"</router-link>
         <i class="right arrow icon divider"></i>
       </template>
       <div class="active section">Ajouter un exercice</div>
@@ -77,7 +77,9 @@
 </template>
 
 <script>
-import Utilisateur from '@/mixins/Utilisateur'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 
 import Alerte from '@/components/Alerte.vue'
@@ -89,7 +91,6 @@ export default {
     Alerte,
     FormChamps
   },
-  mixins: [Utilisateur],
   props: {
     idNiveau: {
       type: String,
@@ -110,6 +111,10 @@ export default {
     }
   },
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
+    },
     niveaux: {
       query: Niveaux,
       result({ data, loading }) {

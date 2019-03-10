@@ -1,0 +1,7 @@
+#import "@/graphql/Utilisateur/FragmentUtilisateur.gql"
+
+query Utilisateur($id: ID!) {
+  utilisateur (id: $id) {
+    ...utilisateur
+  }
+}
