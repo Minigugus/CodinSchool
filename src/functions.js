@@ -21,4 +21,17 @@ const setErreurInput = (activerErreur, ...id) =>
       : document.getElementById(input).parentElement.classList.remove('error')
   })
 
-export { isEmail, setErreurInput }
+/**
+ * Vérifier qu'un utilisateur possède les permissions requises par une route
+ *
+ * @param {string[]} permissionsRequises liste des permissions requises par la route
+ * @param {string?} routeRedirection la page où rediriger en cas de permissions non satisfaites
+ * @returns {function} la fonction chargée par le composant Vue
+ */
+const checkPermissions = (permissionsRequises, routeRedirection = 'Profil') =>
+  function ({ loading, data }) {
+    if (!loading && !permissionsRequises.every(x => data.moi.permissions.includes(x)))
+      this.$router.replace({ name: routeRedirection })
+  }
+
+export { isEmail, setErreurInput, checkPermissions }

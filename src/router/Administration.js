@@ -11,5 +11,25 @@ export default [
     path: '/Administration/creerRole',
     name: 'CreerRole',
     component: () => import('@/views/Connecte/Administration/CreerRole.vue')
+  },
+
+  {
+    // Editer les utilisateurs de l'application
+    path: '/Administration/gererUtilisateurs',
+    name: 'GererUtilisateurs',
+    component: () => import('@/views/Connecte/Administration/GererUtilisateurs.vue')
+  },
+  {
+    // Editer les utilisateurs de l'application
+    path: '/Administration/creerUtilisateur',
+    name: 'CreerUtilisateur',
+    component: () => import('@/views/Connecte/Administration/CreerUtilisateur.vue')
+  },
+  {
+    // Editer un utilisateur
+    path: '/Administration/editerUtilisateur/:idUser',
+    name: 'EditerUtilisateur',
+    component: () => import('@/views/Connecte/Administration/EditerUtilisateur.vue'),
+    props: true
   }
 ]

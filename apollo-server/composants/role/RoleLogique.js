@@ -1,6 +1,6 @@
 import { Role, RoleNonTrouveError } from '.'
 
-export const recupererTous = () => Role.findAll()
+export const recupererTous = () => Role.findAll({ order: [['id', 'ASC']] })
 export const recupererParID = id => {
   const role = Role.findByPk(id)
   if (!role)

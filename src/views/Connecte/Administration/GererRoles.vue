@@ -71,7 +71,7 @@
               }
             }"
             @error="chargerErreur"
-            @done="() => {}"
+            @done="cacheRole"
           >
             <!-- TODO: Alerte de notification de succès -->
             <!-- TODO: Loading de l'édition de rôle -->
@@ -96,17 +96,7 @@
                 </div>
               </td>
               <td>
-                <input type="checkbox" v-model="aRole.parDefaut" @change="mutate({
-                  variables: {
-                    id: aRole.id,
-                    role: {
-                      id: aRole.id,
-                      nom: aRole.nom,
-                      parDefaut: aRole.parDefaut,
-                      permissions: aRole.permissions
-                    }
-                  }})"
-                />
+                <input type="checkbox" v-model="aRole.parDefaut" @change="mutate()" />
               </td>
               <td
                 v-for="(aPermission, index) in permissions"
@@ -115,19 +105,7 @@
                 <input
                   type="checkbox"
                   :checked="possedePermission(aRole, aPermission)"
-                  @change="mutate({
-                    variables: {
-                      id: aRole.id,
-                      role: {
-                        id: aRole.id,
-                        nom: aRole.nom,
-                        parDefaut: aRole.parDefaut,
-                        permissions: possedePermission(aRole, aPermission)
-                          ? aRole.permissions.filter(x => x !== aPermission)
-                          : aRole.permissions.concat(aPermission)
-                      }
-                    }
-                  })"
+                  @change="togglePermission(aRole, aPermission)"
                 />
               </td>
             </template>
@@ -153,11 +131,14 @@
 </template>
 
 <script>
-import Utilisateur from '@/mixins/Utilisateur'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import Alerte from '@/components/Alerte.vue'
 
 import Permissions from '@/graphql/Administration/Permissions.gql'
 import Roles from '@/graphql/Administration/Roles.gql'
+import EditerRole from '@/graphql/Administration/EditerRole.gql'
 import SupprimerRole from '@/graphql/Administration/SupprimerRole.gql'
 
 export default {
@@ -165,8 +146,11 @@ export default {
   components: {
     Alerte
   },
-  mixins: [Utilisateur],
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result: checkPermissions(['GESTION_ROLE'])
+    },
     permissions: {
       query: Permissions,
       update({__type: { enumValues } }) {
@@ -196,6 +180,8 @@ export default {
       this.typeAlerte = 'Erreur'
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
+
+    // Vérifier que le champs n'est pas vide
     checkVide({ srcElement: { value } }) {
       if (value === '') {
         // Affichage de l'erreur dans l'alerte
@@ -206,10 +192,35 @@ export default {
       }
       return true
     },
+
+    // Afficher la modal de confirmation de suppression de rôle
     demandeSuppression(aRole) {
       this.modalConfirmationSuppression = true
       this.suppressionRoleCible = aRole
     },
+
+    async togglePermission(aRole, aPermission) {
+      const role = this.roles.find(x => x.id === aRole.id)
+
+      const apolloClient = this.$apollo.provider.defaultClient
+      await apolloClient.mutate({
+        mutation: EditerRole,
+        variables: {
+          id: role.id,
+          role: {
+            id: role.id,
+            nom: role.nom,
+            parDefaut: role.parDefaut,
+            permissions: this.possedePermission(role, aPermission)
+              ? role.permissions.filter(x => x !== aPermission)
+              : role.permissions.concat(aPermission)
+          }
+        },
+        update: (_, gqlResponse) => this.cacheRole(gqlResponse)
+      })
+    },
+
+    // Supprimer un rôle
     async supprimerRole(aRole) {
       const apolloClient = this.$apollo.provider.defaultClient
       await apolloClient.mutate({
@@ -232,6 +243,21 @@ export default {
           }
         }
       })
+    },
+
+    // Mise à jour du rôle en cache
+    cacheRole({ data: { editerRole: roleModif } }) {
+      const apolloClient = this.$apollo.provider.defaultClient
+      const data = apolloClient.readQuery({ query: Roles })
+      const index = data.roles.findIndex(x => x.id === roleModif.id)
+      if (index !== -1) {
+        data.roles[index] = roleModif
+        apolloClient.writeQuery({ query: Roles, data })
+
+        this.$refs.erreurs.viderAlerte()
+        this.typeAlerte = 'Succès'
+        this.$refs.erreurs.ajouterAlerte(`Le rôle "${roleModif.nom}" a été modifié.`)
+      }
     }
   }
 }
