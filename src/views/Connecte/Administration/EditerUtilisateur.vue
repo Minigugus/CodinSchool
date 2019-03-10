@@ -366,12 +366,17 @@ export default {
         this.champs.utilisateur[el].err = [];
 
       // On vérifie que les champs obligatoires sont remplis
-      ['nom', 'prenom', 'motDePasse', 'emailPrimaire', 'dateNaissance'].forEach(x => {
+      ['nom', 'prenom', 'emailPrimaire', 'dateNaissance'].forEach(x => {
         if (this.utilisateur[x] === '') {
           this.champs.utilisateur[x].err.push('Champs vide.')
           tousRemplis = false
         }
-      });
+      })
+      if (this.champs.utilisateur.motDePasse.v === '') {
+        this.champs.utilisateur.motDePasse.err.push('Champs vide.')
+        tousRemplis = false
+      }
+
 
       // On vérifie que les adresses email sont valides
       ['emailPrimaire', 'emailSecondaire'].forEach(x => {
