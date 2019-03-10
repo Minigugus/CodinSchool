@@ -5,7 +5,7 @@
       <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
       <i class="right angle icon divider"></i>
       <template v-if="idNiveau">
-        <router-link :to="'/NiveauExercice/niveau/' + idNiveau" class="section">Niveau "{{ idNiveau }}"</router-link>
+        <router-link :to="`/NiveauExercice/niveau/${idNiveau}`" class="section">Niveau "{{ idNiveau }}"</router-link>
         <i class="right arrow icon divider"></i>
       </template>
       <div class="active section">Ajouter un exercice</div>

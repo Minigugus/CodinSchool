@@ -66,9 +66,9 @@
             <td>{{ aUser.roles.map(x => x.nom).join(', ') }}</td>
             <td>
               <!-- Bouton de redirection vers page d'édition d'utilisateur -->
-              <button @click="demandeSuppression(aUser)" class="ui icon button negative tiny">
-                <i class="pen icon"></i>
-              </button>
+              <router-link :to="`/Administration/editerUtilisateur/${aUser.id}`" class="ui icon button primary tiny" tag="button">
+                <i class="pencil alternate icon"></i>
+              </router-link>
               <!--/ Bouton de redirection vers page d'édition d'utilisateur -->
             </td>
           </tr>

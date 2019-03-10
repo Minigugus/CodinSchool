@@ -18,5 +18,12 @@ export default [
     path: '/Administration/gererUtilisateurs',
     name: 'GererUtilisateurs',
     component: () => import('@/views/Connecte/Administration/GererUtilisateurs.vue')
+  },
+  {
+    // Editer un utilisateur
+    path: '/Administration/editerUtilisateur/:idUser',
+    name: 'EditerUtilisateur',
+    component: () => import('@/views/Connecte/Administration/EditerUtilisateur.vue'),
+    props: true
   }
 ]

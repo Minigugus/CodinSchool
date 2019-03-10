@@ -2,7 +2,7 @@
   <div class="ui text vertical segment container">
     <!-- Erreur de chargement de la page -->
     <div v-if="erreurLoadingNiveau" class="ui text vertical segment container">
-      <router-link :to="`/NiveauExercice/niveau/liste`" class="ui button left labeled icon" tag="button">
+      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
@@ -14,15 +14,15 @@
     <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
-    <!-- Aleter de notification de niveau supprimé -->
+    <!-- Alerte de notification de niveau supprimé -->
     <div v-else-if="niveauSupprime" class="ui text vertical segment container">
-      <router-link :to="`/NiveauExercice/niveau/liste`" class="ui button left labeled icon" tag="button">
+      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
       <Alerte type-alerte="Succès" :liste-msg="[niveauSupprime]" :fermable="false" />
     </div>
-    <!--/ Aleter de notification de niveau supprimé -->
+    <!--/ Alerte de notification de niveau supprimé -->
 
     <!-- Contenu de la page -->
     <div v-else>
@@ -121,7 +121,7 @@
       <template v-if="niveau.exercices.length === 0">
         <div class="ui container segment stripe text-center">
           Ce niveau ne contient aucun exercice.<br>
-          <router-link :to="'/NiveauExercice/ajouterExercice/' + idNiveau" class="underlineHover">
+          <router-link :to="`/NiveauExercice/ajouterExercice/${idNiveau}`" class="underlineHover">
             Ajouter un exercice au niveau
           </router-link>
         </div>
@@ -186,7 +186,7 @@
 
         <!-- Bouton d'ajout d'exercice -->
         <div v-if="!exercice.sontDraggable" class="text-center">
-          <router-link :to="'/NiveauExercice/ajouterExercice/' + idNiveau" class="ui button right labeled icon text-center" tag="button">
+          <router-link :to="`/NiveauExercice/ajouterExercice/${idNiveau}`" class="ui button right labeled icon text-center" tag="button">
             <i class="plus icon"></i>
             Ajouter un exercice
           </router-link>
