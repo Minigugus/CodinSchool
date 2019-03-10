@@ -3,9 +3,10 @@ export default [
   // Partie "Utilisateur"
   {
     // Faire un exercice
-    path: '/faireExercice',
+    path: '/faireExercice/:idExercice',
     name: 'FaireExercice',
-    component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/FaireExercice.vue')
+    component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/FaireExercice.vue'),
+    props: true
   },
 
   // Partie "Gestion"

@@ -22,7 +22,10 @@
       <!-- Liste des niveaux -->
       <draggable
         :list="niveaux"
-        :options="{ animation: 0, group: 'niveau', disabled: !niveau.sontDraggable, ghostClass: 'ghost' }"
+        :animation="0"
+        group="niveau"
+        :disabled="!niveau.sontDraggable"
+        ghost-class="ghost"
         element="div"
         class="liste-niveau"
       >
