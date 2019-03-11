@@ -256,5 +256,3 @@ export default {
   name: 'MentionsLegales'
 }
 </script>
-
-<style scoped></style>
