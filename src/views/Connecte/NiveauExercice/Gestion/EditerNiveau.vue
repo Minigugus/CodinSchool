@@ -95,8 +95,8 @@
               />
 
               <form-champs
+                tag="texteditor"
                 v-model="niveau.introduction"
-                tag="textarea"
                 nom="Introduction"
                 id="introduction"
                 :err="champs.niveau.introduction.err"
@@ -147,7 +147,10 @@
         <!-- Liste des exercices du niveau -->
         <draggable
           :list="niveau.exercices"
-          :options="{ animation: 0, group: 'exercice', disabled: !exercice.sontDraggable, ghostClass: 'ghost' }"
+          :animation="0"
+          group="exercice"
+          :disabled="!exercice.sontDraggable"
+          ghost-class="ghost"
           element="div"
           class="liste-exercice"
         >

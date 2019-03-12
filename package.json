@@ -15,6 +15,7 @@
     "apollo-server-express": "^2.4.8",
     "bcrypt": "^3.0.4",
     "graphql-type-json": "^0.2.1",
+    "highlight.js": "^9.15.6",
     "jsonwebtoken": "^8.5.0",
     "lowdb": "^1.0.0",
     "mkdirp": "^0.5.1",
@@ -26,7 +27,9 @@
     "sequelize": "^4.43.0",
     "vue": "^2.6.8",
     "vue-apollo": "^3.0.0-beta.28",
+    "vue-codemirror": "^4.0.6",
     "vue-router": "^3.0.2",
+    "vue2-editor": "^2.6.6",
     "vuedraggable": "^2.19.1"
   },
   "devDependencies": {
