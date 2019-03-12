@@ -26,7 +26,7 @@ type Mutation {
 Paramètres demandés lors de la création d'un Niveau.
 """
 input CreationNiveau {
-	id: ID!
+  id: ID!
   titre: String!
   introduction: String
 }
@@ -35,7 +35,7 @@ input CreationNiveau {
 Paramètres demandés lors de l'édition d'un Niveau.
 """
 input EditionNiveau {
-	id: ID
+  id: ID
   titre: String
   introduction: String
 }

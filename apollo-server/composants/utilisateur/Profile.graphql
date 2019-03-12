@@ -1,36 +1,36 @@
 enum Permission {
-	"""
-	Gestion des Utilisateurs - Permet l'édition du profil de tous les Utilisateurs de CodinSchool.
-	"""
-	GESTION_UTILISATEUR
+  """
+  Gestion des Utilisateurs - Permet l'édition du profil de tous les Utilisateurs de CodinSchool.
+  """
+  GESTION_UTILISATEUR
 }
 
 """
 Représente le profile d'un Utilisateur de CodinSchool.
 """
 type Profile {
-	id: ID!
-	dateInscription: String!
+  id: ID!
+  dateInscription: String!
 
-	roles: [Role!]!
-	permissions: [Permission!]!
+  roles: [Role!]!
+  permissions: [Permission!]!
 
-	nom: String
-	prenom: String
-	dateNaissance: Int
-	adresse: String
-	codePostal: Int
+  nom: String
+  prenom: String
+  dateNaissance: Int
+  adresse: String
+  codePostal: Int
 
-	emailPrimaire: String
-	emailSecondaire: String
+  emailPrimaire: String
+  emailSecondaire: String
 
-	telephonePrimaire: String
-	telephoneSecondaire: String
+  telephonePrimaire: String
+  telephoneSecondaire: String
 
-	diplome: String
-	anneeDiplome: Int
+  diplome: String
+  anneeDiplome: Int
 
-	siteWeb: String
+  siteWeb: String
 
-	avatar: String
+  avatar: String
 }

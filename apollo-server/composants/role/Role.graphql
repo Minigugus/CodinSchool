@@ -1,25 +1,25 @@
 enum Permission {
-	"""
-	Gestion des Roles - Permet l'édition des Roles de CodinSchool.
-	"""
-	GESTION_ROLE
+  """
+  Gestion des Roles - Permet l'édition des Roles de CodinSchool.
+  """
+  GESTION_ROLE
 }
 
 """
 Présente le Role d'un Utilisateur.
 """
 type Role {
-	id: ID!
-	nom: String!
+  id: ID!
+  nom: String!
 }
 
 """
 Décrit un Role de CodinSchool.
 """
 type DefinitionRole { # @acces(requis: [ GESTION_ROLE ])
-	id: ID!
-	nom: String!
-	permissions: [Permission!]!
-	parDefaut: Boolean!
-	membres: [Profile!]!
+  id: ID!
+  nom: String!
+  permissions: [Permission!]!
+  parDefaut: Boolean!
+  membres: [Profile!]!
 }
