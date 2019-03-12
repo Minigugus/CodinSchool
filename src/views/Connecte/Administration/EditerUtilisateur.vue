@@ -63,7 +63,7 @@
             id: idUser,
             modifications: {
               roles: champs.utilisateur.roles.v,
-              motDePasse: champs.utilisateur.motDePasse.v,
+              motDePasse: champs.modifierMotDePasse ? champs.utilisateur.motDePasse.v : undefined,
               nom: utilisateur.nom,
               prenom: utilisateur.prenom,
               dateNaissance: utilisateur.dateNaissance,
@@ -71,10 +71,8 @@
               codePostal: utilisateur.codePostal,
               emailPrimaire: utilisateur.emailPrimaire,
               emailSecondaire: utilisateur.emailSecondaire,
-              emailVisible: champs.utilisateur.emailVisible.v,
               telephonePrimaire: utilisateur.telephonePrimaire,
               telephoneSecondaire: utilisateur.telephoneSecondaire,
-              telephoneVisible: champs.utilisateur.telephoneVisible.v,
               diplome: utilisateur.diplome,
               anneeDiplome: utilisateur.anneeDiplome,
               siteWeb: utilisateur.siteWeb,
@@ -108,11 +106,19 @@
                 :err="champs.utilisateur.prenom.err"
               />
 
+
+              <form-champs
+                v-model="champs.modifierMotDePasse"
+                nom="Modifier le mot de passe ?"
+                id="modifMdp"
+                type="checkbox"
+              />
               <form-champs
                 v-model="champs.utilisateur.motDePasse.v"
                 nom="Mot de passe"
                 id="motDePasse"
                 :err="champs.utilisateur.motDePasse.err"
+                :disabled="!champs.modifierMotDePasse"
               />
 
               <!-- Champs de modification des rôles du l'utilisateur (Permission 'GESTION_UTILISATEUR' requise) -->
@@ -175,14 +181,6 @@
               />
 
               <form-champs
-                v-model="utilisateur.emailVisible"
-                nom="Email visible par les autres utilisateurs"
-                type="checkbox"
-                id="emailVisible"
-                :err="champs.utilisateur.emailVisible.err"
-              />
-
-              <form-champs
                 v-model="utilisateur.telephonePrimaire"
                 nom="Téléphone primaire"
                 id="telephonePrimaire"
@@ -194,14 +192,6 @@
                 nom="Téléphone secondaire"
                 id="telephoneSecondaire"
                 :err="champs.utilisateur.telephoneSecondaire.err"
-              />
-
-              <form-champs
-                v-model="utilisateur.telephoneVisible"
-                nom="Téléphone visible par les autres utilisateurs"
-                type="checkbox"
-                id="telephoneVisible"
-                :err="champs.utilisateur.telephoneVisible.err"
               />
 
               <form-champs
@@ -250,10 +240,11 @@
 
       <!-- Bouton de suppression de l'utilisateur -->
       <div class="text-center mt-4">
-        <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
+        <button v-if="idUser !== moi.id" @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
           <i class="trash alternate icon"></i>
           Supprimer l'utilisateur
         </button>
+        <p v-else>Vous ne pouvez pas supprimer votre propre compte d'utilisateur.</p>
       </div>
       <!--/ Bouton de suppression de l'utilisateur -->
     </div>
@@ -289,21 +280,19 @@ export default {
       erreurLoadingUser: false,
 
       champs: {
+        modifierMotDePasse: false,
         utilisateur: {
           nom: { err: [] },
           prenom: { err: [] },
+
           motDePasse: { v: '', err: [] },
           dateNaissance: { err: [] },
           adresse: { err: [] },
           codePostal: { err: [] },
           emailPrimaire: { err: [] },
           emailSecondaire: { err: [] },
-          // TODO: Ajout dans la query graphql (le serveur ne le contient pas)
-          emailVisible: { v: false, err: [] },
           telephonePrimaire: { err: [] },
           telephoneSecondaire: { err: [] },
-          // TODO: Ajout dans la query graphql (le serveur ne le contient pas)
-          telephoneVisible: { v: false, err: [] },
           diplome: { err: [] },
           anneeDiplome: { err: [] },
           siteWeb: { err: [] },
@@ -372,7 +361,7 @@ export default {
           tousRemplis = false
         }
       })
-      if (this.champs.utilisateur.motDePasse.v === '') {
+      if (this.champs.modifierMotDePasse && this.champs.utilisateur.motDePasse.v === '') {
         this.champs.utilisateur.motDePasse.err.push('Champs vide.')
         tousRemplis = false
       }
