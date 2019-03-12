@@ -1,5 +1,5 @@
 #import * from "../role/index.graphql"
 
 directive @acces(
-	interdit: [Role!] = []
-) on OBJECT | FIELD_DEFINITION
+  requis: [Permission!] = []
+) on OBJECT | FIELD_DEFINITION | INPUT_FIELD_DEFINITION

@@ -30,7 +30,7 @@ export default {
   name: 'FormChamps',
   props: {
     value: {
-      type: String,
+      type: [String, Number, Boolean],
       required: false,
       default: 'text'
     },

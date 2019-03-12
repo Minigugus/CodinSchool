@@ -8,16 +8,16 @@ type Query {
 type Mutation {
 
   creerExercice(exercice: CreationExercice!): Exercice!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
   editerExercice(id: ID!, exercice: EditionExercice): Exercice!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
   reorganiserExercices(niveau: ID!, exercices: [ID!]!): [Exercice!]!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
   supprimerExercice(id: ID!): ID!
-  @acces(interdit: [ Etudiant ])
+  @acces(requis: [ GESTION_EXERCICE ])
 
 }
 
@@ -25,7 +25,7 @@ type Mutation {
 Paramètres demandés lors de la création d'un Exercice.
 """
 input CreationExercice {
-	niveauId: ID!
+  niveauId: ID!
 
   id: ID!
   titre: String!
@@ -37,7 +37,7 @@ input CreationExercice {
 Paramètres demandés lors de l'édition d'un Exercice.
 """
 input EditionExercice {
-	niveauId: ID
+  niveauId: ID
 
   id: ID
   titre: String

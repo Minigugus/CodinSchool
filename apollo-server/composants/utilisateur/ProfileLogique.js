@@ -2,6 +2,7 @@ import uuidv4 from 'uuid/v4'
 import { hasher, comparer } from '../auth'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
 import Profile from './ProfileModele'
+import { Role } from '../role'
 
 import { activationCompte as mailActivationCompte, nouveauMdp as mailNouveauMdp } from '../mail'
 
@@ -11,44 +12,44 @@ import {
   CodeInvalideError,
   CodeOuEmailInvalideError,
   CompteNonActiveError,
-  ValidationEchoueeError
+  ValidationEchoueeError,
+  UtilisateurNonTrouveError,
+  AutoSuppressionError
 } from './ProfileErreurs'
 
-export const recupererParID = id => Profile.findByPk(id)
+export const recupererTous = () => Profile.findAll()
+export const recupererParID = async id => {
+  const profile = await Profile.findByPk(id)
+  if (!profile)
+    throw new UtilisateurNonTrouveError(id)
+  return profile
+}
 export const recupererParEmail = email =>
   Profile.findOne({ where: { emailPrimaire: { in: [email.toLowerCase()] } } })
 export const recupererParValidation = validation =>
   Profile.findOne({ where: { validationInscription: { in: [validation] } } })
 
-export const authentifier = async (email, motDePasse) => {
-  const utilisateur = await recupererParEmail(email)
-  if (utilisateur && (await comparer(motDePasse, utilisateur.motDePasse)))
-    if (!utilisateur.validationInscription) return utilisateur
-    else throw new CompteNonActiveError(utilisateur.id)
-  throw new IdentifiantsNonReconnusError(email)
-}
-
-export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }) => {
+export const creerProfile = async ({ email, motDePasse, nom, prenom, dateNaissance }, validation = false) => {
   try {
-    const utilisateur = await Profile.create({
+    const options = {
       emailPrimaire: email.toLowerCase(),
       motDePasse: await hasher(motDePasse),
       nom,
       prenom,
       dateNaissance
-    })
+    }
+    if (!validation)
+      options.validationInscription = null
+    const profile = await Profile.create(options)
     try {
-      await mailActivationCompte(
-        utilisateur.emailPrimaire,
-        `${utilisateur.prenom} ${utilisateur.nom}`,
-        utilisateur.validationInscription
-      )
-      return utilisateur
+      const roles = (await Role.findAll()).filter(role => role.parDefaut).map(role => role.id)
+      if (roles.length)
+        await profile.setRole(roles)
+      return profile
     }
     catch (err) {
-      // Suppresion du compte pour libérer l'adresse mail
-      await utilisateur.destroy()
-      throw new ErreurInattendueError('AUTH_INSCRIRE_MAIL_ACTIVATION', { err })
+      await profile.destroy()
+      throw err
     }
   }
   catch (err) {
@@ -69,7 +70,57 @@ export const inscrire = async ({ email, motDePasse, nom, prenom, dateNaissance }
           message: erreur.message
         }))
       )
-    throw new ErreurInattendueError('AUTH_INSCRIRE', { err, message: err.message })
+    throw new ErreurInattendueError('AUTH_CREER_PROFILE', { err, message: err.message })
+  }
+}
+
+export const editerProfile = async (id, modifications) => {
+  if (Object.keys(modifications).length) {
+    if (modifications.motDePasse)
+      modifications.motDePasse = await hasher(modifications.motDePasse)
+    const affecte = await Profile.update(modifications, { where: { id } })
+    if (!affecte[0])
+      throw new UtilisateurNonTrouveError(id)
+    if (modifications.roles) {
+      const profile = await Profile.findByPk(id)
+      await profile.setRole(modifications.roles)
+      return profile
+    }
+  }
+  return recupererParID(id)
+}
+
+export const supprimerProfile = async (idResponsable, id) => {
+  if (idResponsable === id)
+    throw new AutoSuppressionError()
+  const affecte = await Profile.destroy({ where: { id } })
+  if (!affecte)
+    throw new UtilisateurNonTrouveError(id)
+  return id
+}
+
+export const authentifier = async (email, motDePasse) => {
+  const utilisateur = await recupererParEmail(email)
+  if (utilisateur && (await comparer(motDePasse, utilisateur.motDePasse)))
+    if (!utilisateur.validationInscription) return utilisateur
+    else throw new CompteNonActiveError(utilisateur.id)
+  throw new IdentifiantsNonReconnusError(email)
+}
+
+export const inscrire = async (profile) => {
+  const utilisateur = await creerProfile(profile, true)
+  try {
+    await mailActivationCompte(
+      utilisateur.emailPrimaire,
+      `${utilisateur.prenom} ${utilisateur.nom}`,
+      utilisateur.validationInscription
+    )
+    return utilisateur
+  }
+  catch (err) {
+    // Suppresion du compte pour libérer l'adresse mail
+    await utilisateur.destroy()
+    throw new ErreurInattendueError('AUTH_INSCRIRE_MAIL_ACTIVATION', { err })
   }
 }
 

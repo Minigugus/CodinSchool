@@ -1,15 +1,22 @@
 #import * from "../exercice/Exercice.graphql"
 
+enum Permission {
+  """
+  Gestion des Niveaux - Permet l'édition de tous les Niveaux de CodinSchool.
+  """
+  GESTION_NIVEAU
+}
+
 """
 Représente un Niveau de CodinSchool.
 """
 type Niveau {
-	id: ID!
+  id: ID!
   titre: String!
   introduction: String
 
-	dateCreation: String!
+  dateCreation: String!
   position: Int!
 
-	exercices: [Exercice!]
+  exercices: [Exercice!]
 }

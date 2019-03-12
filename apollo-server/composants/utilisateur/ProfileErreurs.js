@@ -43,3 +43,15 @@ export class ValidationEchoueeError extends CodinSchoolError {
     super('VALIDATION_ECHOUEE', 'Un ou plusieurs champs sont invalides.', { champs })
   }
 }
+
+export class UtilisateurNonTrouveError extends CodinSchoolError {
+  constructor(id) {
+    super('UTILISATEUR_NON_TROUVE', `L'Utilisateur « ${id} » n'a pas été trouvé.`, { id })
+  }
+}
+
+export class AutoSuppressionError extends CodinSchoolError {
+  constructor() {
+    super('AUTO_SUPPRESSION', 'Vous avez tenté de supprimer votre propre compte, ce qui est interdit.')
+  }
+}

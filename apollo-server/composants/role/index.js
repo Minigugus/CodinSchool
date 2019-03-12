@@ -1,2 +1,6 @@
-// TODO : Récupérer la liste des Rôles depuis le schéma GraphQL.
-export default ['Etudiant', 'Redacteur', 'Administrateur']
+export { default as Permission } from './PermissionModele'
+
+export * from './RoleErreurs'
+export * from './RoleLogique'
+export { default as Role } from './RoleModele'
+export { default as resolvers } from './RoleResolvers'

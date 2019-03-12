@@ -1,1 +1,45 @@
 #import * from "./Role.graphql"
+
+type Query {
+
+  roles: [DefinitionRole!]!
+  @acces(requis: [ GESTION_ROLE ])
+
+  role(id: ID!): DefinitionRole!
+  @acces(requis: [ GESTION_ROLE ])
+
+}
+
+type Mutation {
+
+  creerRole(role: CreationRole!): DefinitionRole!
+  @acces(requis: [ GESTION_ROLE ])
+
+  editerRole(id: ID!, role: EditionRole!): DefinitionRole!
+  @acces(requis: [ GESTION_ROLE ])
+
+  supprimerRole(id: ID!): ID!
+  @acces(requis: [ GESTION_ROLE ])
+
+  ajouterRole(role: ID!, membre: ID!): DefinitionRole!
+  @acces(requis: [ GESTION_ROLE, GESTION_UTILISATEUR ])
+
+  retirerRole(role: ID!, membre: ID!): DefinitionRole!
+  @acces(requis: [ GESTION_ROLE, GESTION_UTILISATEUR ])
+
+}
+
+input CreationRole {
+  nom: String!
+  permissions: [Permission!]
+  parDefaut: Boolean = false
+  membres: [ID!]
+}
+
+input EditionRole {
+  id: ID
+  nom: String
+  permissions: [Permission!]
+  parDefaut: Boolean
+  membres: [ID!]
+}

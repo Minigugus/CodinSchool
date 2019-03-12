@@ -2,10 +2,10 @@
   <div class="ui container">
     <!-- Fil d'ariane -->
     <div class="ui large breadcrumb mb-2 mt-3">
-      <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+      <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
       <i class="right angle icon divider"></i>
       <template v-if="idNiveau">
-        <router-link :to="'/redacteur/niveau/' + idNiveau" class="section">Niveau "{{ idNiveau }}"</router-link>
+        <router-link :to="`/NiveauExercice/niveau/${idNiveau}`" class="section">Niveau "{{ idNiveau }}"</router-link>
         <i class="right arrow icon divider"></i>
       </template>
       <div class="active section">Ajouter un exercice</div>
@@ -21,7 +21,7 @@
 
       <!-- Formulaire d'ajout d'exercice -->
       <ApolloMutation
-        :mutation="require('@/graphql/Niveau/CreerExercice.gql')"
+        :mutation="require('@/graphql/NiveauExercice/CreerExercice.gql')"
         :variables="{
           exercice: {
             id: champs.id.v,
@@ -65,8 +65,11 @@
 </template>
 
 <script>
-import Utilisateur from '@/mixins/Utilisateur'
-import Niveaux from '@/graphql/Niveau/Niveaux.gql'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
+import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
+
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
@@ -76,7 +79,6 @@ export default {
     Alerte,
     FormChamps
   },
-  mixins: [Utilisateur],
   props: {
     idNiveau: {
       type: String,
@@ -97,6 +99,10 @@ export default {
     }
   },
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
+    },
     niveaux: {
       query: Niveaux,
       result({ data, loading }) {

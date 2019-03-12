@@ -30,7 +30,7 @@
           <!-- Bouton d'édition d'un niveau -->
           <transition name="slide-left">
             <div v-if="!niveau.sontDraggable" :key="'editer-' + aNiveau.id" class="editer">
-              <router-link :to="`/redacteur/niveau/${aNiveau.id}`" class="ui button primary right labeled icon" tag="button">
+              <router-link :to="`/NiveauExercice/niveau/${aNiveau.id}`" class="ui button primary right labeled icon" tag="button">
                 <i class="right arrow icon"></i>
                 Editer
               </router-link>
@@ -61,7 +61,7 @@
 
       <!-- Bouton d'ajout de niveau -->
       <div class="text-center">
-        <router-link to="/redacteur/niveau/ajouterNiveau/" class="ui button right labeled icon text-center" tag="button">
+        <router-link to="/NiveauExercice/niveau/ajouterNiveau/" class="ui button right labeled icon text-center" tag="button">
           <i class="plus icon"></i>
           Ajouter un niveau
         </router-link>
@@ -72,17 +72,19 @@
 </template>
 
 <script>
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import draggable from 'vuedraggable'
-import Utilisateur from '@/mixins/Utilisateur'
-import Niveaux from '@/graphql/Niveau/Niveaux.gql'
-import ReorganiserNiveaux from '@/graphql/Niveau/ReorganiserNiveaux.gql'
+
+import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
+import ReorganiserNiveaux from '@/graphql/NiveauExercice/ReorganiserNiveaux.gql'
 
 export default {
   name: 'ListeNiveaux',
   components: {
     draggable
   },
-  mixins: [Utilisateur],
   data() {
     return {
       niveau: {
@@ -92,6 +94,10 @@ export default {
   },
 
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
+    },
     niveaux: Niveaux
   },
 

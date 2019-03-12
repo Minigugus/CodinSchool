@@ -13,8 +13,8 @@
         </div>
         <div v-else key="menuConnecteMobile">
           <router-link to="/profil" exact-active-class="active" class="item">Profil</router-link>
-          <router-link to="/redacteur/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
-          <router-link to="/redacteur/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
+          <router-link to="/NiveauExercice/gererNiveaux" exact-active-class="active" class="item">Gérer les niveaux</router-link>
+          <router-link to="/NiveauExercice/ajouterExercice" exact-active-class="active" class="item">Ajouter un exercice</router-link>
           <a @click="deconnexion" exact-active-class="active" class="item">Se déconnecter</a>
         </div>
       </div>
@@ -49,27 +49,38 @@
                   <router-link to="/inscription" exact-active-class="active" class="ui inverted button">Inscription</router-link>
                 </div>
                 <div v-else key="menuConnecte" class="right menu">
+                  <!-- Menu principal de gestion -->
                   <sui-dropdown text="Gestion" :item="true">
                     <sui-dropdown-menu>
-                      <sui-dropdown-header>Etudiant</sui-dropdown-header>
-                      <sui-dropdown-item :disabled="true">Liste des exercices</sui-dropdown-item>
+                      <!-- Visible par les permissions "GESTION_NIVEAU" et "GESTION_EXERCICE" -->
+                      <template v-if="possedePermission(['GESTION_NIVEAU', 'GESTION_EXERCICE'], 'AND')">
+                        <sui-dropdown-header>Gestion de contenu</sui-dropdown-header>
 
-                      <sui-dropdown-divider />
+                        <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
+                      </template>
+                      <!--/ Visible par les permissions "GESTION_NIVEAU" et "GESTION_EXERCICE" -->
 
-                      <sui-dropdown-header>Rédacteur</sui-dropdown-header>
+                      <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
+                      <template v-if="possedePermission(['GESTION_UTILISATEUR', 'GESTION_ROLE'])">
+                        <sui-dropdown-divider />
 
-                      <router-link to="/redacteur/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
-
-                      <sui-dropdown-divider />
-
-                      <sui-dropdown-header>Administrateur</sui-dropdown-header>
-                      <sui-dropdown-item :disabled="true">Gérer les utilisateurs</sui-dropdown-item>
-                      <sui-dropdown-item :disabled="true">Gérer les rôles</sui-dropdown-item>
+                        <sui-dropdown-header>Administration</sui-dropdown-header>
+                        <router-link v-if="possedePermission(['GESTION_UTILISATEUR'])" to="/Administration/gererUtilisateurs" class="item" exact-active-class="active">Gérer les utilisateurs</router-link>
+                        <router-link v-if="possedePermission(['GESTION_ROLE'])" to="/Administration/gererRoles" class="item" exact-active-class="active">Gérer les rôles</router-link>
+                      </template>
+                      <!-- Visible par les permissions "GESTION_UTILISATEUR" ou "GESTION_ROLE" -->
                     </sui-dropdown-menu>
                   </sui-dropdown>
+                  <!-- /Menu principal de gestion -->
 
-                  <router-link to="/profil" class="item" exact-active-class="active">Profil</router-link>
-                  <a @click="deconnexion" class="item" exact-active-class="active">Se déconnecter</a>
+                  <!-- Menu personnel de l'utilisateur -->
+                  <sui-dropdown :text="moi.prenom + ' ' + moi.nom" :item="true">
+                    <sui-dropdown-menu>
+                      <router-link to="/profil" class="item" exact-active-class="active">Mon profil</router-link>
+                      <sui-dropdown-item @click.prevent="deconnexion">Se déconnecter</sui-dropdown-item>
+                    </sui-dropdown-menu>
+                  </sui-dropdown>
+                  <!--/ Menu personnel de l'utilisateur -->
                 </div>
               </transition>
             </template>
@@ -100,7 +111,7 @@
             </div>
             <div class="seven wide column">
               <router-link to="/mentionsLegales" exact-active-class="active" class="underlineHover blanc">Mentions Legales</router-link>
-              <p>&copy; 2018 Codinschool</p>
+              <p>&copy; {{ new Date().getFullYear() }} Codinschool</p>
             </div>
           </div>
         </div>
@@ -111,16 +122,18 @@
 </template>
 
 <script>
-import Utilisateur from '@/mixins/Utilisateur'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { onLogout } from '@/vue-apollo'
 
 export default {
-  mixins: [Utilisateur],
   data() {
     return {
       menuSideBarVisible: false,
       tailleEcran: null
     }
+  },
+  apollo: {
+    moi: Utilisateur
   },
   computed: {
     isTailleMobile() {
@@ -146,6 +159,16 @@ export default {
 
       // On redirige le client vers la page d'accueil
       this.$router.replace({ name: 'Accueil' })
+    },
+
+    /** Vérifier qu'un utilisateur possède des permissions
+     * @param {string[]} permissions liste des permissions à vérifier
+     * @param {string} test opération de vérification booléenne à tester
+     * @returns {boolean} possède les permissions demandées
+     */
+    possedePermission(permissions, test = 'OR') {
+      if (test === 'OR') return permissions.some(x => this.moi.permissions.includes(x))
+      else if (test === 'AND') return permissions.every(x => this.moi.permissions.includes(x))
     }
   }
 }
