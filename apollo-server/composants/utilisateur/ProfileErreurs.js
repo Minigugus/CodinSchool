@@ -49,3 +49,9 @@ export class UtilisateurNonTrouveError extends CodinSchoolError {
     super('UTILISATEUR_NON_TROUVE', `L'Utilisateur « ${id} » n'a pas été trouvé.`, { id })
   }
 }
+
+export class AutoSuppressionError extends CodinSchoolError {
+  constructor() {
+    super('AUTO_SUPPRESSION', 'Vous avez tenté de supprimer votre propre compte, ce qui est interdit.')
+  }
+}

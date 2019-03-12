@@ -13,7 +13,8 @@ import {
   CodeOuEmailInvalideError,
   CompteNonActiveError,
   ValidationEchoueeError,
-  UtilisateurNonTrouveError
+  UtilisateurNonTrouveError,
+  AutoSuppressionError
 } from './ProfileErreurs'
 
 export const recupererTous = () => Profile.findAll()
@@ -84,7 +85,9 @@ export const editerProfile = async (id, modifications) => {
   return Profile.findByPk(id)
 }
 
-export const supprimerProfile = async id => {
+export const supprimerProfile = async (idResponsable, id) => {
+  if (idResponsable === id)
+    throw new AutoSuppressionError()
   const affecte = await Profile.destroy({ where: { id } })
   if (!affecte)
     throw new UtilisateurNonTrouveError(id)

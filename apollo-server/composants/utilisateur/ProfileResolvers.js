@@ -46,8 +46,8 @@ export default {
     editerUtilisateur(_, { id, modifications }) {
       return editerProfile(id, modifications)
     },
-    supprimerUtilisateur(_, { id }) {
-      return supprimerProfile(id)
+    supprimerUtilisateur(_, { id }, { utilisateur }) {
+      return supprimerProfile(utilisateur.id, id)
     }
   },
 
