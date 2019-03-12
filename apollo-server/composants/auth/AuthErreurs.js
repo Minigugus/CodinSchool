@@ -7,7 +7,7 @@ export class AuthentificationRequiseError extends CodinSchoolError {
 }
 
 export class AccesInterditError extends CodinSchoolError {
-  constructor(role, interdits) {
-    super('ACCES_REFUSE', 'Droits d\'accès insuffisants.', { role, interdits })
+  constructor(permissionsManquantes) {
+    super('ACCES_REFUSE', 'Droits d\'accès insuffisants.', { requis: permissionsManquantes })
   }
 }

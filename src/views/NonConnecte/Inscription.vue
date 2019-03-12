@@ -73,7 +73,7 @@ export default {
         email: { v: '', err: []},
         mdp: { v: '', err: []},
         mdp2: { v: '', err: []},
-        dateNaissance: { v: '', err: []}
+        dateNaissance: { v: null, err: []}
       },
 
       inscriptionFin: false

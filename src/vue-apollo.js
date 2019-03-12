@@ -13,8 +13,7 @@ const httpEndpoint =
   process.env.VUE_APP_GRAPHQL_HTTP ||
   (process.env.NODE_ENV === 'production' ? '/graphql' : 'http://localhost:4000/graphql')
 // Files URL root
-export const filesRoot =
-  process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
+export const filesRoot = process.env.VUE_APP_FILES_ROOT || httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
 
 Vue.prototype.$filesRoot = filesRoot
 
@@ -62,10 +61,7 @@ const defaultOptions = {
 // Vérifier si l'erreur GraphQL est une erreur de non authentification
 function isUnauthorizedError(error) {
   const { graphQLErrors } = error
-  return (
-    graphQLErrors &&
-    graphQLErrors.some(e => e.message === 'Cette requête requière une authentification.')
-  )
+  return graphQLErrors && graphQLErrors.some(e => e.message === 'Cette requête requière une authentification.')
 }
 
 // Call this in the Vue app file
@@ -89,6 +85,11 @@ export function createProvider(options = {}, { router }) {
       if (isUnauthorizedError(error)) {
         // Liste des pages qui ont besoin de connexion
         const besoinConnexion = [
+          'CreerRole',
+          'CreerUtilisateur',
+          'EditerUtilisateur',
+          'GererRoles',
+          'GererUtilisateurs',
           'AjouterExercice',
           'AjouterNiveau',
           'EditerExercice',
@@ -121,8 +122,7 @@ export async function onLogin(apolloClient, token) {
     await apolloClient.resetStore()
   }
   catch (e) {
-    if (!isUnauthorizedError(e))
-      console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
+    if (!isUnauthorizedError(e)) console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
   }
 }
 
@@ -134,7 +134,6 @@ export async function onLogout(apolloClient) {
     await apolloClient.resetStore()
   }
   catch (e) {
-    if (!isUnauthorizedError(e))
-      console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
+    if (!isUnauthorizedError(e)) console.log('%cError on cache reset (logout)', 'color: orange;', e.message)
   }
 }

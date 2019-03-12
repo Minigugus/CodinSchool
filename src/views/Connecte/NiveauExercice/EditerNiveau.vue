@@ -2,7 +2,7 @@
   <div class="ui text vertical segment container">
     <!-- Erreur de chargement de la page -->
     <div v-if="erreurLoadingNiveau" class="ui text vertical segment container">
-      <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
+      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
@@ -14,15 +14,15 @@
     <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
-    <!-- Aleter de notification de niveau supprimé -->
+    <!-- Alerte de notification de niveau supprimé -->
     <div v-else-if="niveauSupprime" class="ui text vertical segment container">
-      <router-link :to="`/redacteur/niveau/liste`" class="ui button left labeled icon" tag="button">
+      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
         <i class="left arrow icon"></i>
         Retour à la liste des niveaux
       </router-link>
       <Alerte type-alerte="Succès" :liste-msg="[niveauSupprime]" :fermable="false" />
     </div>
-    <!--/ Aleter de notification de niveau supprimé -->
+    <!--/ Alerte de notification de niveau supprimé -->
 
     <!-- Contenu de la page -->
     <div v-else>
@@ -45,7 +45,7 @@
 
       <!-- Fil d'ariane -->
       <div class="ui large breadcrumb">
-        <router-link to="/redacteur/niveau/liste" class="section">Liste des niveaux</router-link>
+        <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
         <i class="right angle icon divider"></i>
         <div class="active section">Niveau "{{ niveau.id }}"</div>
       </div>
@@ -63,7 +63,7 @@
         </p>
 
         <ApolloMutation
-          :mutation="require('@/graphql/Niveau/EditerNiveau.gql')"
+          :mutation="require('@/graphql/NiveauExercice/EditerNiveau.gql')"
           :variables="{
             id: idNiveau,
             niveau: {
@@ -121,7 +121,7 @@
       <template v-if="niveau.exercices.length === 0">
         <div class="ui container segment stripe text-center">
           Ce niveau ne contient aucun exercice.<br>
-          <router-link :to="'/redacteur/ajouterExercice/' + idNiveau" class="underlineHover">
+          <router-link :to="`/NiveauExercice/ajouterExercice/${idNiveau}`" class="underlineHover">
             Ajouter un exercice au niveau
           </router-link>
         </div>
@@ -155,7 +155,7 @@
             <!-- Bouton d'édition d'un exercice -->
             <transition name="slide-left">
               <div v-if="!exercice.sontDraggable" :key="'editer-' + aExercice.id" class="editer">
-                <router-link :to="`/redacteur/exercice/${aExercice.id}`" class="ui button primary right labeled icon" tag="button">
+                <router-link :to="`/NiveauExercice/exercice/${aExercice.id}`" class="ui button primary right labeled icon" tag="button">
                   <i class="right arrow icon"></i>
                   Editer
                 </router-link>
@@ -186,7 +186,7 @@
 
         <!-- Bouton d'ajout d'exercice -->
         <div v-if="!exercice.sontDraggable" class="text-center">
-          <router-link :to="'/redacteur/ajouterExercice/' + idNiveau" class="ui button right labeled icon text-center" tag="button">
+          <router-link :to="`/NiveauExercice/ajouterExercice/${idNiveau}`" class="ui button right labeled icon text-center" tag="button">
             <i class="plus icon"></i>
             Ajouter un exercice
           </router-link>
@@ -208,15 +208,17 @@
 </template>
 
 <script>
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { checkPermissions } from '@/functions'
+
 import draggable from 'vuedraggable'
-import Utilisateur from '@/mixins/Utilisateur'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
-import Niveau from '@/graphql/Niveau/Niveau.gql'
-import Niveaux from '@/graphql/Niveau/Niveaux.gql'
-import ReorganiserExercices from '@/graphql/Niveau/ReorganiserExercices.gql'
-import SupprimerNiveau from '@/graphql/Niveau/SupprimerNiveau.gql'
+import Niveau from '@/graphql/NiveauExercice/Niveau.gql'
+import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
+import ReorganiserExercices from '@/graphql/NiveauExercice/ReorganiserExercices.gql'
+import SupprimerNiveau from '@/graphql/NiveauExercice/SupprimerNiveau.gql'
 
 export default {
   name: 'EditerNiveau',
@@ -225,7 +227,6 @@ export default {
     Alerte,
     FormChamps
   },
-  mixins: [Utilisateur],
   props: {
     idNiveau: {
       type: String,
@@ -254,6 +255,10 @@ export default {
   },
 
   apollo: {
+    moi: {
+      query: Utilisateur,
+      result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
+    },
     niveaux: Niveaux,
     niveau() {
       return {

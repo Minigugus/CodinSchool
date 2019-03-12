@@ -1,0 +1,6 @@
+fragment role on DefinitionRole {
+  id
+  nom
+  permissions
+  parDefaut
+}
