@@ -57,11 +57,9 @@ input EditionProfile {
 
 	emailPrimaire: String
 	emailSecondaire: String
-	emailVisible: Boolean
 
 	telephonePrimaire: String
 	telephoneSecondaire: String
-	telephoneVisible: Boolean
 
 	diplome: String
 	anneeDiplome: Int
@@ -104,11 +102,9 @@ input EditionProfilePrivilegie {
 
 	emailPrimaire: String
 	emailSecondaire: String
-	emailVisible: Boolean
 
 	telephonePrimaire: String
 	telephoneSecondaire: String
-	telephoneVisible: Boolean
 
 	diplome: String
 	anneeDiplome: Int
