@@ -48,10 +48,22 @@
               <div v-for="(anError, index) in champs.niveau.err" :key="'erreur-niveau-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
             </div>
 
-            <form-champs v-model="champs.enonce.v" nom="Enoncé" id="enonce" :err="champs.enonce.err"
-                         placeholder="Sortir tous les nombres de 1 à 10 séparés par un retour à la ligne."
+            <form-champs
+              tag="texteditor"
+              v-model="champs.enonce.v"
+              nom="Enoncé"
+              id="enonce"
+              :err="champs.enonce.err"
             />
-            <form-champs v-model="champs.correction.v" tag="textarea" nom="Correction" id="correction" :err="champs.correction.err" />
+
+            <form-champs
+              v-model="champs.correction.v"
+              tag="codeeditor"
+              nom="Correction"
+              id="Correction"
+              type="C"
+              :err="champs.correction.err"
+            />
 
             <button class="ui button" type="submit">Ajouter l'exercice</button>
           </form>

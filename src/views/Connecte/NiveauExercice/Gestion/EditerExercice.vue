@@ -102,8 +102,8 @@
               </div>
 
               <form-champs
+                tag="texteditor"
                 v-model="exercice.enonce"
-                tag="textarea"
                 nom="Enoncé"
                 id="enonce"
                 :err="champs.exercice.enonce.err"

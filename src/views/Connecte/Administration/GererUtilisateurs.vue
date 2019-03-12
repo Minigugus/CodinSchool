@@ -59,7 +59,7 @@
               </button>
               <!--/ Bouton de suppression d'utilisateur -->
             </td>
-            <td>{{ aUser.id.slice(0, 8) }}...</td>
+            <td :title="aUser.id">{{ aUser.id.slice(0, 8) }}...</td>
             <td>{{ aUser.prenom + ' ' + aUser.nom }}</td>
             <td>{{ aUser.emailPrimaire }}</td>
             <td>{{ aUser.dateInscription }}</td>
