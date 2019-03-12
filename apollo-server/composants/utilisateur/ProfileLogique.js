@@ -18,7 +18,12 @@ import {
 } from './ProfileErreurs'
 
 export const recupererTous = () => Profile.findAll()
-export const recupererParID = id => Profile.findByPk(id)
+export const recupererParID = async id => {
+  const profile = await Profile.findByPk(id)
+  if (!profile)
+    throw new UtilisateurNonTrouveError(id)
+  return profile
+}
 export const recupererParEmail = email =>
   Profile.findOne({ where: { emailPrimaire: { in: [email.toLowerCase()] } } })
 export const recupererParValidation = validation =>
@@ -82,7 +87,7 @@ export const editerProfile = async (id, modifications) => {
       return profile
     }
   }
-  return Profile.findByPk(id)
+  return recupererParID(id)
 }
 
 export const supprimerProfile = async (idResponsable, id) => {
