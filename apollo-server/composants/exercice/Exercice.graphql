@@ -4,7 +4,7 @@ enum Permission {
   """
   Gestion des Exercices - Permet l'édition de tous les Exercices de CodinSchool.
   """
-	GESTION_EXERCICE
+  GESTION_EXERCICE
 }
 
 """
@@ -19,5 +19,5 @@ type Exercice {
   dateCreation: String!
   position: Int!
 
-	niveau: Niveau!
+  niveau: Niveau!
 }
