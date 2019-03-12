@@ -68,13 +68,18 @@ export const creerProfile = async ({ email, motDePasse, nom, prenom, dateNaissan
   }
 }
 
-export const editerProfile = async (id, profile) => {
-  if (Object.keys(profile).length) {
-    if (profile.motDePasse)
-      profile.motDePasse = await hasher(profile.motDePasse)
-    const affecte = await Profile.update(profile, { where: { id } })
+export const editerProfile = async (id, modifications) => {
+  if (Object.keys(modifications).length) {
+    if (modifications.motDePasse)
+      modifications.motDePasse = await hasher(modifications.motDePasse)
+    const affecte = await Profile.update(modifications, { where: { id } })
     if (!affecte[0])
       throw new UtilisateurNonTrouveError(id)
+    if (modifications.roles) {
+      const profile = await Profile.findByPk(id)
+      await profile.setRole(modifications.roles)
+      return profile
+    }
   }
   return Profile.findByPk(id)
 }
