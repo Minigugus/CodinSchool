@@ -41,8 +41,14 @@
                 </div>
                 <div class="right floated column">
                   <div class="ui text-right">
-                    <button @click="copierDivPressePapier('#enonce', $event)" class="ui button">Copier</button>
-                    <button @click="copierPressePapier(TEMP_ENONCE, $event)" class="ui button">Copier HTML</button>
+                    <button @click="copierDivPressePapier('#enonce', $event)" class="ui button labeled icon tiny">
+                      <i class="clone icon"></i>
+                      Copier
+                    </button>
+                    <button @click="copierPressePapier(TEMP_ENONCE, $event)" class="ui button labeled icon tiny">
+                      <i class="clone icon"></i>
+                      Copier HTML
+                    </button>
                   </div>
                 </div>
               </div>
@@ -57,7 +63,7 @@
             <div class="ui grid mb-1">
               <div class="two column row">
                 <div class="left floated column">
-                  <h2>Retour de code</h2>
+                  <h2>Résultat d'exécution de code</h2>
                 </div>
                 <div class="right floated column">
                   <div class="ui text-right">
@@ -65,12 +71,16 @@
                       <button
                         v-show="TEMP_RETOUR_CODE !== ''"
                         @click="copierPressePapier(TEMP_RETOUR_CODE, $event)"
-                        class="ui button"
+                        class="ui button labeled icon tiny"
                       >
+                        <i class="clone icon"></i>
                         Copier
                       </button>
                     </transition>
-                    <button @click="TEMP_RETOUR_CODE = ''" class="ui button">Vider</button>
+                    <button @click="TEMP_RETOUR_CODE = ''" class="ui button labeled icon tiny">
+                      <i class="trash icon"></i>
+                      Vider
+                    </button>
                   </div>
                 </div>
               </div>
@@ -82,7 +92,71 @@
           <!--/ Bloc de retour de code -->
 
           <!-- Bloc de retour de tests -->
-          <div class="ui container segment retour-tests"></div>
+          <div class="ui container segment retour-tests">
+            <div class="ui grid mb-1">
+              <div class="two column row">
+                <div class="left floated column">
+                  <h2>Tests à valider</h2>
+                </div>
+                <div class="right floated column">
+                  <div class="ui text-right">
+                    <button
+                      @click="lancerTests"
+                      class="ui button labeled icon tiny"
+                      :class="{
+                        loading: testsLoading,
+                        primary: !testsLoading
+                      }"
+                    >
+                      <i class="terminal icon"></i>
+                      Tester mon code
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Liste des tests -->
+            <sui-accordion styled fluid class="mb-3">
+              <div v-for="(aTest, index) in TEMP_TESTS" :key="'test-' + index">
+                <sui-accordion-title class="test-title">
+                  <span>
+                    <sui-icon :name="aTest.nom.length > 60 ? 'dropdown' : 'arrow right'" />
+                    {{ aTest.nom.slice(0, 60) }} {{ aTest.nom.length > 60 ? '...' : '' }}
+                  </span>
+                  <span>
+                    <button
+                      class="ui right floated icon button mini"
+                      :class="{
+                        orange: aTest.loading,
+                        loading: aTest.loading,
+                        green: !aTest.loading && aTest.reussi,
+                        red: !aTest.loading && !aTest.reussi
+                      }"
+                    >
+                      <i
+                        class="icon"
+                        :class="{
+                          check: !aTest.loading && aTest.reussi,
+                          close: !aTest.loading && !aTest.reussi
+                        }"
+                      />
+                    </button>
+                  </span>
+                </sui-accordion-title>
+                <sui-accordion-content v-if="aTest.nom.length > 60">
+                  <p v-text="aTest.nom" />
+                </sui-accordion-content>
+              </div>
+            </sui-accordion>
+            <!--/ Liste des tests -->
+            <sui-progress
+              state="active"
+              indicating
+              :percent="testsCompletion"
+              :label="`Complétion de l'exercice - ${testsCompletion}%`"
+            />
+          </div>
           <!--/ Bloc de retour de tests -->
         </div>
         <!--/ Bloc de gauche -->
@@ -97,7 +171,10 @@
                 </div>
                 <div class="right floated column">
                   <div class="ui text-right">
-                    <button @click="copierPressePapier(champs.code.v, $event)" class="ui button">Copier le code</button>
+                    <button @click="copierPressePapier(champs.code.v, $event)" class="ui button labeled icon tiny">
+                      <i class="clone icon"></i>
+                      Copier le code
+                    </button>
                   </div>
                 </div>
               </div>
@@ -106,7 +183,7 @@
             <sui-dropdown
               v-model="langageProgrammation"
               fluid
-              :options="options"
+              :options="TEMP_LANGAGES_DISPONIBLES"
               placeholder="Liste des langages autorisés"
               search
               selection
@@ -137,8 +214,6 @@ import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 import { delay, escapeHtml, copierVersPressePapier, copierDOMVersPressePapier } from '@/functions'
-import { codeMirrorLanguages } from '@/codeMirrorLanguagesLoader'
-const options = Object.keys(codeMirrorLanguages).map(key => ({ text: key, value: key }))
 
 export default {
   name: 'FaireExercice',
@@ -160,6 +235,11 @@ export default {
         query: Exercice,
         variables: {
           id: this.idExercice
+        },
+        error: errorObject => {
+          const { gqlError } = errorObject
+          if (!gqlError) return console.error(errorObject)
+          this.erreurLoadingExercice = gqlError.message
         }
       }
     }
@@ -169,22 +249,31 @@ export default {
     return {
       TEMP_ENONCE: '<h1>Partie 1 :</h1><p>Aujourd\'hui, nous apprenons la triste nouvelle que le membre du projet <em>CodinSchool, \"</em>Minigugus\", n\'a pas codé pour le projet de tout le week end.</p><p><strong>Objectif :</strong></p><p>Sortir tous les nombres de 1 à 48 suivis de la lettre \"h\", afin de lui faire ouvrir les yeux sur les heures perdues pour le projet.</p><p><br></p><h1>Partie 2 :</h1><p>Malheureusement, cela ne suffira pas.Afin de la motiver à se bouger le cul il faut maintenant lui mettre la <strong>pression</strong>.</p><p><strong>Objectif :</strong></p><p>Créer un script affichant le nombre de jours restant avant le jour de rendu du rapport de projet.</p><p><br></p><h3>Obtenir la date en JavaScript :</h3><pre class=\"ql-syntax\" spellcheck=\"false\"><span class=\"hljs-built_in\">var</span> <span class=\"hljs-built_in\">date</span> = <span class=\"hljs-literal\">new</span> <span class=\"hljs-built_in\">Date</span>()\n</pre><script>console.log(\'mdr\')script>',
       TEMP_RETOUR_CODE: '1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n',
-      TEMP_CODE:
-`for (let i = 1 ; i <= 48 ; i++)
-  console.log(i)`,
+      TEMP_LANGAGES_DISPONIBLES: [
+        'JavaScript',
+        'C'
+      ].map(key => ({ text: key, value: key })),
+      TEMP_TESTS: [
+        { nom: 'Sortir tous les nombres de 1 à 48', loading: false, reussi: false },
+        { nom: 'Sortir le nombre de jours avant le rendu du rapport de projet. Minim pariatur nulla aute sit adipisicing ipsum elit in nisi tempor enim non. Lorem sunt veniam ad cillum ut adipisicing commodo laborum laboris eiusmod aliquip magna magna. Nostrud occaecat fugiat ea consectetur nulla mollit.', loading: false, reussi: false },
+        { nom: 'Sortir le nombre de jours avant le rendu du rapport de projet. Minim pariatur nulla aute sit adipisicing ipsum elit in nisi tempor enim non. Lorem sunt veniam ad cillum ut adipisicing commodo laborum laboris eiusmod aliquip magna magna. Nostrud occaecat fugiat ea consectetur nulla mollit.', loading: false, reussi: false },
+        { nom: 'Sortir le nombre de jours avant le rendu du rapport.', loading: false, reussi: false }
+      ],
 
       erreurLoadingExercice: false,
       langageProgrammation: 'C',
-      options,
 
       champs: {
-        // TODO: dropdown avec query GraphQL langages disponible
-        langagesDisponibles: [
-          'JavaScript',
-          'C'
-        ],
         code: { v: '', err: [] }
       }
+    }
+  },
+  computed: {
+    testsLoading() {
+      return this.TEMP_TESTS.some(x => x.loading)
+    },
+    testsCompletion() {
+      return this.TEMP_TESTS.reduce((acc, el) => el.reussi ? ++acc : acc, 0) / this.TEMP_TESTS.length * 100
     }
   },
 
@@ -209,6 +298,10 @@ export default {
       source.textContent = 'Copié !'
       await delay(2000)
       source.textContent = buttonText
+    },
+
+    async lancerTests() {
+
     }
   }
 }
@@ -229,10 +322,16 @@ export default {
 .retour-code > textarea {
   height: 300px;
 }
+.test-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(0, 0, 0, 0.75) !important;
+}
 
 #editeurCode {
-  overflow-x: scroll;
-  overflow-y: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   max-height: 800px;
 }
 </style>
