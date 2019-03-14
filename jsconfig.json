@@ -5,13 +5,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "rootDirs": [
-      "src"
-    ]
+    }
   },
+  "include": [
+    "./src/**/*",
+    "./apollo-server/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "**/node_modules/*"
+    "node_modules/**/*"
   ]
 }
