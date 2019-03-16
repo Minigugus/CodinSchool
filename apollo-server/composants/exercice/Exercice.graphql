@@ -25,5 +25,7 @@ type Exercice {
 
   tests: [Test]!
   
+  meilleurSoumission: Soumission
+
   soumissions: [Soumission]! @acces
 }

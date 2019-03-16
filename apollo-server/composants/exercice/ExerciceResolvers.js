@@ -25,6 +25,9 @@ export default {
   Exercice: {
     niveau(exercice) {
       return exercice.getNiveau()
+    },
+    tests(exercice) {
+      return exercice.getTests()
     }
   }
 }
