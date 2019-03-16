@@ -1,0 +1,15 @@
+#import * from "../../../auth/DirectiveAcces.graphql"
+#import * from "../../test/Test.graphql"
+#import * from "../Soumission.graphql"
+
+type ResultatTest @acces {
+  id: ID!
+
+  definition: Test!
+  soumission: Soumission!
+
+  passe: Boolean!
+
+  entree: String!
+  sortie: String!
+}
