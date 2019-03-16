@@ -58,39 +58,6 @@
           </div>
           <!--/ Bloc d'énoncé -->
 
-          <!-- Bloc de retour de code -->
-          <div class="ui container segment retour-code form">
-            <div class="ui grid mb-1">
-              <div class="two column row">
-                <div class="left floated column">
-                  <h2>Résultat d'exécution de code</h2>
-                </div>
-                <div class="right floated column">
-                  <div class="ui text-right">
-                    <transition name="fade">
-                      <button
-                        v-show="TEMP_RETOUR_CODE !== ''"
-                        @click="copierPressePapier(TEMP_RETOUR_CODE, $event)"
-                        class="ui button labeled icon tiny"
-                      >
-                        <i class="clone icon"></i>
-                        Copier
-                      </button>
-                    </transition>
-                    <button @click="TEMP_RETOUR_CODE = ''" class="ui button labeled icon tiny">
-                      <i class="trash icon"></i>
-                      Vider
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="field">
-              <textarea v-model="TEMP_RETOUR_CODE" class="field" placeholder="Le résultat de votre code ou les erreurs s'afficheront ici." />
-            </div>
-          </div>
-          <!--/ Bloc de retour de code -->
-
           <!-- Bloc de retour de tests -->
           <div class="ui container segment retour-tests">
             <div class="ui grid mb-1">
@@ -163,6 +130,7 @@
 
         <!-- Bloc de droite -->
         <div class="column">
+          <!-- Bloc de l'éditeur de code -->
           <div class="ui container segment code">
             <div class="ui grid mb-1">
               <div class="two column row">
@@ -198,6 +166,40 @@
               />
             </div>
           </div>
+          <!--/ Bloc de l'éditeur de code -->
+
+          <!-- Bloc de retour de code -->
+          <div class="ui container segment retour-code form">
+            <div class="ui grid mb-1">
+              <div class="two column row">
+                <div class="left floated column">
+                  <h2>Résultat d'exécution de code</h2>
+                </div>
+                <div class="right floated column">
+                  <div class="ui text-right">
+                    <transition name="fade">
+                      <button
+                        v-show="TEMP_RETOUR_CODE !== ''"
+                        @click="copierPressePapier(TEMP_RETOUR_CODE, $event)"
+                        class="ui button labeled icon tiny"
+                      >
+                        <i class="clone icon"></i>
+                        Copier
+                      </button>
+                    </transition>
+                    <button @click="TEMP_RETOUR_CODE = ''" class="ui button labeled icon tiny">
+                      <i class="trash icon"></i>
+                      Vider
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <textarea v-model="TEMP_RETOUR_CODE" class="field" placeholder="Le résultat de votre code ou les erreurs s'afficheront ici." />
+            </div>
+          </div>
+          <!--/ Bloc de retour de code -->
         </div>
         <!--/ Bloc de droite -->
       </div>
@@ -208,7 +210,6 @@
 <script>
 import 'highlight.js/styles/monokai.css'
 
-import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
 
 import Alerte from '@/components/Alerte.vue'
@@ -229,7 +230,6 @@ export default {
   },
 
   apollo: {
-    moi: Utilisateur,
     exercice() {
       return {
         query: Exercice,
@@ -273,7 +273,7 @@ export default {
       return this.TEMP_TESTS.some(x => x.loading)
     },
     testsCompletion() {
-      return this.TEMP_TESTS.reduce((acc, el) => el.reussi ? ++acc : acc, 0) / this.TEMP_TESTS.length * 100
+      return this.TEMP_TESTS.reduce((acc, x) => x.reussi ? ++acc : acc, 0) / this.TEMP_TESTS.length * 100
     }
   },
 
@@ -320,7 +320,7 @@ export default {
   border: 1px solid #f4f4f4;
 }
 .retour-code > textarea {
-  height: 300px;
+  height: 400px;
 }
 .test-title {
   display: flex;
@@ -347,6 +347,6 @@ export default {
 }
 .CodeMirror {
   border: 1px solid #eee !important;
-  height: auto !important;
+  height: 500px !important;
 }
 </style>
