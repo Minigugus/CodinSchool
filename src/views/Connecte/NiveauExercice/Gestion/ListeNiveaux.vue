@@ -201,7 +201,7 @@ export default {
 .editer button {
   position: absolute !important;
   right: 0 !important;
-  margin-top: 15px !important;
+  margin-top: 0px !important;
 }
 
 .ui.divided.items>.item {
