@@ -1,0 +1,19 @@
+#import * from "./Test.graphql"
+
+type Mutation {
+  ajouterTest(exercice: ID!, test: CreationTest!): Test!
+  editerTest(test: ID!, modifications: EditionTest!): Test!
+  supprimerTest(test: ID!): ID!
+}
+
+type CreationTest {
+  nom: String!
+  entree: String!
+  sortie: String!
+}
+
+type EditionTest {
+  nom: String
+  entree: String
+  sortie: String
+}

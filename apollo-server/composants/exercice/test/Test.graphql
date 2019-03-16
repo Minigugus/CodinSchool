@@ -1,0 +1,15 @@
+#import * from "../Exercice.graphql"
+
+type Test {
+  id: ID!
+  nom: String!
+
+  exercice: Exercice!
+
+  # FIXME : Définir le délai d'éxécution maximal pour chaque test ou globalement ?
+  # tempsExecution: Int!
+
+  # FIXME : Les utilisateurs peuvent-ils accéder aux entrées/sorties des tests ?
+  entree: String
+  sortie: String
+}
