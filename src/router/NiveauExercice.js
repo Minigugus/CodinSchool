@@ -3,6 +3,12 @@ export default [
   // Partie "Utilisateur"
   {
     // Faire un exercice
+    path: '/listeExercices',
+    name: 'ListeExercices',
+    component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/ListeExercices.vue')
+  },
+  {
+    // Faire un exercice
     path: '/faireExercice/:idExercice',
     name: 'FaireExercice',
     component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/FaireExercice.vue'),
