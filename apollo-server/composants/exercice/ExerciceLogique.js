@@ -50,3 +50,6 @@ export const supprimerExercice = async id => {
     throw new ExerciceNonTrouveError(id)
   return id
 }
+
+// FIXME : Trier les tests (nouvel attribut ou avec le nom) ?
+export const recupererTestsExercice = exercice => exercice.getTests()

@@ -6,7 +6,8 @@ const Test = bdd.define(
   {
     id: {
       allowNull: false,
-      type: Sequelize.STRING(31),
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
       primaryKey: true
     },
 

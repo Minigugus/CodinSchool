@@ -4,6 +4,7 @@ type Test {
   id: ID!
   nom: String!
 
+  # FIXME : Pas vraiment utile et dangereux (N+1 requêtes)... Le supprimer ?
   exercice: Exercice!
 
   # FIXME : Définir le délai d'éxécution maximal pour chaque test ou globalement ?
