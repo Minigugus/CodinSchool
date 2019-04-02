@@ -1,4 +1,6 @@
-#import * from "../auth/DirectiveAcces.graphql"
+#import * from "./soumission/index.graphql"
+#import * from "./test/index.graphql"
+
 #import * from "./Exercice.graphql"
 
 type Query {
