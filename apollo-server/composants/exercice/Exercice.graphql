@@ -1,4 +1,6 @@
-#import * from '../niveau/Niveau.graphql'
+#import * from "../niveau/Niveau.graphql"
+#import * from "./soumission/Soumission.graphql"
+#import * from "./test/Test.graphql"
 
 enum Permission {
   """
@@ -20,4 +22,10 @@ type Exercice {
   position: Int!
 
   niveau: Niveau!
+
+  tests: [Test]!
+  
+  meilleurSoumission: Soumission
+
+  soumissions: [Soumission]! @acces
 }

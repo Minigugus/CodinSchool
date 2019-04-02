@@ -1,0 +1,16 @@
+#import * from "../../auth/DirectiveAcces.graphql"
+#import * from "../Exercice.graphql"
+#import * from "./test/ResultatTest.graphql"
+
+type Soumission @acces {
+  id: ID!
+
+  nbTests: Int!
+  nbPasses: Int!
+  
+  date: String!
+
+  exercice: Exercice!
+
+  resultats: [ResultatTest]!
+}
