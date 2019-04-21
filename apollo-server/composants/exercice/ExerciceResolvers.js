@@ -1,4 +1,10 @@
-import { recupererParID, creerExercice, editerExercice, reorganiserExercices, supprimerExercice } from './ExerciceLogique'
+import {
+  recupererParID,
+  creerExercice,
+  editerExercice,
+  reorganiserExercices,
+  supprimerExercice
+} from './ExerciceLogique'
 
 export default {
   Query: {
@@ -8,7 +14,12 @@ export default {
     }
   },
   Mutation: {
-    creerExercice(_, { exercice: { niveau, ...exercice } }) {
+    creerExercice(
+      _,
+      {
+        exercice: { niveau, ...exercice }
+      }
+    ) {
       return creerExercice(niveau, exercice)
     },
     editerExercice(_, { id, exercice }) {

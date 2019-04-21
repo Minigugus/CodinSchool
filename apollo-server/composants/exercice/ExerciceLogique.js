@@ -5,8 +5,7 @@ import { ExerciceNonTrouveError } from './ExerciceErreurs'
 
 export const recupererParID = async id => {
   const exercice = await Exercice.findByPk(id)
-  if (!exercice)
-    throw new ExerciceNonTrouveError(id)
+  if (!exercice) throw new ExerciceNonTrouveError(id)
   return exercice
 }
 
@@ -22,17 +21,14 @@ export const creerExercice = (niveau, exercice) =>
 
 export const editerExercice = async (id, exercice) => {
   const affecte = await Exercice.update(exercice, { where: { id } })
-  if (!affecte[0])
-    throw new ExerciceNonTrouveError(id)
+  if (!affecte[0]) throw new ExerciceNonTrouveError(id)
   return await Exercice.findByPk(id)
 }
 
 export const reorganiserExercices = async (niveau, exercices) => {
   await bdd.transaction(async transaction =>
     Promise.all(
-      exercices.map((id, position) =>
-        Exercice.update({ niveauId: niveau, position }, { where: { id }, transaction })
-      )
+      exercices.map((id, position) => Exercice.update({ niveauId: niveau, position }, { where: { id }, transaction }))
     )
   )
   // await Exercice.update(exercices.map((id, position) => ({ id, position })), { where: { } });
@@ -46,8 +42,7 @@ export const reorganiserExercices = async (niveau, exercices) => {
 
 export const supprimerExercice = async id => {
   const affecte = await Exercice.destroy({ where: { id } })
-  if (!affecte)
-    throw new ExerciceNonTrouveError(id)
+  if (!affecte) throw new ExerciceNonTrouveError(id)
   return id
 }
 
