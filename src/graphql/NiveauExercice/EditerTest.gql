@@ -1,0 +1,15 @@
+#import "./FragmentTest.gql"
+#import "./FragmentExercice.gql"
+#import "./FragmentNiveau.gql"
+
+mutation EditerTest($id: ID!, $test: EditionTest!) {
+  editerTest(test: $id, modifications: $test) {
+    ...test
+    exercice {
+      ...exercice
+      niveau {
+      ...niveau
+      }
+    }
+  }
+}
