@@ -110,7 +110,7 @@ const Profile = bdd.define(
 
     scopes: {
       avecRoles: {
-        include: [ { model: Role, as: 'role' } ]
+        include: [{ model: Role, as: 'role' }]
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="ui container fluid">
     <!-- Ecran de chargement de la page -->
-    <!-- <div v-else-if="$apollo.queries.niveaux.loading" class="ui text vertical segment container loading"></div> -->
+    <div v-if="$apollo.queries.niveaux.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
     <!-- <div v-else> -->
@@ -273,8 +273,6 @@ export default {
     }
   },
 
-  mounted() {
-  },
   methods: {
     scrollNiveau(aNiveau) {
       const el = document.querySelector(`#niveau-${aNiveau.id}`)

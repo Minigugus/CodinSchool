@@ -1,0 +1,15 @@
+#import "./FragmentTest.gql"
+#import "./FragmentExercice.gql"
+#import "./FragmentNiveau.gql"
+
+mutation CreerTest($exercice: ID!, $test: CreationTest!) {
+  creerTest(exercice: $exercice, test: $test) {
+    ...test
+    exercice {
+      ...exercice
+      niveau {
+      ...niveau
+      }
+    }
+  }
+}

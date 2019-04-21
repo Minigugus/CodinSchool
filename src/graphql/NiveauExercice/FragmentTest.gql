@@ -1,0 +1,6 @@
+fragment test on Test {
+  id
+  nom
+  entree
+  sortie
+}
