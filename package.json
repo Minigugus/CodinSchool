@@ -25,7 +25,7 @@
     "pg-hstore": "^2.3.2",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-vue": "^0.8.1",
-    "sequelize": "4.43.0",
+    "sequelize": "^5.7.3",
     "vue": "^2.6.10",
     "vue-apollo": "^3.0.0-beta.28",
     "vue-codemirror": "^4.0.6",
