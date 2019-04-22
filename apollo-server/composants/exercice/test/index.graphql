@@ -5,10 +5,10 @@ type Mutation {
   creerTest(exercice: ID!, test: CreationTest!): Test!
   @acces(requis: [ GESTION_EXERCICE ])
 
-  editerTest(test: ID!, modifications: EditionTest!): Test!
+  editerTest(id: ID!, modifications: EditionTest!): Test!
   @acces(requis: [ GESTION_EXERCICE ])
 
-  supprimerTest(test: ID!): ID!
+  supprimerTest(id: ID!): ID!
   @acces(requis: [ GESTION_EXERCICE ])
 
 }
