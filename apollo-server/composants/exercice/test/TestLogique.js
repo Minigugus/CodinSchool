@@ -9,8 +9,8 @@ export const recupererParID = async id => {
 
 export const creerTest = async (exercice, test) => Test.create({ exerciceId: exercice, ...test })
 
-export const editerTest = async (id, test) => {
-  const affecte = await Test.update(test, { where: { id }, returning: true })
+export const editerTest = async (id, modifications) => {
+  const affecte = await Test.update(modifications, { where: { id }, returning: true })
   if (!affecte[0]) throw new TestNonTrouveError(id)
   return affecte[1][0]
 }
