@@ -131,6 +131,55 @@
       </div>
       <!--/ Formulaire d'édition de l'exercice -->
 
+      <!-- Liste des tests -->
+      <template v-if="exercice.tests.length === 0">
+        <div class="ui container segment stripe text-center">
+          Cet exercice ne contient aucun test.<br>
+          <router-link :to="`/NiveauExercice/ajouterTest/${idExercice}`" class="underlineHover">
+            Ajouter un test à l'exercice
+          </router-link>
+        </div>
+      </template>
+      <template v-else>
+        <!-- Liste des tests de l'exercice -->
+        <sui-table celled selectable>
+          <sui-table-header>
+            <sui-table-row text-align="center">
+              <sui-table-header-cell>Id</sui-table-header-cell>
+              <sui-table-header-cell>Nom</sui-table-header-cell>
+              <sui-table-header-cell>Entrée</sui-table-header-cell>
+              <sui-table-header-cell>Sortie</sui-table-header-cell>
+              <sui-table-header-cell>Editer</sui-table-header-cell>
+            </sui-table-row>
+          </sui-table-header>
+          <sui-table-body>
+            <sui-table-row v-for="(aTest, index) in exercice.tests" :key="`test-${aTest.id}`" text-align="center">
+              <sui-table-cell v-text="++index" text-align="center" />
+              <sui-table-cell v-text="aTest.nom" />
+              <sui-table-cell v-text="aTest.entree" />
+              <sui-table-cell v-text="aTest.sortie" />
+              <sui-table-cell>
+                <router-link :to="`/NiveauExercice/test/${aTest.id}`" class="ui primary right labeled icon button mini">
+                  <i class="edit icon"></i>
+                  Editer
+                </router-link>
+              </sui-table-cell>
+            </sui-table-row>
+          </sui-table-body>
+        </sui-table>
+        <!--/ Liste des tests de l'exercice -->
+
+        <!-- Bouton d'ajout de test -->
+        <div class="text-center">
+          <router-link :to="`/NiveauExercice/ajouterTest/${idExercice}`" class="ui button right labeled icon text-center" tag="button">
+            <i class="plus icon"></i>
+            Ajouter un test
+          </router-link>
+        </div>
+        <!--/ Bouton d'ajout de test -->
+      </template>
+      <!--/ Liste des tests -->
+
       <!-- Bouton de suppression du niveau -->
       <div class="text-center mt-4">
         <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">

@@ -1,11 +1,15 @@
 #import "./FragmentExercice.gql"
 #import "./FragmentNiveau.gql"
+#import "./FragmentTest.gql"
 
 query Exercice($id: ID!) {
   exercice(id: $id) {
     ...exercice
     niveau {
      ...niveau
+    }
+    tests {
+      ...test
     }
   }
 }

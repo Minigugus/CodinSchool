@@ -167,7 +167,7 @@ export default {
     exerciceCree({ data }) {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`L'exercice "${data.creerExercice.id}"a été ajouté au niveau "${this.champs.niveau.v}".`)
+      this.$refs.erreurs.ajouterAlerte(`L'exercice "${data.creerExercice.id}" a été ajouté au niveau "${this.champs.niveau.v}".`)
     }
   }
 }
