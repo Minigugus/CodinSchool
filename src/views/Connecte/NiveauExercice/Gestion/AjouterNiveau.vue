@@ -31,10 +31,27 @@
       >
         <template slot-scope="{ mutate, loading }">
           <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-            <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
-            <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Structures de données" />
+            <form-champs
+              v-model="champs.id.v"
+              nom="Identifiant"
+              id="identifiant"
+              :err="champs.id.err"
+            />
+            <form-champs
+              v-model="champs.titre.v"
+              nom="Titre"
+              id="titre"
+              :err="champs.titre.err"
+              placeholder="Structures de données"
+            />
 
-            <form-champs v-model="champs.introduction.v" tag="textarea" nom="Introduction" id="introduction" :err="champs.introduction.err" />
+            <form-champs
+              tag="texteditor"
+              v-model="champs.introduction.v"
+              nom="Introduction"
+              id="introduction"
+              :err="champs.introduction.err"
+            />
 
             <button class="ui button" type="submit">Ajouter le niveau</button>
           </form>
