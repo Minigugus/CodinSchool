@@ -153,13 +153,13 @@
             </sui-table-row>
           </sui-table-header>
           <sui-table-body>
-            <sui-table-row v-for="(aTest, index) in exercice.tests" :key="`test-${aTest.id}`" text-align="center">
-              <sui-table-cell v-text="++index" text-align="center" />
+            <sui-table-row v-for="aTest in exercice.tests" :key="`test-${aTest.id}`" text-align="center">
+              <sui-table-cell v-text="aTest.id" text-align="center" />
               <sui-table-cell v-text="aTest.nom" />
               <sui-table-cell v-text="aTest.entree" />
               <sui-table-cell v-text="aTest.sortie" />
               <sui-table-cell>
-                <router-link :to="`/NiveauExercice/test/${aTest.id}`" class="ui primary right labeled icon button mini">
+                <router-link :to="`/NiveauExercice/exercice/${idExercice}/test/${aTest.id}`" class="ui primary right labeled icon button mini">
                   <i class="edit icon"></i>
                   Editer
                 </router-link>

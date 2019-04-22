@@ -154,7 +154,7 @@ export default {
       // Un ou plusieurs champs sont invalides
       if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
         gqlError.extensions.exception.props.champs.forEach(x =>
-          (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
+          (this.champs[x.nom] && this.champs[x.nom].err.push(x.message)))
 
       // Affichage de l'erreur dans l'alerte
       this.$refs.erreurs.viderAlerte()
