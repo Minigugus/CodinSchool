@@ -2,7 +2,7 @@
 export default [
   // Partie "Utilisateur"
   {
-    // Faire un exercice
+    // Lister les niveaux et exercices
     path: '/listeExercices',
     name: 'ListeExercices',
     component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/ListeExercices.vue')
@@ -48,5 +48,20 @@ export default [
     name: 'AjouterExercice',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterExercice.vue'),
     props: true
+  },
+  {
+    // Créer un test
+    path: '/NiveauExercice/ajouterTest/:idExercice?',
+    name: 'AjouterTest',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterTest.vue'),
+    props: true
   }
+  // ,
+  // {
+  //   // Modifier un test
+  //   path: '/NiveauExercice/test/:idTest',
+  //   name: 'EditerTest',
+  //   component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
+  //   props: true
+  // }
 ]
