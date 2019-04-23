@@ -36,8 +36,22 @@
       >
         <template slot-scope="{ mutate, loading }">
           <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-            <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
-            <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Les boucles" />
+            <form-champs
+              :value="champs.id.v"
+              nom="Identifiant"
+              id="identifiant"
+              :err="champs.id.err"
+              disabled="disabled"
+            />
+
+            <form-champs
+              v-model="champs.titre.v"
+              nom="Titre"
+              id="titre"
+              :err="champs.titre.err"
+              placeholder="Les boucles"
+              @input="generateId"
+            />
 
             <div class="field" :class="{ error: champs.niveau.err.length > 0 }">
               <label>Niveau</label>
@@ -78,7 +92,7 @@
 
 <script>
 import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
-import { checkPermissions } from '@/functions'
+import { checkPermissions, toKebabCase } from '@/functions'
 
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 
@@ -168,6 +182,10 @@ export default {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
       this.$refs.erreurs.ajouterAlerte(`L'exercice "${data.creerExercice.id}"a été ajouté au niveau "${this.champs.niveau.v}".`)
+    },
+
+    generateId() {
+      this.champs.id.v = toKebabCase(this.champs.titre.v).slice(0, 31)
     }
   }
 }

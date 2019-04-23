@@ -91,6 +91,19 @@ const copierDOMVersPressePapier = ele => {
   window.getSelection().removeAllRanges()
 }
 
+/**
+ * Convertir une chaîne en kebab case sans accent ni symboles interdits.
+ *
+ * @param {string} str la chaîne à convertir
+ * @returns {string} la chaîne en kebab case
+ */
+const toKebabCase = str => str
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/\s+]/gi, '-')
+  .replace(/\-+/g, '-')
+  .replace(/^\-|\-$/g, '')
+  .toLowerCase()
+
 export {
   delay,
   isEmail,
@@ -98,5 +111,6 @@ export {
   setErreurInput,
   checkPermissions,
   copierVersPressePapier,
-  copierDOMVersPressePapier
+  copierDOMVersPressePapier,
+  toKebabCase
 }

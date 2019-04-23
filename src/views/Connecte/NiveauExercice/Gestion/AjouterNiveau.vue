@@ -32,17 +32,21 @@
         <template slot-scope="{ mutate, loading }">
           <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
             <form-champs
-              v-model="champs.id.v"
+              :value="champs.id.v"
               nom="Identifiant"
               id="identifiant"
               :err="champs.id.err"
+              disabled="disabled"
             />
+            <!-- ID Auto-généré : https://github.com/Minigugus/CodinSchool/issues/38 -->
+
             <form-champs
               v-model="champs.titre.v"
               nom="Titre"
               id="titre"
               :err="champs.titre.err"
               placeholder="Structures de données"
+              @input="generateId"
             />
 
             <form-champs
@@ -66,7 +70,7 @@
 
 <script>
 import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
-import { checkPermissions } from '@/functions'
+import { checkPermissions, toKebabCase } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
@@ -145,6 +149,10 @@ export default {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
       this.$refs.erreurs.ajouterAlerte(`Le niveau "${nouveauNiveau.id}" a été créé.`)
+    },
+
+    generateId() {
+      this.champs.id.v = toKebabCase(this.champs.titre.v).slice(0, 31)
     }
   }
 }

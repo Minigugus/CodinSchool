@@ -157,6 +157,11 @@ export default {
     return {
       localValue: this.value
     }
+  },
+  watch: {
+    value(newValue) {
+      if (newValue !== this.localValue) this.localValue = newValue
+    }
   }
 }
 </script>
