@@ -17,10 +17,16 @@ export default [
 
   // Partie "Gestion"
   {
-    // Lister/Réorganiser les niveaux
+    // Lister les niveaux
     path: '/NiveauExercice/niveau/liste',
     name: 'ListeNiveaux',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/ListeNiveaux.vue')
+  },
+  {
+    // Réorganiser les niveaux/exercices/tests
+    path: '/NiveauExercice/reorganiser',
+    name: 'Reorganiser',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/Reorganiser.vue')
   },
   {
     // Créer un niveau

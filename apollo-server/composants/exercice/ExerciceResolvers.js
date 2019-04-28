@@ -17,10 +17,10 @@ export default {
     creerExercice(
       _,
       {
-        exercice: { niveau, ...exercice }
+        exercice: { niveauId, ...exercice }
       }
     ) {
-      return creerExercice(niveau, exercice)
+      return creerExercice(niveauId, exercice)
     },
     editerExercice(_, { id, exercice }) {
       return editerExercice(id, exercice)
