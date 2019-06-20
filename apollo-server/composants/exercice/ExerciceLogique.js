@@ -46,5 +46,4 @@ export const supprimerExercice = async id => {
   return id
 }
 
-// FIXME : Trier les tests (nouvel attribut ou avec le nom) ?
-export const recupererTestsExercice = exercice => exercice.getTests()
+export const recupererTestsExercice = exercice => exercice.getTests({ order: [['position', 'ASC']] })
