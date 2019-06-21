@@ -41,7 +41,6 @@
     "vue-apollo": "^3.0.0-beta.28",
     "vue-cli-plugin-apollo": "^0.20.0",
     "vue-codemirror": "^4.0.6",
-    "vue-promised": "^1.2.0",
     "vue-router": "^3.0.6",
     "vue-template-compiler": "^2.6.10",
     "vue2-editor": "^2.8.1",
