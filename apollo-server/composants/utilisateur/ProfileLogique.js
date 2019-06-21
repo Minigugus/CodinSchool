@@ -1,3 +1,4 @@
+import Sequelize from 'sequelize'
 import uuidv4 from 'uuid/v4'
 import { hasher, comparer } from '../auth'
 import CodinSchoolError, { ErreurInattendueError } from '../erreur'
@@ -25,9 +26,9 @@ export const recupererParID = async id => {
   return profile
 }
 export const recupererParEmail = email =>
-  Profile.findOne({ where: { emailPrimaire: { in: [email.toLowerCase()] } } })
+  Profile.findOne({ where: { emailPrimaire: { [Sequelize.Op.in]: [email.toLowerCase()] } } })
 export const recupererParValidation = validation =>
-  Profile.findOne({ where: { validationInscription: { in: [validation] } } })
+  Profile.findOne({ where: { validationInscription: { [Sequelize.Op.in]: [validation] } } })
 
 export const creerProfile = async ({ email, motDePasse, nom, prenom, dateNaissance }, validation = false) => {
   try {

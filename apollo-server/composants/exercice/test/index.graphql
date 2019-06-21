@@ -8,7 +8,10 @@ type Mutation {
   editerTest(id: ID!, modifications: EditionTest!): Test!
   @acces(requis: [ GESTION_EXERCICE ])
 
-  supprimerTest(id: ID!): ID!
+  reorganiserTests(exercice: ID!, tests: [ID!]!): [Test!]!
+  @acces(requis: [ GESTION_EXERCICE ])
+
+  supprimerTest(test: ID!): ID!
   @acces(requis: [ GESTION_EXERCICE ])
 
 }
