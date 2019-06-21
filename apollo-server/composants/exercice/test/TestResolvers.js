@@ -1,4 +1,4 @@
-import { creerTest, editerTest, supprimerTest } from './TestLogique'
+import { creerTest, editerTest, supprimerTest, reorganiserTests } from './TestLogique'
 
 export default {
   Mutation: {
@@ -8,8 +8,11 @@ export default {
     editerTest(_, { id, modifications }) {
       return editerTest(id, modifications)
     },
-    supprimerTest(_, { id }) {
-      return supprimerTest(id)
+    supprimerTest(_, { test }) {
+      return supprimerTest(test)
+    },
+    reorganiserTests(_, { niveau, tests }) {
+      return reorganiserTests(niveau, tests)
     }
   },
   Test: {
