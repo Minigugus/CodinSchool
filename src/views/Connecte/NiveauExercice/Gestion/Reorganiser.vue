@@ -28,7 +28,7 @@
         <div class="text-center mb-3">
           <transition name="fade" mode="out-in">
             <!-- Choix du contenu à réorganiser -->
-            <div v-if="Object.values(reorg).every(x => x === false)" key="choix-reorganisation">
+            <div v-if="areButtonsVisible" key="choix-reorganisation">
               <h3 class="ui center aligned header">Quel contenu réorganiser ?</h3>
 
               <button @click="reorg.niveau = true" class="ui button primary">Niveaux</button>
@@ -121,7 +121,9 @@ import { checkPermissions } from '@/functions'
 import draggable from 'vuedraggable'
 
 import Contenu from '@/graphql/NiveauExercice/NiveauxExercicesTests.gql'
+import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 import ReorganiserNiveaux from '@/graphql/NiveauExercice/ReorganiserNiveaux.gql'
+import ReorganiserExercices from '@/graphql/NiveauExercice/ReorganiserExercices.gql'
 
 export default {
   name: 'Reorganiser',
@@ -134,9 +136,6 @@ export default {
         niveau: false,
         exercice: false,
         test: false
-      },
-      niveau: {
-        sontDraggable: false
       }
     }
   },
@@ -148,21 +147,53 @@ export default {
     },
     niveaux: Contenu
   },
+  computed: {
+    areButtonsVisible() {
+      return Object.values(this.reorg).every(x => x === false)
+    }
+  },
 
   methods: {
-    async validerReorganisation() {
+    validerReorganisation() {
+      if (this.reorg.niveau) this.reorgNiveaux()
+      else if (this.reorg.exercice) this.reorgExercices()
+      else if (this.reorg.test) this.r
+    },
 
-      // this.niveau.sontDraggable = false
+    async reorgNiveaux() {
+      const apolloClient = this.$apollo.provider.defaultClient
 
+      // Mise à jour du cache
+      await apolloClient.mutate({
+        mutation: ReorganiserNiveaux,
+        variables: {
+          niveaux: this.niveaux.map(x => x.id)
+        },
+        update: (store, { data: { reorganiserNiveaux: nouvelleOrganisation } }) => {
+          // Lire le cache pour récupérer le contenu actuel
+          const data = store.readQuery({ query: Niveaux })
+
+          // Modifier le contenu actuel récupéré
+          data.niveaux = nouvelleOrganisation
+
+          // Appliquer la modification en cache
+          store.writeQuery({ query: Niveaux, data })
+        }})
+    },
+
+    async reorgExercices() {
+      // TODO: Multiple niveaux change
       // const apolloClient = this.$apollo.provider.defaultClient
 
       // // Mise à jour du cache
       // await apolloClient.mutate({
-      //   mutation: ReorganiserNiveaux,
+      //   mutation: ReorganiserExercices,
       //   variables: {
-      //     niveaux: this.niveaux.map(x => x.id)
+      //     niveau:
+      //     exercices: this.exercices.map(x => x.id)
       //   },
-      //   update: (store, { data: { reorganiserNiveaux: nouvelleOrganisation } }) => {
+      //   update: (store, { data: { ReorganiserExercices: nouvelleOrganisation } }) => {
+      //     console.log(nouvelleOrganisation)
       //     // Lire le cache pour récupérer le contenu actuel
       //     const data = store.readQuery({ query: Niveaux })
 
@@ -172,6 +203,10 @@ export default {
       //     // Appliquer la modification en cache
       //     store.writeQuery({ query: Niveaux, data })
       //   }})
+    },
+
+    async reorgTests() {
+      // TODO: need back
     }
   }
 }
