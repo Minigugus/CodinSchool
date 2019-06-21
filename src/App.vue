@@ -91,7 +91,7 @@
 
       <!-- Contenu pages -->
       <transition name="fade-fast" mode="out-in">
-        <router-view id="mainContent" />
+        <router-view id="mainContent" class="mt-2" />
       </transition>
       <!--/ Contenu pages -->
 
