@@ -2,6 +2,8 @@ import path from 'path'
 import fs from 'fs'
 import { parse, Kind, buildASTSchema, print } from 'graphql'
 
+const REGEXP_IMPORT = /^\s*#\s*(?:import\s+(?:\*|([\S]+))\s+from|import)\s+(?:'((?:\\'|[^'])+)'|"((?:\\"|[^"])+)");?\s*$/mg
+
 /**
  * Importe un schéma GraphQL récursivement en fusionant les types de même nom.
  * Supporte les importations cycliques.
@@ -23,11 +25,11 @@ const importerSchema = (fichier, dossier = __dirname) => {
       // On stocke son contenu
       charge.set(
         chemin,
-        contenu.replace(/# ?import (\*|(.*)) from ('|")([^"']+)('|");?/g, '').trim()
+        contenu.replace(REGEXP_IMPORT, '').trim()
       )
       // On charge les importations
-      const regex = /# ?import (\*|(.*)) from ('|")([^"']+)('|");?/g
-      for (let i; (i = regex.exec(contenu)) !== null; null) importer(i[4], _dossier)
+      for (let i; (i = REGEXP_IMPORT.exec(contenu)) !== null; null) importer(i[2] || i[3], _dossier)
+      REGEXP_IMPORT.lastIndex = 0
     }
   }
   const definitionsParNom = new Map()
