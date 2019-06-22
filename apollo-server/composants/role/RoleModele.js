@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize'
 import bdd from '../bdd'
 
-import { Permission } from '.'
+import Permissions from '../permissions'
 
 export default bdd.define(
   'role',
@@ -17,7 +17,7 @@ export default bdd.define(
       allowNull: false
     },
     permissions: {
-      type: Sequelize.ARRAY(Sequelize.ENUM(Permission)),
+      type: Sequelize.ARRAY(Sequelize.ENUM(Permissions)),
       allowNull: false
     },
     parDefaut: {
