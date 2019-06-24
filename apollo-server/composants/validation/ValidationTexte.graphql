@@ -1,0 +1,7 @@
+directive @min(
+  longueur: Int!
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @max(
+  longueur: Int!
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION

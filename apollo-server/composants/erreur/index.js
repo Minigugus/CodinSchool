@@ -4,7 +4,7 @@ import { MODE_DEVELOPPEMENT } from '../config'
 
 export default class CodinSchoolError extends ApolloError {
   constructor(code, message, props, details) {
-    super(message, code, { props, details: MODE_DEVELOPPEMENT ? details : undefined })
+    super(message, code, { ...props, details: MODE_DEVELOPPEMENT ? details : undefined })
   }
 }
 
