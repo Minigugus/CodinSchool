@@ -27,8 +27,15 @@ Paramètres demandés lors de la création d'un Niveau.
 """
 input CreationNiveau {
   id: ID!
+  @min(longueur: 3)
+  @max(longueur: 31)
+
   titre: String!
+  @min(longueur: 3)
+  @max(longueur: 137)
+  
   introduction: String
+  @max(longueur: 5000)
 }
 
 """
@@ -36,6 +43,13 @@ Paramètres demandés lors de l'édition d'un Niveau.
 """
 input EditionNiveau {
   id: ID
+  @min(longueur: 3)
+  @max(longueur: 31)
+
   titre: String
+  @min(longueur: 3)
+  @max(longueur: 137)
+  
   introduction: String
+  @max(longueur: 5000)
 }
