@@ -1,0 +1,15 @@
+#import "./FragmentNiveau.gql"
+#import "./FragmentExercice.gql"
+#import "./FragmentTest.gql"
+
+query NiveauxExercicesTests {
+  niveaux {
+    ...niveau
+    exercices {
+      ...exercice
+      tests {
+        ...test
+      }
+    }
+  }
+}

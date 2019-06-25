@@ -1,7 +1,3 @@
 query Permissions {
-  __type(name: "Permission") {
-    enumValues {
-      name
-    }
-  }
+  permissions
 }
