@@ -4,74 +4,73 @@
     <div class="ui large breadcrumb mb-2 mt-3">
       <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
       <i class="right angle icon divider"></i>
-      <template v-if="idNiveau">
-        <router-link :to="`/NiveauExercice/niveau/${idNiveau}`" class="section">Niveau "{{ idNiveau }}"</router-link>
+      <template v-if="idExercice">
+        <router-link :to="`/NiveauExercice/exercice/${idExercice}`" class="section">Exercice "{{ idExercice }}"</router-link>
         <i class="right arrow icon divider"></i>
       </template>
-      <div class="active section">Ajouter un exercice</div>
+      <div class="active section">Ajouter un test</div>
     </div>
     <!--/ Fil d'ariane -->
 
     <div class="ui container segment stripe">
       <h2 class="ui center aligned header">
         <div class="content">
-          Ajouter un exercice
+          Ajouter un test
         </div>
       </h2>
 
-      <!-- Formulaire d'ajout d'exercice -->
+      <!-- Formulaire d'ajout de test -->
       <ApolloMutation
-        :mutation="require('@/graphql/NiveauExercice/CreerExercice.gql')"
+        :mutation="require('@/graphql/NiveauExercice/CreerTest.gql')"
         :variables="{
-          exercice: {
-            id: champs.id.v,
-            titre: champs.titre.v,
-            niveauId: champs.niveau.v,
-            enonce: champs.enonce.v,
-            correction: champs.correction.v
+          exercice: champs.exercice.v,
+          test: {
+            nom: champs.nom.v,
+            entree: champs.entree.v,
+            sortie: champs.sortie.v
           }
         }"
         @error="chargerErreur"
-        @done="exerciceCree"
+        @done="testCree"
       >
         <template slot-scope="{ mutate, loading }">
           <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-            <form-champs v-model="champs.id.v" nom="Identifiant" id="identifiant" :err="champs.id.err" />
-            <form-champs v-model="champs.titre.v" nom="Titre" id="titre" :err="champs.titre.err" placeholder="Les boucles" />
+            <form-champs v-model="champs.nom.v" nom="Nom" id="nom" :err="champs.nom.err" placeholder="Envoi d'entier" />
 
-            <div class="field" :class="{ error: champs.niveau.err.length > 0 }">
-              <label>Niveau</label>
-              <select class="ui dropdown" v-model="champs.niveau.v">
+            <div class="field" :class="{ error: champs.exercice.err.length > 0 }">
+              <label>Exercice</label>
+              <select class="ui dropdown" v-model="champs.exercice.v">
                 <option>-</option>
-                <option v-for="(aNiveau, index) in niveaux" :value="aNiveau.id" :key="'option-' + index">{{ aNiveau.titre }} (#{{ aNiveau.id }})</option>
+                <template v-for="(aNiveau, index) in niveaux">
+                  <option v-for="(aExercice, indexExo) in aNiveau.exercices" :value="aExercice.id" :key="`option-${index}-${indexExo}`">
+                    {{ aExercice.titre }} (Niveau "#{{ aNiveau.id }}" / Exercice "#{{ aExercice.id }}")
+                  </option>
+                </template>
               </select>
-              <div v-for="(anError, index) in champs.niveau.err" :key="'erreur-niveau-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
+              <div v-for="(anError, index) in champs.exercice.err" :key="'erreur-exercice-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
             </div>
 
             <form-champs
-              tag="texteditor"
-              v-model="champs.enonce.v"
-              nom="Enoncé"
-              id="enonce"
-              :err="champs.enonce.err"
+              v-model="champs.entree.v"
+              nom="Entrée"
+              id="entree"
+              :err="champs.entree.err"
             />
 
             <form-champs
-              v-model="champs.correction.v"
-              tag="codeeditor"
-              nom="Correction"
-              id="Correction"
-              type="C"
-              :err="champs.correction.err"
+              v-model="champs.sortie.v"
+              nom="Sortie"
+              id="sortie"
+              :err="champs.sortie.err"
             />
 
-            <button class="ui button" type="submit">Ajouter l'exercice</button>
+            <button class="ui button" type="submit">Ajouter le test</button>
           </form>
 
           <Alerte ref="erreurs" :type-alerte="typeAlerte" />
         </template>
       </ApolloMutation>
-    <!--/ Formulaire d'ajout d'exercice -->
+    <!--/ Formulaire d'ajout de test -->
     </div>
   </div>
 </template>
@@ -80,19 +79,19 @@
 import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { checkPermissions } from '@/functions'
 
-import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
+import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 
 export default {
-  name: 'AjouterExercice',
+  name: 'AjouterTest',
   components: {
     Alerte,
     FormChamps
   },
   props: {
-    idNiveau: {
+    idExercice: {
       type: String,
       required: false,
       default: null
@@ -101,11 +100,10 @@ export default {
   data() {
     return {
       champs: {
-        id: { v: '', err: [] },
-        titre: { v: '', err: [] },
-        niveau: { v: '-', err: [] },
-        enonce: { v: '', err: [] },
-        correction: { v: '#include <stdio.h>\nint main(void) {\n  for (int i = 0 ; i < 10 ; ++i)\n    printf("%d\\n", i);\n  return 0;\n}', err: [] }
+        nom: { v: '', err: [] },
+        entree: { v: '', err: [] },
+        sortie: { v: '', err: [] },
+        exercice: { v: '-', err: [] }
       },
       typeAlerte: 'Erreur'
     }
@@ -116,12 +114,12 @@ export default {
       result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
     },
     niveaux: {
-      query: Niveaux,
+      query: NiveauxExercices,
       result({ data, loading }) {
-        // Pendant le chargement des niveaux, vérifier si l'id de niveau passé
+        // Pendant le chargement des niveaux, vérifier si l'id d'exercice passé
         // en paramètre existe. Si oui, l'appliquer dans le champs <select>
-        if (!loading && data.niveaux.find(x => x.id === this.idNiveau))
-          this.champs.niveau.v = this.idNiveau
+        if (!loading && data.niveaux.find(x => x.exercices.find(y => y.id === this.idExercice)))
+          this.champs.exercice.v = this.idExercice
       }
     }
   },
@@ -138,8 +136,8 @@ export default {
           tousRemplis = false
         }
       }
-      if (this.champs.niveau.v === '-') {
-        this.champs.niveau.err.push('Veuillez sélectionner un niveau.')
+      if (this.champs.exercice.v === '-') {
+        this.champs.exercice.err.push('Veuillez sélectionner un exercice.')
         tousRemplis = false
       }
       if (!tousRemplis) this.$refs.erreurs.ajouterAlerte('Tous les champs sont obligatoires.')
@@ -156,7 +154,7 @@ export default {
       // Un ou plusieurs champs sont invalides
       if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
         gqlError.extensions.exception.props.champs.forEach(x =>
-          (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
+          (this.champs[x.nom] && this.champs[x.nom].err.push(x.message)))
 
       // Affichage de l'erreur dans l'alerte
       this.$refs.erreurs.viderAlerte()
@@ -164,10 +162,10 @@ export default {
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
-    exerciceCree({ data }) {
+    testCree({ data }) {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`L'exercice "${data.creerExercice.id}" a été ajouté au niveau "${this.champs.niveau.v}".`)
+      this.$refs.erreurs.ajouterAlerte(`Le test "${data.creerTest.id}" a été ajouté à l'exercice "${this.champs.exercice.v}".`)
     }
   }
 }

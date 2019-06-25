@@ -2,7 +2,7 @@
 export default [
   // Partie "Utilisateur"
   {
-    // Faire un exercice
+    // Lister les niveaux et exercices
     path: '/listeExercices',
     name: 'ListeExercices',
     component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/ListeExercices.vue')
@@ -17,10 +17,16 @@ export default [
 
   // Partie "Gestion"
   {
-    // Lister/Réorganiser les niveaux
+    // Lister les niveaux
     path: '/NiveauExercice/niveau/liste',
     name: 'ListeNiveaux',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/ListeNiveaux.vue')
+  },
+  {
+    // Réorganiser les niveaux/exercices/tests
+    path: '/NiveauExercice/reorganiser',
+    name: 'Reorganiser',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/Reorganiser.vue')
   },
   {
     // Créer un niveau
@@ -47,6 +53,20 @@ export default [
     path: '/NiveauExercice/ajouterExercice/:idNiveau?',
     name: 'AjouterExercice',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterExercice.vue'),
+    props: true
+  },
+  {
+    // Créer un test
+    path: '/NiveauExercice/ajouterTest/:idExercice?',
+    name: 'AjouterTest',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterTest.vue'),
+    props: true
+  },
+  {
+    // Modifier un test
+    path: '/NiveauExercice/exercice/:idExercice/test/:idTest',
+    name: 'EditerTest',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
     props: true
   }
 ]

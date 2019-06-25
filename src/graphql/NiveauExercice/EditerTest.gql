@@ -2,8 +2,8 @@
 #import "./FragmentExercice.gql"
 #import "./FragmentNiveau.gql"
 
-mutation EditerTest($id: ID!, $test: EditionTest!) {
-  editerTest(test: $id, modifications: $test) {
+mutation EditerTest($id: ID!, $modifications: EditionTest!) {
+  editerTest(id: $id, modifications: $modifications) {
     ...test
     exercice {
       ...exercice

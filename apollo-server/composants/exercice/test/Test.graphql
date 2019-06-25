@@ -3,6 +3,7 @@
 type Test {
   id: ID!
   nom: String!
+  position: Int!
 
   # FIXME : Pas vraiment utile et dangereux (N+1 requêtes)... Le supprimer ?
   exercice: Exercice!
