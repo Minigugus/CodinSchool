@@ -11,6 +11,11 @@ const Test = bdd.define(
       primaryKey: true
     },
 
+    position: {
+      allowNull: false,
+      type: Sequelize.INTEGER
+    },
+
     nom: {
       allowNull: false,
       type: Sequelize.STRING(256)

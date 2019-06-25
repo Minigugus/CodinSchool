@@ -27,7 +27,8 @@ export default {
   props: {
     typeAlerte: {
       type: String,
-      required: true
+      required: true,
+      validator: v => typesAlertes.map(x => x.titre).includes(v)
     },
     fermable: {
       type: Boolean,
