@@ -3,7 +3,8 @@ import {
   creerExercice,
   editerExercice,
   reorganiserExercices,
-  supprimerExercice
+  supprimerExercice,
+  recupererTestsExercice
 } from './ExerciceLogique'
 
 export default {
@@ -17,10 +18,10 @@ export default {
     creerExercice(
       _,
       {
-        exercice: { niveau, ...exercice }
+        exercice: { niveauId, ...exercice }
       }
     ) {
-      return creerExercice(niveau, exercice)
+      return creerExercice(niveauId, exercice)
     },
     editerExercice(_, { id, exercice }) {
       return editerExercice(id, exercice)
@@ -38,7 +39,7 @@ export default {
       return exercice.getNiveau()
     },
     tests(exercice) {
-      return exercice.getTests()
+      return recupererTestsExercice(exercice)
     }
   }
 }
