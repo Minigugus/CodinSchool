@@ -12,7 +12,7 @@ const REGEXP_IMPORT = /^\s*#\s*(?:import\s+(?:\*|([\S]+))\s+from|import)\s+(?:'(
  * @param {string} dossier Base du chemin relatif du fichier à importer.
  * @returns {GraphQLSchema} Schéma GraphQL résultant de l'importation et de la fusion des types.
  */
-const importerSchema = (fichier, dossier = __dirname) => {
+const importerSchema = (fichier, { dossier = __dirname, trier = false } = {}) => {
   const charge = new Map()
   const importer = (_fichier, _dossier) => {
     const chemin = path.resolve(_dossier, _fichier)
@@ -41,16 +41,23 @@ const importerSchema = (fichier, dossier = __dirname) => {
       return arr
     }, actuel.directives)
   }
+  const trierParNom = tableau => trier
+    ? trier instanceof Function
+      ? tableau.sort(trier)
+      : tableau.sort((a, b) => a.name.value.localeCompare(b.name.value))
+    : undefined
   const fusionChamps = (actuel, nouveau) => {
     actuel.fields.push(...nouveau.fields)
+    trierParNom(actuel.fields)
     fusionDirectives(actuel, nouveau)
   }
   const fusionValeurs = (actuel, nouveau) => {
     actuel.values.push(...nouveau.values)
+    trierParNom(actuel.values)
     fusionDirectives(actuel, nouveau)
   }
   const aucuneFusion = () => {
-    // Ce type ne peut être fusionné.
+    // Ce type ne nécessite pas de fusion.
   }
   const fusions = {
     [Kind.INPUT_OBJECT_TYPE_DEFINITION]: fusionChamps,
@@ -67,13 +74,21 @@ const importerSchema = (fichier, dossier = __dirname) => {
     for (let source of sources)
       if (source.length)
         for (let definition of parse(source, { noLocation: true }).definitions)
-          if (definition.name && definitionsParNom.has(definition.name.value))
-            if (fusions[definition.kind])
+          if ('name' in definition && definitionsParNom.has(definition.name.value))
+            if (definition.kind in fusions)
               fusions[definition.kind](definitionsParNom.get(definition.name.value), definition)
             else
               console.warn(`Le type GraphQL « ${definition.kind} » ne peut être fusionné.`)
-          else
-            definitionsParNom.set(definition.name ? definition.name.value : definition, definition)
+          else {
+            if ('fields' in definition)
+              trierParNom(definition.fields)
+            if ('values' in definition)
+              trierParNom(definition.values)
+            definitionsParNom.set(
+              definition.name ? definition.name.value : definition,
+              definition
+            )
+          }
   }
   const recreerDocument = definitions => ({
     kind: 'Document',
@@ -90,7 +105,7 @@ const importerSchema = (fichier, dossier = __dirname) => {
   return document
 }
 
-const document = importerSchema('schema.graphql')
+const document = importerSchema('schema.graphql', { trier: true })
 
 export const schema = buildASTSchema(document)
 
