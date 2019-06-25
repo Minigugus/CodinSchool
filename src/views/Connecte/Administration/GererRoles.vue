@@ -151,12 +151,7 @@ export default {
       query: Utilisateur,
       result: checkPermissions(['GESTION_ROLE'])
     },
-    permissions: {
-      query: Permissions,
-      update({__type: { enumValues } }) {
-        return enumValues.map(x => x.name)
-      }
-    },
+    permissions: Permissions,
     roles: Roles
   },
   data() {
