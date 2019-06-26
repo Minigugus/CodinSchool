@@ -1,5 +1,9 @@
 <template>
   <div class="ui container">
+    <h2 class="ui center aligned header">
+      <div class="content">Gestion des utilisateurs</div>
+    </h2>
+
     <ApolloQuery :query="require('@/graphql/Administration/Utilisateurs.gql')">
       <template v-slot="{ result: { error, data }, isLoading }">
         <!-- Chargement -->
@@ -25,11 +29,6 @@
           </Modale>
           <!--/ Modal de confirmation de suppression d'utilisateur -->
 
-          <h2 class="ui center aligned header">
-            <div class="content">
-              Gestion des utilisateurs
-            </div>
-          </h2>
 
           <!-- Tableau de gestion des utilisateurs -->
           <table class="ui celled table table-center">
@@ -61,9 +60,9 @@
                 <td :title="aUser.id">{{ aUser.id.slice(0, 8) }}...</td>
                 <td>{{ aUser.prenom + ' ' + aUser.nom }}</td>
                 <td>{{ aUser.emailPrimaire }}</td>
-                <td>{{ aUser.dateInscription }}</td>
+                <td>{{ new Date(parseInt(aUser.dateInscription, 10)).toJSON() }}</td>
                 <td>
-                  <span v-for="aRole in aUser.roles" :key="aRole.id" v-text="aRole.nom" />
+                  {{ listeRoles(aUser) }}
                 </td>
                 <td>
                   <!-- Bouton de redirection vers page d'édition d'utilisateur -->
@@ -122,6 +121,13 @@ export default {
       typeAlerte: 'Erreur'
     }
   },
+
+  computed: {
+    listeRoles() {
+      return aUser => aUser.roles.map(x => x.nom).join(', ')
+    }
+  },
+
   methods: {
     // Afficher la modal de confirmation de suppression d'utilisateur
     demandeSuppression(aUserId) {
