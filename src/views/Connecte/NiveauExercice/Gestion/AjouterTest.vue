@@ -1,15 +1,12 @@
 <template>
   <div class="ui container">
     <!-- Fil d'ariane -->
-    <div class="ui large breadcrumb mb-2 mt-3">
-      <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
-      <i class="right angle icon divider"></i>
-      <template v-if="idExercice">
-        <router-link :to="`/NiveauExercice/exercice/${idExercice}`" class="section">Exercice "{{ idExercice }}"</router-link>
-        <i class="right arrow icon divider"></i>
-      </template>
-      <div class="active section">Ajouter un test</div>
-    </div>
+    <FilAriane :items="[
+      { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
+      idExercice ? { txt: `Niveau : ${idExercice}`, to: `/NiveauExercice/exercice/${idExercice}` } : undefined,
+      `Ajouter un test`
+    ]"
+    />
     <!--/ Fil d'ariane -->
 
     <div class="ui container segment stripe">
@@ -83,12 +80,14 @@ import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
 
 export default {
   name: 'AjouterTest',
   components: {
     Alerte,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   props: {
     idExercice: {
