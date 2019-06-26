@@ -53,6 +53,7 @@ Editeur de code :
       :type="type"
       :placeholder="placeholder"
       @input="$emit('input', $event.target.value)"
+      @blur="$emit('blur', $event)"
     />
 
     <textarea
@@ -61,6 +62,7 @@ Editeur de code :
       :id="id"
       :placeholder="placeholder"
       @input="$emit('input', $event.target.value)"
+      @blur="$emit('blur', $event)"
     />
 
     <!-- Editeur de texte -->

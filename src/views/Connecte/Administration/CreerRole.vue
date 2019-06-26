@@ -1,84 +1,88 @@
 <template>
-  <div class="ui container segment">
-    <!-- Ecran de chargement de la page -->
-    <div v-if="$apollo.queries.permissions.loading" class="ui text vertical segment container loading"></div>
-    <!--/ Ecran de chargement de la page -->
+  <div class="ui container">
+    <!-- Fil d'ariane -->
+    <FilAriane :items="[
+      { txt: 'Gestion des rôles', to: '/Administration/gererRoles' },
+      `Création d'un rôle`
+    ]"
+    />
+    <!--/ Fil d'ariane -->
 
-    <!-- Contenu de la page -->
-    <div v-else class="ui container">
-      <!-- Lien de retour vers la liste des rôles -->
-      <div>
-        <router-link to="/Administration/gererRoles" class="ui button left labeled icon" tag="button">
-          <i class="left arrow icon"></i>
-          Retour vers la liste des rôles
-        </router-link>
-      </div>
-      <!--/ Lien de retour vers la liste des rôles -->
+    <h2 class="ui center aligned header">
+      <div class="content">Création d'un rôle</div>
+    </h2>
 
-      <h2 class="ui center aligned header">
-        <div class="content">
-          Création d'un rôle
+    <ApolloQuery :query="require('@/graphql/Administration/Permissions.gql')">
+      <template v-slot="{ result: { error, data }, isLoading }">
+        <!-- Chargement -->
+        <sui-loader v-if="isLoading" active centered inline />
+
+        <!-- Erreur -->
+        <div v-else-if="error">
+          <Alerte :liste-msg="[error.message]" type-alerte="Erreur" />
         </div>
-      </h2>
 
-      <!-- Formulaire de création de rôle -->
-      <ApolloMutation
-        :mutation="require('@/graphql/Administration/CreerRole.gql')"
-        :variables="{
-          role: {
-            nom: champs.role.nom.v,
-            permissions: champs.role.permissions.v,
-            parDefaut: champs.role.parDefaut.v
-          }
-        }"
-        @error="chargerErreur"
-        @done="roleCree"
-      >
-        <template slot-scope="{ mutate, loading }">
-          <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-            <form-champs
-              v-model="champs.role.nom.v"
-              nom="Nom"
-              id="nom"
-              :err="champs.role.nom.err"
-            />
+        <!-- Result -->
+        <div v-else-if="data" class="ui container segment">
+          <!-- Formulaire de création de rôle -->
+          <ApolloMutation
+            :mutation="require('@/graphql/Administration/CreerRole.gql')"
+            :variables="{
+              role: {
+                nom: champs.role.nom.v,
+                permissions: champs.role.permissions.v,
+                parDefaut: champs.role.parDefaut.v
+              }
+            }"
+            @error="chargerErreur"
+            @done="roleCree"
+          >
+            <template slot-scope="{ mutate, loading }">
+              <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
+                <form-champs
+                  v-model="champs.role.nom.v"
+                  nom="Nom"
+                  id="nom"
+                  :err="champs.role.nom.err"
+                />
 
-            <label>Liste des permissions</label>
-            <table class="ui celled table">
-              <thead>
-                <tr>
-                  <th>Permission</th>
-                  <th>Attribuée</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(aPermission, index) in permissions" :key="'permission-' + index">
-                  <td>{{ aPermission }}</td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      :checked="possedePermission(aPermission)"
-                      @change="togglePermission(aPermission)"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                <label>Liste des permissions</label>
+                <table class="ui celled table">
+                  <thead>
+                    <tr>
+                      <th>Permission</th>
+                      <th>Attribuée</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(aPermission, index) in data.permissions" :key="'permission-' + index">
+                      <td>{{ aPermission }}</td>
+                      <td>
+                        <input
+                          type="checkbox"
+                          :checked="possedePermission(aPermission)"
+                          @change="togglePermission(aPermission)"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
 
-            <div class="field">
-              <label for="parDefaut">Par défaut</label>
-              <input type="checkbox" class="ui checkbox" v-model="champs.role.parDefaut.v" id="parDefaut" />
-            </div>
+                <div class="field">
+                  <label for="parDefaut">Par défaut</label>
+                  <input type="checkbox" class="ui checkbox" v-model="champs.role.parDefaut.v" id="parDefaut" />
+                </div>
 
-            <button class="ui button" type="submit">Créer le rôle</button>
-          </form>
+                <button class="ui button" type="submit">Créer le rôle</button>
+              </form>
 
-          <Alerte ref="erreurs" :type-alerte="typeAlerte" />
-        </template>
-      </ApolloMutation>
-      <!--/ Formulaire de création de rôle -->
-    </div>
-    <!--/ Contenu de la page -->
+              <Alerte ref="erreurs" :type-alerte="typeAlerte" />
+            </template>
+          </ApolloMutation>
+          <!--/ Formulaire de création de rôle -->
+        </div>
+      </template>
+    </ApolloQuery>
   </div>
 </template>
 
@@ -88,23 +92,23 @@ import { checkPermissions } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
 
 import Roles from '@/graphql/Administration/Roles.gql'
-import Permissions from '@/graphql/Administration/Permissions.gql'
 
 export default {
-  name: 'CreerRoles',
+  name: 'CreerRole',
   components: {
     Alerte,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   apollo: {
     moi: {
       query: Utilisateur,
       result: checkPermissions(['GESTION_ROLE'])
     },
-    roles: Roles,
-    permissions: Permissions
+    roles: Roles
   },
   data() {
     return {
@@ -169,7 +173,7 @@ export default {
       apolloClient.writeQuery({ query: Roles, data: oldData })
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`Le rôle "${nouveauRole.nom}" a été ajouté.`)
+      this.$refs.erreurs.ajouterAlerte(`Le rôle "${nouveauRole.nom}" a été créé.`)
     }
   }
 }

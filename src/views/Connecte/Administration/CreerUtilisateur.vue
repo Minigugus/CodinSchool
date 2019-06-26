@@ -1,10 +1,10 @@
 <template>
-  <div class="ui text vertical segment container">
+  <div class="ui container">
     <!-- Contenu de la page -->
 
     <!-- Fil d'ariane -->
     <FilAriane :items="[
-      { txt: 'Liste des utilisateurs', to: '/Administration/gererUtilisateurs' },
+      { txt: 'Gestion des utilisateurs', to: '/Administration/gererUtilisateurs' },
       `Création d'utilisateur`
     ]"
     />
@@ -66,10 +66,7 @@
               :err="champs.utilisateur.dateNaissance.err"
             />
 
-            <button
-              class="ui button"
-              type="submit"
-            >
+            <button class="ui button" type="submit">
               Créer l'utilisateur
             </button>
           </form>
