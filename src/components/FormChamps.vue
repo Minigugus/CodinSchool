@@ -48,7 +48,7 @@ Editeur de code :
     <label v-if="nom" :for="id">{{ nom }}</label>
     <input
       v-if="tag === 'input'"
-      v-model="localValue"
+      :value="value"
       :id="id"
       :type="type"
       :placeholder="placeholder"
@@ -57,7 +57,7 @@ Editeur de code :
 
     <textarea
       v-else-if="tag === 'textarea'"
-      v-model="localValue"
+      :value="value"
       :id="id"
       :placeholder="placeholder"
       @input="$emit('input', $event.target.value)"

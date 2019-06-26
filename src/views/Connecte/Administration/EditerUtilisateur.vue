@@ -43,11 +43,11 @@
             <!--/ Modale de confirmation de suppression d'utilisateur -->
 
             <!-- Fil d'ariane -->
-            <div class="ui large breadcrumb">
-              <router-link to="/Administration/gererUtilisateurs" class="section">Liste des utilisateurs</router-link>
-              <i class="right arrow icon divider"></i>
-              <div class="active section">Utilisateur "{{ champs.utilisateur.prenom.v + ' ' + champs.utilisateur.nom.v }}"</div>
-            </div>
+            <FilAriane :items="[
+              { txt: 'Liste des utilisateurs', to: '/Administration/gererUtilisateurs' },
+              `Utilisateur : ${champs.utilisateur.prenom.v} ${champs.utilisateur.nom.v}`
+            ]"
+            />
             <!--/ Fil d'ariane -->
 
             <h1 class="ui center aligned header">
@@ -260,6 +260,7 @@ import Alerte from '@/components/Alerte.vue'
 import GoBack from '@/components/GoBack.vue'
 import Modale from '@/components/Modale.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
 
 import Roles from '@/graphql/Administration/Roles.gql'
 import Utilisateurs from '@/graphql/Administration/Utilisateurs.gql'
@@ -270,7 +271,8 @@ export default {
     Alerte,
     GoBack,
     Modale,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   props: {
     idUser: {

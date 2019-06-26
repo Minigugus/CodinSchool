@@ -1,17 +1,16 @@
 <template>
   <div class="ui text vertical segment container">
     <!-- Contenu de la page -->
+
     <!-- Fil d'ariane -->
-    <div class="ui large breadcrumb">
-      <router-link to="/Administration/gererUtilisateurs" class="section">Liste des utilisateurs</router-link>
-      <i class="right arrow icon divider"></i>
-      <div class="active section">Création d'utilisateur</div>
-    </div>
+    <FilAriane :items="[
+      { txt: 'Liste des utilisateurs', to: '/Administration/gererUtilisateurs' },
+      `Création d'utilisateur`
+    ]"
+    />
     <!--/ Fil d'ariane -->
 
-    <h1 class="ui center aligned header">
-      Création d'utilisateur
-    </h1>
+    <h1 class="ui center aligned header">Création d'utilisateur</h1>
 
     <!-- Formulaire d'édition de l'exercice -->
     <div class="ui container segment stripe">
@@ -89,14 +88,14 @@ import { checkPermissions, isEmail } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
-
-import Utilisateurs from '@/graphql/Administration/Utilisateurs.gql'
+import FilAriane from '@/components/FilAriane.vue'
 
 export default {
   name: 'CreerUtilisateur',
   components: {
     Alerte,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   data() {
     return {
@@ -116,8 +115,7 @@ export default {
     moi: {
       query: Utilisateur,
       result: checkPermissions(['GESTION_UTILISATEUR'])
-    },
-    utilisateurs: Utilisateurs
+    }
   },
 
   methods: {
@@ -164,15 +162,11 @@ export default {
     },
 
     utilisateurCree({ data: { creerUtilisateur } }) {
-      const apolloClient = this.$apollo.provider.defaultClient
-      const data = apolloClient.readQuery({ query: Utilisateurs })
-      data.utilisateurs.push(creerUtilisateur)
-      // Appliquer la modification en cache
-      apolloClient.writeQuery({ query: Utilisateurs, data })
-
       // Reset des champs de formulaire
-      for (const el in this.champs.utilisateur)
-        this.champs.utilisateur[el] = { v: '', err: [] }
+      for (const el in this.champs.utilisateur) {
+        this.champs.utilisateur[el].v = ''
+        this.champs.utilisateur[el].err = []
+      }
 
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'

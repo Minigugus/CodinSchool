@@ -44,6 +44,11 @@
       <!--/ Modal de confirmation de suppression de niveau -->
 
       <!-- Fil d'ariane -->
+      <FilAriane :items="[
+        { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
+        `Niveau : ${niveau.id }`
+      ]"
+      />
       <div class="ui large breadcrumb">
         <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
         <i class="right angle icon divider"></i>
@@ -217,6 +222,7 @@ import { checkPermissions } from '@/functions'
 import draggable from 'vuedraggable'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
 
 import Niveau from '@/graphql/NiveauExercice/Niveau.gql'
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
@@ -228,7 +234,8 @@ export default {
   components: {
     draggable,
     Alerte,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   props: {
     idNiveau: {

@@ -43,15 +43,13 @@
       <!--/ Modal de confirmation de suppression de test -->
 
       <!-- Fil d'ariane -->
-      <div class="ui large breadcrumb">
-        <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
-        <i class="right angle icon divider"></i>
-        <router-link :to="`/NiveauExercice/niveau/${exercice.niveau.id}`" class="section">Niveau "{{ exercice.niveau.id }}"</router-link>
-        <i class="right angle icon divider"></i>
-        <router-link :to="`/NiveauExercice/exercice/${exercice.id}`" class="section">Exercice "{{ exercice.id }}"</router-link>
-        <i class="right arrow icon divider"></i>
-        <div class="active section">Test "{{ exercice.tests[testIndex].id }}"</div>
-      </div>
+      <FilAriane :items="[
+        { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
+        { txt: `Niveau : ${exercice.niveau.id}`, to: `/NiveauExercice/niveau/${exercice.niveau.id}` },
+        { txt: `Exercice : ${exercice.id}`, to: `/NiveauExercice/exercice/${exercice.id}` },
+        `Test : ${exercice.tests[testIndex].id}`
+      ]"
+      />
       <!--/ Fil d'ariane -->
 
       <h1 class="ui center aligned header">
@@ -153,6 +151,7 @@ import { checkPermissions } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
 
 import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
 import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
@@ -162,7 +161,8 @@ export default {
   name: 'EditerTest',
   components: {
     Alerte,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   props: {
     idExercice: {
