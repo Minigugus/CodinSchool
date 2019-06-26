@@ -1,11 +1,11 @@
 <template>
   <div class="ui container">
     <!-- Fil d'ariane -->
-    <div class="ui large breadcrumb mb-2 mt-3">
-      <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
-      <i class="right angle icon divider"></i>
-      <div class="active section">Ajouter un niveau</div>
-    </div>
+    <FilAriane :items="[
+      { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
+      `Ajouter un niveau`
+    ]"
+    />
     <!--/ Fil d'ariane -->
 
     <div class="ui container segment stripe">
@@ -70,6 +70,7 @@ import { checkPermissions } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
 
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 
@@ -77,7 +78,8 @@ export default {
   name: 'AjouterNiveau',
   components: {
     Alerte,
-    FormChamps
+    FormChamps,
+    FilAriane
   },
   data() {
     return {

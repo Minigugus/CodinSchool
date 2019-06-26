@@ -13,28 +13,16 @@
         <!-- Result -->
         <div v-else-if="data" class="ui container">
           <!-- Modal de confirmation de suppression d'utilisateur -->
-          <sui-modal v-model="modalConfirmationSuppression" class="bgTransparent">
-            <template v-if="suppressionUtilisateurCible">
-              <sui-modal-header>
-                Supprimer l'utilisateur "{{
-                  suppressionUtilisateurCible
-                    ? suppressionUtilisateurCible.prenom + ' ' + suppressionUtilisateurCible.nom
-                    : ''
-                }}" ?
-              </sui-modal-header>
-              <sui-modal-content>
-                <sui-modal-description>
-                  <sui-header>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</sui-header>
-                  <p>L'utilisateur n'aura plus accès à la plateforme. Tous ses travaux seront supprimés.</p>
-                  <p>Cette action est irréversible.</p>
-                </sui-modal-description>
-              </sui-modal-content>
-              <sui-modal-actions>
-                <sui-button secondary @click.native="modalConfirmationSuppression = false">Annuler</sui-button>
-                <sui-button negative @click.native="supprimerUtilisateur(suppressionUtilisateurCible)">Valider la suppression</sui-button>
-              </sui-modal-actions>
-            </template>
-          </sui-modal>
+          <Modale
+            header="Supprimer l'utilisateur"
+            action="Valider la suppression"
+            @validate="supprimerUtilisateur"
+            ref="modaleDeleteUser"
+          >
+            <sui-header>Êtes-vous sûr de vouloir supprimer cet utilisateur ?</sui-header>
+            <p>L'utilisateur n'aura plus accès à la plateforme. Tous ses travaux seront supprimés.</p>
+            <p>Cette action est irréversible.</p>
+          </Modale>
           <!--/ Modal de confirmation de suppression d'utilisateur -->
 
           <h2 class="ui center aligned header">
@@ -61,7 +49,7 @@
                 <td>
                   <!-- Bouton de suppression d'utilisateur -->
                   <button
-                    @click="demandeSuppression(aUser)"
+                    @click="demandeSuppression(aUser.id)"
                     :disabled="aUser.id === moi.id"
                     title="Supprimer l'utilisateur"
                     class="ui icon button negative tiny"
@@ -110,6 +98,7 @@ import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { checkPermissions } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
+import Modale from '@/components/Modale.vue'
 
 import Utilisateurs from '@/graphql/Administration/Utilisateurs.gql'
 import SupprimerUtilisateur from '@/graphql/Administration/SupprimerUtilisateur.gql'
@@ -117,7 +106,8 @@ import SupprimerUtilisateur from '@/graphql/Administration/SupprimerUtilisateur.
 export default {
   name: 'GererUtilisateurs',
   components: {
-    Alerte
+    Alerte,
+    Modale
   },
   apollo: {
     moi: {
@@ -128,24 +118,24 @@ export default {
   data() {
     return {
       modalConfirmationSuppression: false,
-      suppressionUtilisateurCible: null,
+      modaleUserSupprId: null,
       typeAlerte: 'Erreur'
     }
   },
   methods: {
     // Afficher la modal de confirmation de suppression d'utilisateur
-    demandeSuppression(aUser) {
-      this.modalConfirmationSuppression = true
-      this.suppressionUtilisateurCible = aUser
+    demandeSuppression(aUserId) {
+      this.$refs.modaleDeleteUser.show()
+      this.modaleUserSupprId = aUserId
     },
 
     // Supprimer un rôle
-    async supprimerUtilisateur(aUser) {
+    async supprimerUtilisateur() {
       const apolloClient = this.$apollo.provider.defaultClient
       await apolloClient.mutate({
         mutation: SupprimerUtilisateur,
         variables: {
-          id: aUser.id
+          id: this.modaleUserSupprId
         },
         update: (store, { data: { supprimerUtilisateur: idUtilisateurSupprime } }) => {
           const oldData = store.readQuery({ query: Utilisateurs })
@@ -154,8 +144,7 @@ export default {
             oldData.utilisateurs.splice(index, 1)
             store.writeQuery({ query: Utilisateurs, data: oldData })
 
-            this.modalConfirmationSuppression = false
-            this.suppressionUtilisateurCible = null
+            this.modaleUserSupprId = null
             this.$refs.notifications.viderAlerte()
             this.typeAlerte = 'Succès'
             this.$refs.notifications.ajouterAlerte('L\'utilisateur a été supprimé.')

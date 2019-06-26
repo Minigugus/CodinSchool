@@ -16,11 +16,11 @@
 
     <div v-else>
       <!-- Fil d'ariane -->
-      <div class="ui large breadcrumb mt-3">
-        <router-link to="/listeExercices" class="section">Liste des exercices</router-link>
-        <i class="right arrow icon divider"></i>
-        <div class="active section">Faire exercice "{{ exercice.titre }}"</div>
-      </div>
+      <FilAriane :items="[
+        { txt: 'Liste des exercices', to: '/listeExercices' },
+        `Faire exercice : ${ exercice.titre}`
+      ]"
+      />
       <!--/ Fil d'ariane -->
 
       <h2 class="ui header">
@@ -214,13 +214,16 @@ import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
+import FilAriane from '@/components/FilAriane.vue'
+
 import { delay, escapeHtml, copierVersPressePapier, copierDOMVersPressePapier } from '@/functions'
 
 export default {
   name: 'FaireExercice',
   components: {
     FormChamps,
-    Alerte
+    Alerte,
+    FilAriane
   },
   props: {
     idExercice: {
