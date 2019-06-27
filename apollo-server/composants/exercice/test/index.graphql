@@ -23,6 +23,8 @@ input CreationTest {
 }
 
 input EditionTest {
+  exerciceId: ID
+
   nom: String
   entree: String
   sortie: String
