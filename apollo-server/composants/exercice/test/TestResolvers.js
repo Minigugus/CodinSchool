@@ -10,8 +10,8 @@ export default {
     creerTest(_, { exercice, test }) {
       return creerTest(exercice, test)
     },
-    editerTest(_, { id, modifications }) {
-      return editerTest(id, modifications)
+    editerTest(_, { id, test }) {
+      return editerTest(id, test)
     },
     supprimerTest(_, { test }) {
       return supprimerTest(test)

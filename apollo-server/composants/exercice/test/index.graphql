@@ -9,7 +9,7 @@ type Mutation {
   creerTest(exercice: ID!, test: CreationTest!): Test!
   @acces(requis: [ GESTION_EXERCICE ])
 
-  editerTest(id: ID!, modifications: EditionTest!): Test!
+  editerTest(id: ID!, test: EditionTest!): Test!
   @acces(requis: [ GESTION_EXERCICE ])
 
   reorganiserTests(exercice: ID!, tests: [ID!]!): [Test!]!
