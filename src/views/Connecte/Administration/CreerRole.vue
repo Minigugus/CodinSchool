@@ -8,9 +8,7 @@
     />
     <!--/ Fil d'ariane -->
 
-    <h2 class="ui center aligned header">
-      <div class="content">Création d'un rôle</div>
-    </h2>
+    <h2 class="text-center">Création d'un rôle</h2>
 
     <ApolloQuery :query="require('@/graphql/Administration/Permissions.gql')">
       <template v-slot="{ result: { error, data }, isLoading }">

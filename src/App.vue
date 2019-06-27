@@ -260,6 +260,19 @@ export default {
     width: 100% !important;
   }
 }
+.blanc {
+  color: white !important;
+}
+.blanc-hover:hover {
+  color: white !important;
+}
+.cursor-move {
+  cursor: move;
+}
+.ghost {
+  opacity: 0.5 !important;
+  background: #c8ebfb !important;
+}
 </style>
 
 <style scoped>
@@ -325,12 +338,5 @@ export default {
 }
 .ui.inverted.segment{
   background-color: #568EA3 !important;
-}
-
-.blanc {
-  color: white !important;
-}
-.blanc-hover:hover {
-  color: white !important;
 }
 </style>

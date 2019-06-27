@@ -10,64 +10,83 @@
     <!--/ Fil d'ariane -->
 
     <div class="ui container segment stripe">
-      <h2 class="ui center aligned header">
-        <div class="content">
-          Ajouter un test
-        </div>
-      </h2>
+      <h2 class="text-center">Ajouter un test</h2>
 
-      <!-- Formulaire d'ajout de test -->
-      <ApolloMutation
-        :mutation="require('@/graphql/NiveauExercice/CreerTest.gql')"
-        :variables="{
-          exercice: champs.exercice.v,
-          test: {
-            nom: champs.nom.v,
-            entree: champs.entree.v,
-            sortie: champs.sortie.v
-          }
-        }"
-        @error="chargerErreur"
-        @done="testCree"
+      <!-- Si l'exercice passé en paramètre d'URL existe, le sélectionner dans le choix d'exercice -->
+      <ApolloQuery
+        :query="require('@/graphql/NiveauExercice/NiveauxExercices.gql')"
+        @result="!$event.loading && !$event.error
+          && $event.fullData.niveaux.find(x => x.exercices.find(y => y.id === idExercice))
+          && (champs.exercice.v = idExercice)"
       >
-        <template slot-scope="{ mutate, loading }">
-          <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
-            <form-champs v-model="champs.nom.v" nom="Nom" id="nom" :err="champs.nom.err" placeholder="Envoi d'entier" />
+        <template v-slot="{ result: { error, data }, isLoading }">
+          <!-- Chargement -->
+          <sui-loader v-if="isLoading" active centered inline />
 
-            <div class="field" :class="{ error: champs.exercice.err.length > 0 }">
-              <label>Exercice</label>
-              <select class="ui dropdown" v-model="champs.exercice.v">
-                <option>-</option>
-                <template v-for="(aNiveau, index) in niveaux">
-                  <option v-for="(aExercice, indexExo) in aNiveau.exercices" :value="aExercice.id" :key="`option-${index}-${indexExo}`">
-                    {{ aExercice.titre }} (Niveau "#{{ aNiveau.id }}" / Exercice "#{{ aExercice.id }}")
-                  </option>
-                </template>
-              </select>
-              <div v-for="(anError, index) in champs.exercice.err" :key="'erreur-exercice-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
-            </div>
+          <!-- Erreur -->
+          <div v-else-if="error">
+            <Alerte :liste-msg="[error.message]" type-alerte="Erreur" :fermable="false" />
+          </div>
 
-            <form-champs
-              v-model="champs.entree.v"
-              nom="Entrée"
-              id="entree"
-              :err="champs.entree.err"
-            />
+          <!-- Result -->
+          <div v-else-if="data" class="ui container">
+            <!-- Formulaire d'ajout de test -->
+            <ApolloMutation
+              :mutation="require('@/graphql/NiveauExercice/CreerTest.gql')"
+              :variables="{
+                exercice: champs.exercice.v,
+                test: {
+                  nom: champs.nom.v,
+                  entree: champs.entree.v,
+                  sortie: champs.sortie.v
+                }
+              }"
+              @error="chargerErreur"
+              @done="testCree"
+            >
+              <template v-slot="{ mutate, loading }">
+                <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
+                  <form-champs v-model="champs.nom.v" nom="Nom" id="nom" :err="champs.nom.err" placeholder="Envoi d'entier" />
 
-            <form-champs
-              v-model="champs.sortie.v"
-              nom="Sortie"
-              id="sortie"
-              :err="champs.sortie.err"
-            />
+                  <div class="field" :class="{ error: champs.exercice.err.length > 0 }">
+                    <label>Exercice</label>
 
-            <button class="ui button" type="submit">Ajouter le test</button>
-          </form>
+                    <sui-dropdown
+                      fluid
+                      :options="selectExerciceOptions(data.niveaux)"
+                      placeholder="Exercice"
+                      search
+                      selection
+                      v-model="champs.exercice.v"
+                    />
 
-          <Alerte ref="erreurs" :type-alerte="typeAlerte" />
+                    <div v-for="(anError, index) in champs.exercice.err" :key="'erreur-exercice-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
+                  </div>
+
+                  <form-champs
+                    v-model="champs.entree.v"
+                    nom="Entrée"
+                    id="entree"
+                    :err="champs.entree.err"
+                  />
+
+                  <form-champs
+                    v-model="champs.sortie.v"
+                    nom="Sortie"
+                    id="sortie"
+                    :err="champs.sortie.err"
+                  />
+
+                  <button class="ui button" type="submit">Ajouter le test</button>
+                </form>
+
+                <Alerte ref="erreurs" :type-alerte="typeAlerte" />
+              </template>
+            </ApolloMutation>
+            <!--/ Formulaire d'ajout de test -->
+          </div>
         </template>
-      </ApolloMutation>
-    <!--/ Formulaire d'ajout de test -->
+      </ApolloQuery>
     </div>
   </div>
 </template>
@@ -75,8 +94,6 @@
 <script>
 import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { checkPermissions } from '@/functions'
-
-import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
@@ -111,14 +128,16 @@ export default {
     moi: {
       query: Utilisateur,
       result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
-    },
-    niveaux: {
-      query: NiveauxExercices,
-      result({ data, loading }) {
-        // Pendant le chargement des niveaux, vérifier si l'id d'exercice passé
-        // en paramètre existe. Si oui, l'appliquer dans le champs <select>
-        if (!loading && data.niveaux.find(x => x.exercices.find(y => y.id === this.idExercice)))
-          this.champs.exercice.v = this.idExercice
+    }
+  },
+
+  computed: {
+    selectExerciceOptions() {
+      return niveaux => {
+        let options = []
+        niveaux.map(aNiveau => aNiveau.exercices.map(anExercice =>
+          (options.push({ text: `${anExercice.titre} (Niveau : #${aNiveau.id} / Exercice : #${anExercice.id})`, value: anExercice.id }))))
+        return options
       }
     }
   },
@@ -164,7 +183,7 @@ export default {
     testCree({ data }) {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`Le test "${data.creerTest.id}" a été ajouté à l'exercice "${this.champs.exercice.v}".`)
+      this.$refs.erreurs.ajouterAlerte(`Le test "${data.creerTest.nom}" a été ajouté à l'exercice "${this.champs.exercice.v}".`)
     }
   }
 }

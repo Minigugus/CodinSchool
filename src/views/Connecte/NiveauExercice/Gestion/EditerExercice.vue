@@ -1,61 +1,47 @@
 <template>
   <div class="ui text vertical segment container">
-    <!-- Erreur de chargement de la page -->
-    <div v-if="erreurLoadingExercice" class="ui text vertical segment container">
-      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
-        <i class="left arrow icon"></i>
-        Retour à la liste des niveaux
-      </router-link>
-      <Alerte type-alerte="Erreur" :liste-msg="[erreurLoadingExercice]" :fermable="false" />
+    <!-- Chargement -->
+    <sui-loader v-if="$apollo.queries.exercice.loading" active centered inline />
+
+    <!-- Erreur -->
+    <div v-else-if="erreurLoadingExercice || exerciceSupprime">
+      <template v-if="erreurLoadingExercice">
+        <GoBack to="/NiveauExercice/niveau/liste" text="Retour à la liste des niveaux" />
+        <Alerte :liste-msg="[erreurLoadingExercice]" type-alerte="Erreur" :fermable="false" />
+      </template>
+      <template v-else-if="exerciceSupprime">
+        <GoBack :to="`/NiveauExercice/niveau/${exercice.niveau.id}`" :text="`Retour au niveau : ${exercice.niveau.id}`" />
+        <Alerte :liste-msg="[`L'exercice : ${exercice.id} a été supprimé.`]" type-alerte="Succès" :fermable="false" />
+      </template>
     </div>
-    <!--/ Erreur de chargement de la page -->
 
-    <!-- Ecran de chargement de la page -->
-    <div v-else-if="!erreurLoadingExercice && $apollo.queries.exercice.loading" class="ui text vertical segment container loading"></div>
-    <!--/ Ecran de chargement de la page -->
-
-    <!-- Alerte de notification d'exercice supprimé -->
-    <div v-else-if="exerciceSupprime" class="ui text vertical segment container">
-      <router-link :to="`/NiveauExercice/niveau/${exerciceSupprimeAppartientANiveau}`" class="ui button left labeled icon" tag="button">
-        <i class="left arrow icon"></i>
-        Retour au niveau {{ exerciceSupprimeAppartientANiveau }}
-      </router-link>
-      <Alerte type-alerte="Succès" :liste-msg="[exerciceSupprime]" :fermable="false" />
-    </div>
-    <!--/ Alerte de notification d'exercice supprimé -->
-
-    <!-- Contenu de la page -->
-    <div v-else>
+    <div v-else class="ui container">
+      <!-- Contenu de la page -->
       <!-- Modal de confirmation de suppression d'exercice -->
-      <sui-modal v-model="modalConfirmationSuppression" class="bgTransparent">
-        <sui-modal-header>Supprimer l'exercice "{{ exercice.titre }}"</sui-modal-header>
-        <sui-modal-content>
-          <sui-modal-description>
-            <sui-header>Êtes-vous sûr de vouloir supprimer cet exercice ?</sui-header>
-            <p>Cette action est irréversible.</p>
-          </sui-modal-description>
-        </sui-modal-content>
-        <sui-modal-actions>
-          <sui-button secondary @click.native="modalConfirmationSuppression = false">Annuler</sui-button>
-          <sui-button negative @click.native="supprimerExercice">Valider la suppression</sui-button>
-        </sui-modal-actions>
-      </sui-modal>
+      <Modale
+        header="Supprimer l'exercice"
+        action="Valider la suppression"
+        @validate="supprimerExercice"
+        ref="modaleDeleteExercice"
+      >
+        <sui-header>Êtes-vous sûr de vouloir supprimer cet exercice ?</sui-header>
+        <p>Cette action est irréversible.</p>
+      </Modale>
       <!--/ Modal de confirmation de suppression d'exercice -->
 
       <!-- Fil d'ariane -->
       <FilAriane :items="[
         { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
-        { txt: `Niveau : ${exercice.niveau.id}`, to: `/NiveauExercice/niveau/${exercice.niveau.id}` },
-        idExercice ? { txt: `Niveau : ${idExercice}`, to: `/NiveauExercice/exercice/${idExercice}` } : undefined,
-        `Exercice : ${exercice.id }`
+        { txt: `Niveau : ${exercice.niveau.titre}`, to: `/NiveauExercice/niveau/${exercice.niveau.id}` },
+        `Exercice : ${exercice.titre }`
       ]"
       />
       <!--/ Fil d'ariane -->
 
-      <h1 class="ui center aligned header">
+      <h2 class="ui center aligned header">
         Edition d'exercice
         <h3>"{{ exercice.titre }}"</h3>
-      </h1>
+      </h2>
 
       <!-- Formulaire d'édition de l'exercice -->
       <div class="ui container segment stripe">
@@ -68,13 +54,13 @@
               titre: exercice.titre,
               enonce: exercice.enonce,
               correction: exercice.correction,
-              niveauId: exercice.niveau.id
+              niveauId: champs.exercice.niveau.v
             }
           }"
           @error="chargerErreur"
           @done="exerciceModif"
         >
-          <template slot-scope="{ mutate, loading }">
+          <template v-slot="{ mutate, loading }">
             <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
               <form-champs
                 v-model="exercice.id"
@@ -94,10 +80,16 @@
 
               <div class="field" :class="{ error: champs.exercice.niveau.err.length > 0 }">
                 <label>Niveau</label>
-                <select class="ui dropdown" v-model="exercice.niveau.id">
-                  <option>-</option>
-                  <option v-for="(aNiveau, index) in niveaux" :value="aNiveau.id" :key="'option-' + index">{{ aNiveau.titre }} (#{{ aNiveau.id }})</option>
-                </select>
+
+                <sui-dropdown
+                  fluid
+                  :options="niveaux.map(aNiveau => ({ text: `${aNiveau.titre} (#${aNiveau.id})`, value: aNiveau.id }))"
+                  placeholder="Rôles"
+                  search
+                  selection
+                  v-model="champs.exercice.niveau.v"
+                />
+
                 <div v-for="(anError, index) in champs.exercice.niveau.err" :key="'erreur-niveau-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
               </div>
 
@@ -117,12 +109,7 @@
                 :err="champs.exercice.correction.err"
               />
 
-              <button
-                class="ui button"
-                type="submit"
-              >
-                Modifier l'exercice
-              </button>
+              <button class="ui button" type="submit">Modifier l'exercice</button>
             </form>
 
             <Alerte ref="erreurs" :type-alerte="typeAlerte" />
@@ -141,36 +128,82 @@
         </div>
       </template>
       <template v-else>
-        <!-- Liste des tests de l'exercice -->
-        <sui-table celled selectable>
-          <sui-table-header>
-            <sui-table-row text-align="center">
-              <sui-table-header-cell>Id</sui-table-header-cell>
-              <sui-table-header-cell>Nom</sui-table-header-cell>
-              <sui-table-header-cell>Entrée</sui-table-header-cell>
-              <sui-table-header-cell>Sortie</sui-table-header-cell>
-              <sui-table-header-cell>Editer</sui-table-header-cell>
-            </sui-table-row>
-          </sui-table-header>
-          <sui-table-body>
-            <sui-table-row v-for="aTest in exercice.tests" :key="`test-${aTest.id}`" text-align="center">
-              <sui-table-cell v-text="aTest.id" text-align="center" />
-              <sui-table-cell v-text="aTest.nom" />
-              <sui-table-cell v-text="aTest.entree" />
-              <sui-table-cell v-text="aTest.sortie" />
-              <sui-table-cell>
-                <router-link :to="`/NiveauExercice/exercice/${idExercice}/test/${aTest.id}`" class="ui primary right labeled icon button mini">
-                  <i class="edit icon"></i>
-                  Editer
-                </router-link>
-              </sui-table-cell>
-            </sui-table-row>
-          </sui-table-body>
-        </sui-table>
-        <!--/ Liste des tests de l'exercice -->
+        <h2 class="ui center aligned header">Tests de l'exercice</h2>
+
+        <ApolloMutation
+          :mutation="require('@/graphql/NiveauExercice/ReorganiserTests.gql')"
+          :variables="{
+            exercice: exercice.id,
+            tests: exercice.tests.map(x => x.id)
+          }"
+          :update="reorgUpdateCache"
+        >
+          <template v-slot="{ mutate, loading, gqlError }">
+            <!-- Bouton de réorganisation des exercices -->
+            <div class="text-center">
+              <transition name="fade" mode="out-in">
+                <button v-if="!test.sontDraggable" key="reorganiser" @click="test.sontDraggable = true" class="ui button primary right labeled icon">
+                  <i class="right bars icon"></i>
+                  Réorganiser les tests
+                </button>
+                <button
+                  v-else
+                  key="valider"
+                  @click="mutate()"
+                  class="ui button positive right labeled icon"
+                  :disabled="loading"
+                >
+                  <i class="right check icon"></i>
+                  Valider la réorganisation
+                </button>
+              </transition>
+            </div>
+            <!--/ Bouton de réorganisation des exercices -->
+
+            <sui-loader v-if="loading" active centered inline class="mt-3">Réorganisation ...</sui-loader>
+
+            <sui-table v-else celled selectable>
+              <sui-table-header>
+                <sui-table-row text-align="center">
+                  <sui-table-header-cell v-if="test.sontDraggable">#</sui-table-header-cell>
+                  <sui-table-header-cell>Id</sui-table-header-cell>
+                  <sui-table-header-cell>Nom</sui-table-header-cell>
+                  <sui-table-header-cell>Entrée</sui-table-header-cell>
+                  <sui-table-header-cell>Sortie</sui-table-header-cell>
+                  <sui-table-header-cell v-if="!test.sontDraggable">Editer</sui-table-header-cell>
+                </sui-table-row>
+              </sui-table-header>
+              <draggable
+                :list="exercice.tests"
+                :animation="200"
+                group="test"
+                :disabled="!test.sontDraggable"
+                ghost-class="ghost"
+                class="liste-test"
+                tag="sui-table-body"
+              >
+                <sui-table-row v-for="aTest in exercice.tests" :key="`test-${aTest.id}`" text-align="center">
+                  <sui-table-cell v-if="test.sontDraggable"><i class="bars icon cursor-move" /></sui-table-cell>
+                  <sui-table-cell v-text="aTest.id" text-align="center" />
+                  <sui-table-cell v-text="aTest.nom" />
+                  <sui-table-cell v-text="aTest.entree" />
+                  <sui-table-cell v-text="aTest.sortie" />
+                  <sui-table-cell v-if="!test.sontDraggable">
+                    <router-link :to="`/NiveauExercice/exercice/${idExercice}/test/${aTest.id}`" class="ui primary right labeled icon button mini">
+                      <i class="edit icon"></i>
+                      Editer
+                    </router-link>
+                  </sui-table-cell>
+                </sui-table-row>
+              </draggable>
+            </sui-table>
+
+            <Alerte v-if="gqlError" :liste-msg="[gqlError.message]" type-alerte="Erreur" />
+          </template>
+        </ApolloMutation>
 
         <!-- Bouton d'ajout de test -->
-        <div class="text-center">
+        <div v-if="!test.sontDraggable" class="text-center mt-2">
           <router-link :to="`/NiveauExercice/ajouterTest/${idExercice}`" class="ui button right labeled icon text-center" tag="button">
             <i class="plus icon"></i>
             Ajouter un test
@@ -180,14 +213,14 @@
       </template>
       <!--/ Liste des tests -->
 
-      <!-- Bouton de suppression du niveau -->
-      <div class="text-center mt-4">
-        <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
+      <!-- Bouton de suppression de l'exercice -->
+      <div v-if="!test.sontDraggable" class="text-center mt-4">
+        <button @click="$refs.modaleDeleteExercice.show()" class="ui button negative right labeled icon text-center">
           <i class="trash alternate icon"></i>
           Supprimer l'exercice
         </button>
       </div>
-      <!--/ Bouton de suppression du niveau -->
+      <!--/ Bouton de suppression de l'exercice -->
     </div>
   </div>
 </template>
@@ -196,7 +229,10 @@
 import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { checkPermissions } from '@/functions'
 
+import draggable from 'vuedraggable'
 import Alerte from '@/components/Alerte.vue'
+import Modale from '@/components/Modale.vue'
+import GoBack from '@/components/GoBack.vue'
 import FormChamps from '@/components/FormChamps.vue'
 import FilAriane from '@/components/FilAriane.vue'
 
@@ -207,7 +243,10 @@ import SupprimerExercice from '@/graphql/NiveauExercice/SupprimerExercice.gql'
 export default {
   name: 'EditerExercice',
   components: {
+    draggable,
     Alerte,
+    Modale,
+    GoBack,
     FormChamps,
     FilAriane
   },
@@ -221,20 +260,22 @@ export default {
     return {
       erreurLoadingExercice: false,
 
+      test: {
+        sontDraggable: false
+      },
+
       champs: {
         exercice: {
           id: { err: [] },
           titre: { err: [] },
-          niveau: { err: [] },
+          niveau: { v: '', err: [] },
           enonce: { err: [] },
           correction: { err: [] }
         }
       },
       typeAlerte: 'Erreur',
 
-      modalConfirmationSuppression: false,
-      exerciceSupprime: false,
-      exerciceSupprimeAppartientANiveau: ''
+      exerciceSupprime: false
     }
   },
   apollo: {
@@ -246,13 +287,10 @@ export default {
     exercice() {
       return {
         query: Exercice,
-        variables: {
-          id: this.idExercice
-        },
-        error: errorObject => {
-          const { gqlError } = errorObject
-          if (!gqlError) return console.error(errorObject)
-          this.erreurLoadingExercice = gqlError.message
+        variables: { id: this.idExercice },
+        error: err => (this.erreurLoadingExercice = err.message),
+        result({ data, loading }) {
+          if (!loading && !this.erreurLoadingExercice) this.champs.exercice.niveau.v = data.exercice.niveau.id
         }
       }
     }
@@ -296,53 +334,42 @@ export default {
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
-    async supprimerExercice() {
-      const apolloClient = this.$apollo.provider.defaultClient
-
-      await apolloClient.mutate({
+    supprimerExercice() {
+      return this.$apollo.provider.defaultClient.mutate({
         mutation: SupprimerExercice,
-        variables: {
-          id: this.exercice.id
-        },
+        variables: { id: this.exercice.id },
         update: store => {
-          try {
-            // Lire le cache pour récupérer le contenu actuel
-            const data = store.readQuery({ query: NiveauxExercices })
-            const indexNiveau = data.niveaux.findIndex(x => x.id === this.exercice.niveau.id)
-            if (indexNiveau !== -1) {
-              const indexExercice = data.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.exercice.id)
-              if (indexExercice !== 1) {
-                data.niveaux[indexNiveau].exercices.splice(indexExercice, 1)
-                this.modalConfirmationSuppression = false
+          // Lire le cache pour récupérer le contenu actuel
+          const data = store.readQuery({ query: NiveauxExercices })
+          const indexNiveau = data.niveaux.findIndex(x => x.id === this.exercice.niveau.id)
+          if (indexNiveau !== -1) {
+            const indexExercice = data.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.exercice.id)
+            if (indexExercice !== 1) {
+              data.niveaux[indexNiveau].exercices.splice(indexExercice, 1)
 
-                // Appliquer la modification en cache
-                store.writeQuery({ query: NiveauxExercices, data })
-                this.exerciceSupprime = `L'exercice "${this.idExercice}" a été supprimé.`
-                this.exerciceSupprimeAppartientANiveau = data.niveaux[indexNiveau].id
-                return
-              }
+              // Appliquer la modification en cache
+              store.writeQuery({ query: NiveauxExercices, data })
+              this.exerciceSupprime = true
             }
           }
-          catch (err) {
-            console.error(err)
-            this.$refs.erreurs.viderAlerte()
-            this.typeAlerte = 'Erreur'
-            this.$refs.erreurs.ajouterAlerte(err.message)
-          }
         }
-      }
-      )
+      }).catch(err => {
+        console.error(err)
+        this.$refs.erreurs.viderAlerte()
+        this.typeAlerte = 'Erreur'
+        this.$refs.erreurs.ajouterAlerte(err.message)
+      })
     },
 
     exerciceModif({ data }) {
       const apolloClient = this.$apollo.provider.defaultClient
 
-      // Lire le cache pour récupérer le contenu actuel
-      const oldData = apolloClient.readQuery({ query: NiveauxExercices })
-      const indexNiveau = oldData.niveaux.findIndex(x => x.id === this.exercice.niveau.id)
       try {
+      // Lire le cache pour récupérer le contenu actuel
+        const oldData = apolloClient.readQuery({ query: NiveauxExercices })
+        const indexNiveau = oldData.niveaux.findIndex(x => x.id === this.exercice.niveau.id)
         const indexExercice = oldData.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.exercice.id)
-        oldData.niveaux[indexNiveau].exercices.splice(indexExercice, 1)
+        oldData.niveaux[indexNiveau].exercices[indexExercice] = data.editerExercice
 
         // Appliquer la modification en cache
         apolloClient.writeQuery({ query: NiveauxExercices, data: oldData })
@@ -357,14 +384,20 @@ export default {
         this.typeAlerte = 'Erreur'
         this.$refs.erreurs.ajouterAlerte(err.message)
       }
+    },
+
+    reorgUpdateCache(store, { data: { reorganiserTests: nouvelleOrganisation } }) {
+      this.test.sontDraggable = false
+
+      // Lire le cache pour récupérer le contenu actuel
+      const data = store.readQuery({ query: Exercice, variables: { id: this.exercice.id } })
+
+      // Modifier le contenu actuel récupéré
+      data.exercice.tests = nouvelleOrganisation
+
+      // Appliquer la modification en cache
+      store.writeQuery({ query: Exercice, variables: { id: this.exercice.id }, data })
     }
   }
 }
 </script>
-
-<style scoped>
-.bgTransparent {
-  background-color: transparent !important;
-}
-</style>
-
