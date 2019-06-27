@@ -1,5 +1,9 @@
 #import * from "./Test.graphql"
 
+type Query {
+  test(id: ID!): Test!
+}
+
 type Mutation {
 
   creerTest(exercice: ID!, test: CreationTest!): Test!

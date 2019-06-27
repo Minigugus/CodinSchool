@@ -1,6 +1,11 @@
-import { creerTest, editerTest, supprimerTest, reorganiserTests } from './TestLogique'
+import { creerTest, editerTest, supprimerTest, reorganiserTests, recupererParID } from './TestLogique'
 
 export default {
+  Query: {
+    test(_, { id }) {
+      return recupererParID(id)
+    }
+  },
   Mutation: {
     creerTest(_, { exercice, test }) {
       return creerTest(exercice, test)
