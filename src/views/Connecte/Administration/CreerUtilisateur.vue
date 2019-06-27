@@ -10,7 +10,7 @@
     />
     <!--/ Fil d'ariane -->
 
-    <h1 class="ui center aligned header">Création d'utilisateur</h1>
+    <h2 class="text-center">Création d'utilisateur</h2>
 
     <!-- Formulaire d'édition de l'exercice -->
     <div class="ui container segment stripe">

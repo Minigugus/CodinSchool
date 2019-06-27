@@ -1,83 +1,69 @@
 <template>
   <div class="ui text vertical segment container">
-    <!-- Erreur de chargement de la page -->
-    <div v-if="erreurLoadingTest" class="ui text vertical segment container">
-      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
-        <i class="left arrow icon"></i>
-        Retour à la liste des niveaux
-      </router-link>
-      <Alerte type-alerte="Erreur" :liste-msg="[erreurLoadingTest]" :fermable="false" />
+    <!-- Chargement -->
+    <sui-loader v-if="$apollo.queries.test.loading && $apollo.queries.niveaux.loading" active centered inline />
+
+    <!-- Erreur -->
+    <div v-else-if="erreurLoadingTest || testSupprime">
+      <template v-if="erreurLoadingTest">
+        <GoBack to="/NiveauExercice/niveau/liste" text="Retour à la liste des niveaux" />
+        <Alerte :liste-msg="[erreurLoadingTest]" type-alerte="Erreur" :fermable="false" />
+      </template>
+      <template v-else-if="testSupprime">
+        <GoBack :to="`/NiveauExercice/exercice/${test.exercice.id}`" :text="`Retour à l'exercice : ${test.exercice.id}`" />
+        <Alerte :liste-msg="[`Le test : ${test.id} a été supprimé.`]" type-alerte="Succès" :fermable="false" />
+      </template>
     </div>
-    <!--/ Erreur de chargement de la page -->
 
-    <!-- Ecran de chargement de la page -->
-    <div v-else-if="!erreurLoadingTest && $apollo.queries.exercice.loading" class="ui text vertical segment container loading"></div>
-    <!--/ Ecran de chargement de la page -->
-
-    <!-- Alerte de notification de test supprimé -->
-    <div v-else-if="testSupprime" class="ui text vertical segment container">
-      <router-link :to="`/NiveauExercice/exercice/${testSupprimeAppartientAExercice}`" class="ui button left labeled icon" tag="button">
-        <i class="left arrow icon"></i>
-        Retour à l'exercice {{ testSupprimeAppartientAExercice }}
-      </router-link>
-      <Alerte type-alerte="Succès" :liste-msg="[testSupprime]" :fermable="false" />
-    </div>
-    <!--/ Alerte de notification de test supprimé -->
-
-    <!-- Contenu de la page -->
-    <div v-else>
+    <div v-else class="ui container">
+      <!-- Contenu de la page -->
       <!-- Modal de confirmation de suppression de test -->
-      <sui-modal v-model="modalConfirmationSuppression" class="bgTransparent">
-        <sui-modal-header>Supprimer le test "{{ exercice.tests[testIndex].nom }}"</sui-modal-header>
-        <sui-modal-content>
-          <sui-modal-description>
-            <sui-header>Êtes-vous sûr de vouloir supprimer ce test ?</sui-header>
-            <p>Cette action est irréversible.</p>
-          </sui-modal-description>
-        </sui-modal-content>
-        <sui-modal-actions>
-          <sui-button secondary @click.native="modalConfirmationSuppression = false">Annuler</sui-button>
-          <sui-button negative @click.native="supprimerTest">Valider la suppression</sui-button>
-        </sui-modal-actions>
-      </sui-modal>
+      <Modale
+        header="Supprimer le test"
+        action="Valider la suppression"
+        @validate="supprimerTest"
+        ref="modaleDeleteTest"
+      >
+        <sui-header>Êtes-vous sûr de vouloir supprimer ce test ?</sui-header>
+        <p>Cette action est irréversible.</p>
+      </Modale>
       <!--/ Modal de confirmation de suppression de test -->
 
       <!-- Fil d'ariane -->
       <FilAriane :items="[
         { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
-        { txt: `Niveau : ${exercice.niveau.id}`, to: `/NiveauExercice/niveau/${exercice.niveau.id}` },
-        { txt: `Exercice : ${exercice.id}`, to: `/NiveauExercice/exercice/${exercice.id}` },
-        `Test : ${exercice.tests[testIndex].id}`
+        { txt: `Niveau : ${test.niveau.titre}`, to: `/NiveauExercice/niveau/${test.niveau.id}` },
+        { txt: `Exercice : ${test.exercice.titre}`, to: `/NiveauExercice/exercice/${test.exercice.id}` },
+        `Test : ${test.nom }`
       ]"
       />
       <!--/ Fil d'ariane -->
 
-      <h1 class="ui center aligned header">
+      <h2 class="ui center aligned header">
         Edition de test
-        <h3>"{{ exercice.tests[testIndex].nom }}"</h3>
-      </h1>
+        <h3>"{{ test.nom }}"</h3>
+      </h2>
 
-      <!-- Formulaire d'édition du test -->
+      <!-- Formulaire d'édition de le test -->
       <div class="ui container segment stripe">
         <ApolloMutation
           :mutation="require('@/graphql/NiveauExercice/EditerTest.gql')"
           :variables="{
-            id: idTest,
-            modifications: {
-              nom: exercice.tests[testIndex].nom,
-              entree: exercice.tests[testIndex].entree,
-              sortie: exercice.tests[testIndex].sortie,
-              // exerciceId: champs.test.exercice.v
-              // TODO: Changement d'exercice d'un test - https://github.com/Minigugus/CodinSchool/issues/45
+            id: test.id,
+            test: {
+              entree: test.entree,
+              nom: test.nom,
+              sortie: test.sortie,
+              exerciceId: champs.test.exercice.v
             }
           }"
           @error="chargerErreur"
           @done="testModif"
         >
-          <template slot-scope="{ mutate, loading }">
+          <template v-slot="{ mutate, loading }">
             <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
               <form-champs
-                v-model="exercice.tests[testIndex].id"
+                v-model="test.id"
                 nom="Identifiant"
                 id="id"
                 :err="champs.test.id.err"
@@ -86,61 +72,57 @@
               <!-- Champs id bloqué : https://github.com/Minigugus/CodinSchool/issues/20 -->
 
               <form-champs
-                v-model="exercice.tests[testIndex].nom"
+                v-model="test.nom"
                 nom="Nom"
                 id="nom"
                 :err="champs.test.nom.err"
               />
 
               <div class="field" :class="{ error: champs.test.exercice.err.length > 0 }">
-                <label>Exercice</label>
-                <select class="ui dropdown" v-model="champs.test.exercice.v">
-                  <option>-</option>
-                  <template v-for="(aNiveau, index) in niveaux">
-                    <option v-for="(aExercice, indexExo) in aNiveau.exercices" :value="aExercice.id" :key="`option-${index}-${indexExo}`">
-                      {{ aExercice.titre }} (Niveau "#{{ aNiveau.id }}" / Exercice "#{{ aExercice.id }}")
-                    </option>
-                  </template>
-                </select>
+                <label>Niveau</label>
+
+                <sui-dropdown
+                  fluid
+                  :options="selectExerciceOptions"
+                  placeholder="Rôles"
+                  search
+                  selection
+                  v-model="champs.test.exercice.v"
+                />
                 <div v-for="(anError, index) in champs.test.exercice.err" :key="'erreur-exercice-' + index" class="ui basic red pointing prompt label transition">{{ anError }}</div>
               </div>
 
               <form-champs
-                v-model="exercice.tests[testIndex].entree"
+                v-model="test.entree"
                 nom="Entrée"
                 id="entree"
                 :err="champs.test.entree.err"
               />
 
               <form-champs
-                v-model="exercice.tests[testIndex].sortie"
+                v-model="test.sortie"
                 nom="Sortie"
                 id="sortie"
                 :err="champs.test.sortie.err"
               />
 
-              <button
-                class="ui button"
-                type="submit"
-              >
-                Modifier le test
-              </button>
+              <button class="ui button" type="submit">Modifier le test</button>
             </form>
 
             <Alerte ref="erreurs" :type-alerte="typeAlerte" />
           </template>
         </ApolloMutation>
       </div>
-      <!--/ Formulaire d'édition du test -->
+      <!--/ Formulaire d'édition de le test -->
 
-      <!-- Bouton de suppression du test -->
+      <!-- Bouton de suppression de le test -->
       <div class="text-center mt-4">
-        <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
+        <button @click="$refs.modaleDeleteTest.show()" class="ui button negative right labeled icon text-center">
           <i class="trash alternate icon"></i>
           Supprimer le test
         </button>
       </div>
-      <!--/ Bouton de suppression du test -->
+      <!--/ Bouton de suppression de le test -->
     </div>
   </div>
 </template>
@@ -150,25 +132,25 @@ import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { checkPermissions } from '@/functions'
 
 import Alerte from '@/components/Alerte.vue'
+import Modale from '@/components/Modale.vue'
+import GoBack from '@/components/GoBack.vue'
 import FormChamps from '@/components/FormChamps.vue'
 import FilAriane from '@/components/FilAriane.vue'
 
 import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
-import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
+import Test from '@/graphql/NiveauExercice/Test.gql'
 import SupprimerTest from '@/graphql/NiveauExercice/SupprimerTest.gql'
 
 export default {
   name: 'EditerTest',
   components: {
     Alerte,
+    Modale,
+    GoBack,
     FormChamps,
     FilAriane
   },
   props: {
-    idExercice: {
-      type: String,
-      required: true
-    },
     idTest: {
       type: String,
       required: true
@@ -178,22 +160,17 @@ export default {
     return {
       erreurLoadingTest: false,
 
-      typeAlerte: 'Erreur',
-
-      testIndex: -1,
       champs: {
         test: {
-          id: { err: [] },
           nom: { err: [] },
           entree: { err: [] },
           sortie: { err: [] },
-          exercice: { v: '-', err: [] }
+          exercice: { v: '', err: [] }
         }
       },
+      typeAlerte: 'Erreur',
 
-      modalConfirmationSuppression: false,
-      testSupprime: false,
-      testSupprimeAppartientAExercice: ''
+      testSupprime: false
     }
   },
   apollo: {
@@ -202,31 +179,24 @@ export default {
       result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
     },
     niveaux: NiveauxExercices,
-    exercice() {
+    test() {
       return {
-        query: Exercice,
-        variables: {
-          id: this.idExercice
-        },
-        error: errorObject => {
-          const { gqlError } = errorObject
-          if (!gqlError) return console.error(errorObject)
-          this.erreurLoadingTest = gqlError.message
-        },
+        query: Test,
+        variables: { id: this.idTest },
+        error: err => (this.erreurLoadingTest = err.message),
         result({ data, loading }) {
-          // Pendant le chargement du test, vérifier si l'id d'exercice passé
-          // en paramètre existe. Si oui, l'appliquer dans le champs <select>
-          if (!loading) {
-            const testIndex = data.exercice.tests.findIndex(x => x.id === this.idTest)
-            if (testIndex !== -1) {
-              // Le test existe, recopier son index dans une variable pour y accéder directement
-              this.champs.test.exercice.v = this.idExercice
-              this.testIndex = testIndex
-            }
-            else this.erreurLoadingTest = `Le test à éditer n'a pas été trouvé pour l'exercice ${this.idExercice}.`
-          }
+          if (!loading && !this.erreurLoadingTest) this.champs.test.exercice.v = data.test.exercice.id
         }
       }
+    }
+  },
+
+  computed: {
+    selectExerciceOptions() {
+      let options = []
+      this.niveaux.forEach(aNiveau => aNiveau.exercices.forEach(anExercice =>
+        (options.push({ text: `${anExercice.titre} (Niveau : #${aNiveau.id} / Exercice : #${anExercice.id})`, value: anExercice.id }))))
+      return options
     }
   },
 
@@ -235,14 +205,14 @@ export default {
       this.$refs.erreurs.viderAlerte()
       this.typeAlerte = 'Erreur'
       let tousRemplis = true
-      for (const el in this.exercice.tests[this.idTest]) {
+      for (const el in this.champs.test) {
         this.champs.test[el].err = []
-        if (this.exercice.tests[this.idTest][el] === '') {
+        if (this.test[el] === '') {
           this.champs.test[el].err.push('Champs vide.')
           tousRemplis = false
         }
       }
-      if (this.champs.test.exercice.v === '-') {
+      if (this.test.exercice.id === '-') {
         this.champs.test.exercice.err.push('Veuillez sélectionner un exercice.')
         tousRemplis = false
       }
@@ -257,10 +227,10 @@ export default {
       if (!gqlError) return console.error(errorObject)
 
       // TODO: Code VALIDATION_ECHOUEE côté serveur à ajouter
-      // Un ou plusieurs champs sont invalides
-      if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
-        gqlError.extensions.exception.props.champs.forEach(x =>
-          (this.champs.test[x.nom] && this.champs.test[x.nom].err.push(x.message)))
+      // // Un ou plusieurs champs sont invalides
+      // if (gqlError.extensions.code === 'VALIDATION_ECHOUEE')
+      //   gqlError.extensions.exception.props.champs.forEach(x =>
+      //     (this.form[x.nom] && this.form[x.nom].err.push(x.message)))
 
       // Affichage de l'erreur dans l'alerte
       this.$refs.erreurs.viderAlerte()
@@ -268,36 +238,54 @@ export default {
       this.$refs.erreurs.ajouterAlerte(gqlError.message)
     },
 
-    async supprimerTest() {
-      const apolloClient = this.$apollo.provider.defaultClient
-
-      await apolloClient.mutate({
+    supprimerTest() {
+      return this.$apollo.provider.defaultClient.mutate({
         mutation: SupprimerTest,
-        variables: {
-          id: this.idTest
-        },
+        variables: { id: this.test.id },
         update: store => {
-          this.modalConfirmationSuppression = false
-          this.testSupprime = `Le test "${this.idTest}" a été supprimé.`
-          this.testSupprimeAppartientAExercice = this.idExercice
+          // Lire le cache pour récupérer le contenu actuel
+          const data = store.readQuery({ query: NiveauxExercices })
+          const indexNiveau = data.niveaux.findIndex(x => x.id === this.test.niveau.id)
+          const indexExercice = data.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.test.exercice.id)
+          const indexTest = data.niveaux[indexNiveau].exercices[indexExercice].tests.findIndex(x => x.id === this.test.id)
+          data.niveaux[indexNiveau].exercices[indexExercice].tests.splice(indexTest, 1)
+          // Appliquer la modification en cache
+          store.writeQuery({ query: NiveauxExercices, data })
+          this.testSupprime = true
         }
-      }
-      )
+      }).catch(err => {
+        console.error(err)
+        this.$refs.erreurs.viderAlerte()
+        this.typeAlerte = 'Erreur'
+        this.$refs.erreurs.ajouterAlerte(err.message)
+      })
     },
 
-    // Appliquer la modification en cache
-    testModif() {
-      this.$refs.erreurs.viderAlerte()
-      this.typeAlerte = 'Succès'
-      this.$refs.erreurs.ajouterAlerte(`Le test "${this.idTest}" a été modifié.`)
+    testModif({ data }) {
+      const apolloClient = this.$apollo.provider.defaultClient
+
+      try {
+      // Lire le cache pour récupérer le contenu actuel
+        const oldData = apolloClient.readQuery({ query: NiveauxExercices })
+        const indexNiveau = oldData.niveaux.findIndex(x => x.id === this.test.niveau.id)
+        const indexExercice = oldData.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.test.exercice.id)
+        const indexTest = data.niveaux[indexNiveau].exercices[indexExercice].tests.findIndex(x => x.id === this.test.id)
+        oldData.niveaux[indexNiveau].exercices[indexExercice].tests[indexTest] = data.editerTest
+
+        // Appliquer la modification en cache
+        apolloClient.writeQuery({ query: NiveauxExercices, data: oldData })
+
+        this.$refs.erreurs.viderAlerte()
+        this.typeAlerte = 'Succès'
+        this.$refs.erreurs.ajouterAlerte(`Le test "${data.editerExercice.id}" a été modifié.`)
+      }
+      catch (err) {
+        console.error(err)
+        this.$refs.erreurs.viderAlerte()
+        this.typeAlerte = 'Erreur'
+        this.$refs.erreurs.ajouterAlerte(err.message)
+      }
     }
   }
 }
 </script>
-
-<style scoped>
-.bgTransparent {
-  background-color: transparent !important;
-}
-</style>
-

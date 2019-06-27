@@ -41,9 +41,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.bgTransparent {
-  background-color: transparent !important;
-}
-</style>

@@ -8,13 +8,9 @@
     />
     <!--/ Fil d'ariane -->
 
-    <div class="ui container segment stripe">
-      <h2 class="ui center aligned header">
-        <div class="content">
-          Ajouter un niveau
-        </div>
-      </h2>
+    <h2 class="text-center">Ajouter un niveau</h2>
 
+    <div class="ui container segment stripe">
       <!-- Formulaire d'ajout de niveau -->
       <ApolloMutation
         :mutation="require('@/graphql/NiveauExercice/CreerNiveau.gql')"
@@ -29,7 +25,7 @@
         @error="chargerErreur"
         @done="niveauCree"
       >
-        <template slot-scope="{ mutate, loading }">
+        <template v-slot="{ mutate, loading }">
           <form @submit.prevent="checkForm() && mutate()" :class="{ loading }" class="ui form" novalidate>
             <form-champs
               v-model="champs.id.v"
@@ -37,6 +33,7 @@
               id="identifiant"
               :err="champs.id.err"
             />
+
             <form-champs
               v-model="champs.titre.v"
               nom="Titre"
