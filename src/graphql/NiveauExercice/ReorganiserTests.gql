@@ -1,0 +1,7 @@
+#import "./FragmentTest.gql"
+
+mutation ReorganiserTests($exercice: ID!, $tests: [ID!]!) {
+  reorganiserTests(exercice: $exercice, tests: $tests) {
+    ...test
+  }
+}

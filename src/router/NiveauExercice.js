@@ -22,12 +22,13 @@ export default [
     name: 'ListeNiveaux',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/ListeNiveaux.vue')
   },
-  {
-    // Réorganiser les niveaux/exercices/tests
-    path: '/NiveauExercice/reorganiser',
-    name: 'Reorganiser',
-    component: () => import('@/views/Connecte/NiveauExercice/Gestion/Reorganiser.vue')
-  },
+  // TODO: Rendre de nouveau disponible quand feature query multi exos/tests dispo
+  // {
+  //   // Réorganiser les niveaux/exercices/tests
+  //   path: '/NiveauExercice/reorganiser',
+  //   name: 'Reorganiser',
+  //   component: () => import('@/views/Connecte/NiveauExercice/Gestion/Reorganiser.vue')
+  // },
   {
     // Créer un niveau
     path: '/NiveauExercice/niveau/ajouterNiveau',
@@ -61,12 +62,13 @@ export default [
     name: 'AjouterTest',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterTest.vue'),
     props: true
-  },
-  {
-    // Modifier un test
-    path: '/NiveauExercice/exercice/:idExercice/test/:idTest',
-    name: 'EditerTest',
-    component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
-    props: true
   }
+  // TODO: Rendre de nouveau disponible après https://github.com/Minigugus/CodinSchool/issues/45
+  // {
+  //   // Modifier un test
+  //   path: '/NiveauExercice/exercice/:idExercice/test/:idTest',
+  //   name: 'EditerTest',
+  //   component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
+  //   props: true
+  // }
 ]

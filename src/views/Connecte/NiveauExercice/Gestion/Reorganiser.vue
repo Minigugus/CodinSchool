@@ -216,10 +216,6 @@ export default {
 .flip-list-move {
   transition: transform 1s !important;
 }
-.ghost {
-  opacity: 0.5 !important;
-  background: #c8ebfb !important;
-}
 .liste-niveau .accordion {
   width: 100% !important;
   margin: 0 !important;

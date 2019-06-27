@@ -1,46 +1,25 @@
 <template>
   <div class="ui text vertical segment container">
-    <!-- Erreur de chargement de la page -->
-    <div v-if="erreurLoadingNiveau" class="ui text vertical segment container">
-      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
-        <i class="left arrow icon"></i>
-        Retour à la liste des niveaux
-      </router-link>
-      <Alerte type-alerte="Erreur" :liste-msg="[erreurLoadingNiveau]" :fermable="false" />
+    <!-- Chargement -->
+    <sui-loader v-if="$apollo.queries.niveau.loading" active centered inline />
+
+    <!-- Erreur -->
+    <div v-else-if="erreurLoadingNiveau || niveauSupprime">
+      <GoBack to="/NiveauExercice/niveau/liste" text="Retour à la liste des niveaux" />
+      <Alerte :liste-msg="[erreurLoadingNiveau || `Le niveau : ${niveau.id} et les exercices lui étant associés ont été supprimés`]" type-alerte="Erreur" :fermable="false" />
     </div>
-    <!--/ Erreur de chargement de la page -->
 
-    <!-- Ecran de chargement de la page -->
-    <div v-else-if="!erreurLoadingNiveau && $apollo.queries.niveau.loading" class="ui text vertical segment container loading"></div>
-    <!--/ Ecran de chargement de la page -->
-
-    <!-- Alerte de notification de niveau supprimé -->
-    <div v-else-if="niveauSupprime" class="ui text vertical segment container">
-      <router-link to="/NiveauExercice/niveau/liste" class="ui button left labeled icon" tag="button">
-        <i class="left arrow icon"></i>
-        Retour à la liste des niveaux
-      </router-link>
-      <Alerte type-alerte="Succès" :liste-msg="[niveauSupprime]" :fermable="false" />
-    </div>
-    <!--/ Alerte de notification de niveau supprimé -->
-
-    <!-- Contenu de la page -->
-    <div v-else>
+    <div v-else class="ui container">
       <!-- Modal de confirmation de suppression de niveau -->
-      <sui-modal v-model="modalConfirmationSuppression" class="bgTransparent">
-        <sui-modal-header>Supprimer le niveau "{{ niveau.titre }}"</sui-modal-header>
-        <sui-modal-content>
-          <sui-modal-description>
-            <sui-header>Êtes-vous sûr de vouloir supprimer ce niveau ?</sui-header>
-            <p>Supprimer un niveau efface également tous les exercices qui lui sont associés.</p>
-            <p>Cette action est irréversible.</p>
-          </sui-modal-description>
-        </sui-modal-content>
-        <sui-modal-actions>
-          <sui-button secondary @click.native="modalConfirmationSuppression = false">Annuler</sui-button>
-          <sui-button negative @click.native="supprimerNiveau">Valider la suppression</sui-button>
-        </sui-modal-actions>
-      </sui-modal>
+      <Modale
+        header="Supprimer le lniveau"
+        action="Valider la suppression"
+        @validate="supprimerNiveau(exercice)"
+        ref="modaleDeleteNiveau"
+      >
+        <sui-header>Êtes-vous sûr de vouloir supprimer ce niveau ?</sui-header>
+        <p>Cette action est irréversible.</p>
+      </Modale>
       <!--/ Modal de confirmation de suppression de niveau -->
 
       <!-- Fil d'ariane -->
@@ -49,11 +28,6 @@
         `Niveau : ${niveau.id }`
       ]"
       />
-      <div class="ui large breadcrumb">
-        <router-link to="/NiveauExercice/niveau/liste" class="section">Liste des niveaux</router-link>
-        <i class="right angle icon divider"></i>
-        <div class="active section">Niveau "{{ niveau.id }}"</div>
-      </div>
       <!--/ Fil d'ariane -->
 
       <h1 class="ui center aligned header">
@@ -80,7 +54,7 @@
           @error="chargerErreur"
           @done="rechargerNiveau"
         >
-          <template slot-scope="{ mutate, loading }">
+          <template v-slot="{ mutate, loading }">
             <form @submit.prevent="!exercice.sontDraggable && mutate()" :class="{ loading }" class="ui form" novalidate>
               <form-champs
                 v-model="niveau.id"
@@ -132,68 +106,79 @@
         </div>
       </template>
       <template v-else>
-        <h2 class="ui center aligned header">Réorganiser les exercices du niveau</h2>
+        <h2 class="ui center aligned header">Exercices du niveau</h2>
 
-        <!-- Bouton de réorganisation des exercices -->
-        <div class="text-center">
-          <transition name="fade" mode="out-in">
-            <button v-if="!exercice.sontDraggable" key="reorganiser" @click="exercice.sontDraggable = true" class="ui button primary right labeled icon">
-              <i class="right bars icon"></i>
-              Réorganiser les exercices
-            </button>
-            <button v-else key="valider" @click="validerReorganisation" class="ui button positive right labeled icon">
-              <i class="right check icon"></i>
-              Valider la réorganisation
-            </button>
-          </transition>
-        </div>
-        <!--/ Bouton de réorganisation des exercices -->
-
-        <!-- Liste des exercices du niveau -->
-        <draggable
-          :list="niveau.exercices"
-          :animation="0"
-          group="exercice"
-          :disabled="!exercice.sontDraggable"
-          ghost-class="ghost"
-          element="div"
-          class="liste-exercice"
+        <ApolloMutation
+          :mutation="require('@/graphql/NiveauExercice/ReorganiserExercices.gql')"
+          :variables="{
+            niveau: niveau.id,
+            exercices: niveau.exercices.map(x => x.id)
+          }"
+          :update="reorgUpdateCache"
         >
-          <div v-for="aExercice in niveau.exercices" :key="aExercice.id" class="exercice">
-            <!-- Bouton d'édition d'un exercice -->
-            <transition name="slide-left">
-              <div v-if="!exercice.sontDraggable" :key="'editer-' + aExercice.id" class="editer">
-                <router-link :to="`/NiveauExercice/exercice/${aExercice.id}`" class="ui button primary right labeled icon" tag="button">
-                  <i class="right arrow icon"></i>
-                  Editer
-                </router-link>
-              </div>
-            </transition>
-            <!--/ Bouton d'édition d'un exercice -->
-
-            <!-- Icône de drag de l'exercice -->
-            <transition name="fade-slow">
-              <div v-if="exercice.sontDraggable" class="drag-icon">
-                <i class="bars icon"></i>
-              </div>
-            </transition>
-            <!--/ Icône de drag de l'exercice -->
-
-            <!-- Informations de l'exercice -->
-            <div class="contenu">
-              <div class="titre-exercice">{{ aExercice.titre }}</div>
-              <div class="id-exercice">#{{ aExercice.id }}</div>
-              <div class="description-exercice">
-                <span>{{ aExercice.description }}</span>
-              </div>
+          <template v-slot="{ mutate, loading, gqlError }">
+            <!-- Bouton de réorganisation des exercices -->
+            <div class="text-center">
+              <transition name="fade" mode="out-in">
+                <button v-if="!exercice.sontDraggable" key="reorganiser" @click="exercice.sontDraggable = true" class="ui button primary right labeled icon">
+                  <i class="right bars icon"></i>
+                  Réorganiser les exercices
+                </button>
+                <button
+                  v-else
+                  key="valider"
+                  @click="mutate()"
+                  class="ui button positive right labeled icon"
+                  :disabled="loading"
+                >
+                  <i class="right check icon"></i>
+                  Valider la réorganisation
+                </button>
+              </transition>
             </div>
-            <!--/ Informations de l'exercice -->
-          </div>
-        </draggable>
-        <!--/ Liste des exercices du niveau -->
+            <!--/ Bouton de réorganisation des exercices -->
+
+            <sui-loader v-if="loading" active centered inline class="mt-3">Réorganisation ...</sui-loader>
+
+            <!-- Liste des exercices du niveau -->
+            <sui-table v-else celled>
+              <sui-table-header>
+                <sui-table-row text-align="center">
+                  <sui-table-header-cell v-if="exercice.sontDraggable">#</sui-table-header-cell>
+                  <sui-table-header-cell>Id</sui-table-header-cell>
+                  <sui-table-header-cell>Titre</sui-table-header-cell>
+                  <sui-table-header-cell v-if="!exercice.sontDraggable">Editer</sui-table-header-cell>
+                </sui-table-row>
+              </sui-table-header>
+              <draggable
+                :list="niveau.exercices"
+                :animation="200"
+                group="exercice"
+                :disabled="!exercice.sontDraggable"
+                ghost-class="ghost"
+                tag="sui-table-body"
+              >
+                <sui-table-row v-for="anExercice in niveau.exercices" :key="anExercice.id" text-align="center">
+                  <sui-table-cell v-if="exercice.sontDraggable"><i class="bars icon cursor-move" /></sui-table-cell>
+                  <sui-table-cell v-text="anExercice.id" text-align="center" />
+                  <sui-table-cell v-text="anExercice.titre" />
+                  <sui-table-cell v-if="!exercice.sontDraggable">
+                    <router-link :to="`/NiveauExercice/exercice/${anExercice.id}`" class="ui primary right labeled icon button mini">
+                      <i class="edit icon"></i>
+                      Editer
+                    </router-link>
+                  </sui-table-cell>
+                </sui-table-row>
+              </draggable>
+            </sui-table>
+
+            <Alerte v-if="gqlError" :liste-msg="[gqlError.message]" type-alerte="Erreur" />
+            <!--/ Liste des exercices du niveau -->
+          </template>
+        </ApolloMutation>
 
         <!-- Bouton d'ajout d'exercice -->
-        <div v-if="!exercice.sontDraggable" class="text-center">
+        <div v-if="!exercice.sontDraggable" class="text-center mt-4">
           <router-link :to="`/NiveauExercice/ajouterExercice/${idNiveau}`" class="ui button right labeled icon text-center" tag="button">
             <i class="plus icon"></i>
             Ajouter un exercice
@@ -203,15 +188,14 @@
       </template>
 
       <!-- Bouton de suppression du niveau -->
-      <div v-if="!exercice.sontDraggable" class="text-center mt-4">
-        <button @click="modalConfirmationSuppression = true" class="ui button negative right labeled icon text-center">
+      <div v-if="!exercice.sontDraggable" class="text-center mt-2">
+        <button @click="$refs.modaleDeleteNiveau.show()" class="ui button negative right labeled icon text-center">
           <i class="trash alternate icon"></i>
           Supprimer le niveau
         </button>
       </div>
-      <!--/ Bouton de suppression du niveau -->
+    <!--/ Bouton de suppression du niveau -->
     </div>
-    <!-- Contenu de la page -->
   </div>
 </template>
 
@@ -223,10 +207,11 @@ import draggable from 'vuedraggable'
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
 import FilAriane from '@/components/FilAriane.vue'
+import Modale from '@/components/Modale.vue'
+import GoBack from '@/components/GoBack.vue'
 
 import Niveau from '@/graphql/NiveauExercice/Niveau.gql'
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
-import ReorganiserExercices from '@/graphql/NiveauExercice/ReorganiserExercices.gql'
 import SupprimerNiveau from '@/graphql/NiveauExercice/SupprimerNiveau.gql'
 
 export default {
@@ -235,7 +220,9 @@ export default {
     draggable,
     Alerte,
     FormChamps,
-    FilAriane
+    FilAriane,
+    Modale,
+    GoBack
   },
   props: {
     idNiveau: {
@@ -337,39 +324,23 @@ export default {
       this.$router.replace({ name: 'EditerNiveau', params: { idNiveau: data.editerNiveau.id } })
     },
 
-    async validerReorganisation() {
+    reorgUpdateCache(store, { data: { reorganiserExercices: nouvelleOrganisation } }) {
       this.exercice.sontDraggable = false
 
-      const apolloClient = this.$apollo.provider.defaultClient
+      // Lire le cache pour récupérer le contenu actuel
+      const data = store.readQuery({ query: Niveau, variables: { id: this.niveau.id } })
 
-      // Mise à jour du cache
-      await apolloClient.mutate({
-        mutation: ReorganiserExercices,
-        variables: {
-          niveau: this.niveau.id,
-          exercices: this.niveau.exercices.map(x => x.id)
-        },
-        update: (store, { data: { reorganiserExercices: nouvelleOrganisation } }) => {
-          // Lire le cache pour récupérer le contenu actuel
-          const data = store.readQuery({ query: Niveau, variables: { id: this.niveau.id } })
+      // Modifier le contenu actuel récupéré
+      data.niveau.exercices = nouvelleOrganisation
 
-          // Modifier le contenu actuel récupéré
-          data.niveau.exercices = nouvelleOrganisation
-
-          // Appliquer la modification en cache
-          store.writeQuery({ query: Niveau, variables: { id: this.niveau.id }, data })
-        }})
+      // Appliquer la modification en cache
+      store.writeQuery({ query: Niveau, variables: { id: this.niveau.id }, data })
     },
 
     async supprimerNiveau() {
-      const apolloClient = this.$apollo.provider.defaultClient
-
-      // Mise à jour du cache
-      await apolloClient.mutate({
+      await this.$apollo.provider.defaultClient.mutate({
         mutation: SupprimerNiveau,
-        variables: {
-          id: this.niveau.id
-        },
+        variables: { id: this.niveau.id },
         update: store => {
           // Lire le cache pour récupérer le contenu actuel
           const data = store.readQuery({ query: Niveaux })
@@ -378,7 +349,7 @@ export default {
             data.niveaux.splice(index, 1)
             // Appliquer la modification en cache
             store.writeQuery({ query: Niveaux, data })
-            this.niveauSupprime = `Le niveau "${this.idNiveau}" et les exercices lui étant associés ont été supprimés.`
+            this.niveauSupprime = true
             return
           }
           console.error('Impossible de supprimer le niveau.')
@@ -387,91 +358,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.bgTransparent {
-  background-color: transparent !important;
-}
-.flip-list-move {
-  transition: transform 1s !important;
-}
-.ghost {
-  opacity: 0.5 !important;
-  background: #c8ebfb !important;
-}
-.liste-exercice {
-  margin: 20px 0px;
-}
-.exercice {
-  display: block;
-  border-bottom: 1px solid #cfcfcf;
-  background-color: #f3f3f3;
-  padding: 20px;
-}
-.exercice:first-child {
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-.exercice:last-child {
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-.exercice:last-of-type {
-  border-bottom: none;
-}
-.drag-icon {
-  line-height: 60px;
-  position: absolute;
-  padding-right: 20px;
-  cursor: move;
-}
-.contenu {
-  padding-left: 2.2em;
-}
-
-.titre-exercice {
-  font-size: 1.3em;
-  display: inline-block;
-  margin: 0;
-  font-family: Lato,'Helvetica Neue', Arial,Helvetica, sans-serif;
-  font-weight: 700;
-  color: rgba(0,0,0,.85);
-}
-.id-exercice {
-  font-size: 1em;
-  margin-left: 8px !important;
-  display: inline-block;
-  margin: 0;
-  font-family: Lato, 'Helvetica Neue', Arial,Helvetica, sans-serif;
-  font-weight: 700;
-  color: rgba(0, 0, 0, 0.377);
-}
-.description-exercice {
-  margin: .5em 0 .5em;
-  font-size: 1em;
-  line-height: 1em;
-  color: rgba(0,0,0,.6);
-}
-.editer {
-  position: relative;
-}
-.editer button {
-  position: absolute !important;
-  right: 0 !important;
-  margin-top: 15px !important;
-}
-
-
-.ui.divided.items>.item {
-  border-top: 1px solid rgba(34,36,38,.15);
-  background-color: #f3f3f3;
-  padding: 23px;
-}
-.ui.divided.items>.item:first-child {
-  border-top: none;
-}
-.ui.divided.items>.item:first-child, .ui.divided.items>.item:last-child {
-  margin: 0 !important;
-  padding: 25px !important;
-}
-</style>

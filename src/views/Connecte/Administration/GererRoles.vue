@@ -1,8 +1,6 @@
 <template>
   <div class="ui container">
-    <h2 class="ui center aligned header">
-      <div class="content">Gestion des rôles</div>
-    </h2>
+    <h2 class="text-center">Gestion des rôles</h2>
 
     <sui-loader v-if="$apollo.queries.permissions.loading && $apollo.queries.roles.loading" active centered inline />
     <!-- Result -->
@@ -84,17 +82,27 @@
               </td>
               <td>
                 <!-- Bouton d'édition de rôle -->
-                <button v-if="!isRoleEnEdition(aRole.id)" @click="roleEnEdition = aRole.id" class="ui icon button primary tiny">
+                <button
+                  v-if="!isRoleEnEdition(aRole.id)"
+                  @click="roleEnEdition = aRole.id"
+                  :disabled="roleEnEdition && !isRoleEnEdition(aRole.id)"
+                  class="ui icon button primary tiny"
+                >
                   <i class="pencil alternate icon" />
                 </button>
-                <button v-else @click="!!aRole.nom && editerRole(aRole)" class="ui icon button positive tiny">
+                <button
+                  v-else
+                  :disabled="!aRole.nom"
+                  @click="editerRole(aRole)"
+                  class="ui icon button positive tiny"
+                >
                   <i class="check alternate icon" />
                 </button>
                 <!--/ Bouton d'édition de rôle -->
               </td>
               <td>
                 <!-- Bouton de suppression de rôle -->
-                <button @click="$refs.modaleDeleteRole.show() && (suppressionRoleCible = aRole)" class="ui icon button negative tiny">
+                <button @click="(suppressionRoleCible = aRole) && $refs.modaleDeleteRole.show()" class="ui icon button negative tiny">
                   <i class="trash alternate icon" />
                 </button>
                 <!--/ Bouton de suppression de rôle -->
@@ -258,8 +266,5 @@ export default {
 }
 th[title] {
   cursor: help !important;
-}
-.bgTransparent {
-  background-color: transparent !important;
 }
 </style>

@@ -1,8 +1,6 @@
 <template>
   <div class="ui container">
-    <h2 class="ui center aligned header">
-      <div class="content">Gestion des utilisateurs</div>
-    </h2>
+    <h2 class="text-center">Gestion des utilisateurs</h2>
 
     <ApolloQuery :query="require('@/graphql/Administration/Utilisateurs.gql')">
       <template v-slot="{ result: { error, data }, isLoading }">
@@ -34,29 +32,17 @@
           <table class="ui celled table table-center">
             <thead>
               <tr>
-                <th>Effacer</th>
                 <th>id</th>
                 <th>Nom</th>
                 <th>Email</th>
                 <th>Date d'inscription</th>
                 <th>Rôles</th>
                 <th>Editer</th>
+                <th>Effacer</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="aUser in data.utilisateurs" :key="'user-' + aUser.id">
-                <td>
-                  <!-- Bouton de suppression d'utilisateur -->
-                  <button
-                    @click="demandeSuppression(aUser.id)"
-                    :disabled="aUser.id === moi.id"
-                    title="Supprimer l'utilisateur"
-                    class="ui icon button negative tiny"
-                  >
-                    <i class="trash alternate icon"></i>
-                  </button>
-                  <!--/ Bouton de suppression d'utilisateur -->
-                </td>
                 <td :title="aUser.id">{{ aUser.id.slice(0, 8) }}...</td>
                 <td>{{ aUser.prenom + ' ' + aUser.nom }}</td>
                 <td>{{ aUser.emailPrimaire }}</td>
@@ -70,6 +56,18 @@
                     <i class="pencil alternate icon"></i>
                   </router-link>
                   <!--/ Bouton de redirection vers page d'édition d'utilisateur -->
+                </td>
+                <td>
+                  <!-- Bouton de suppression d'utilisateur -->
+                  <button
+                    @click="(modaleUserSupprId = aUser.id) && $refs.modaleDeleteUser.show()"
+                    :disabled="aUser.id === moi.id"
+                    title="Supprimer l'utilisateur"
+                    class="ui icon button negative tiny"
+                  >
+                    <i class="trash alternate icon"></i>
+                  </button>
+                  <!--/ Bouton de suppression d'utilisateur -->
                 </td>
               </tr>
             </tbody>
@@ -129,12 +127,6 @@ export default {
   },
 
   methods: {
-    // Afficher la modal de confirmation de suppression d'utilisateur
-    demandeSuppression(aUserId) {
-      this.$refs.modaleDeleteUser.show()
-      this.modaleUserSupprId = aUserId
-    },
-
     // Supprimer un rôle
     async supprimerUtilisateur() {
       const apolloClient = this.$apollo.provider.defaultClient
