@@ -1,27 +1,5 @@
-/** Liste des pages liées aux niveaux et exercices `/NiveauExercice/` */
+/** Liste des pages relatives à la gestion des niveaux et exercices */
 export default [
-  // Partie "Utilisateur"
-  {
-    // Lister les niveaux et exercices
-    path: '/listeExercices',
-    name: 'ListeExercices',
-    component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/ListeExercices.vue')
-  },
-  {
-    // Faire un exercice
-    path: '/faireExercice/:idExercice',
-    name: 'FaireExercice',
-    component: () => import('@/views/Connecte/NiveauExercice/Utilisateur/FaireExercice.vue'),
-    props: true
-  },
-
-  // Partie "Gestion"
-  {
-    // Lister les niveaux
-    path: '/NiveauExercice/niveau/liste',
-    name: 'ListeNiveaux',
-    component: () => import('@/views/Connecte/NiveauExercice/Gestion/ListeNiveaux.vue')
-  },
   // TODO: Rendre de nouveau disponible quand feature query multi exos/tests dispo
   // {
   //   // Réorganiser les niveaux/exercices/tests
@@ -29,6 +7,13 @@ export default [
   //   name: 'Reorganiser',
   //   component: () => import('@/views/Connecte/NiveauExercice/Gestion/Reorganiser.vue')
   // },
+
+  {
+    // Lister les niveaux
+    path: '/NiveauExercice/niveau/liste',
+    name: 'ListeNiveaux',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/ListeNiveaux.vue')
+  },
   {
     // Créer un niveau
     path: '/NiveauExercice/niveau/ajouterNiveau',
@@ -42,13 +27,7 @@ export default [
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerNiveau.vue'),
     props: true
   },
-  {
-    // Modifier un exercice
-    path: '/NiveauExercice/exercice/:idExercice',
-    name: 'EditerExercice',
-    component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerExercice.vue'),
-    props: true
-  },
+
   {
     // Créer un exercice
     path: '/NiveauExercice/ajouterExercice/:idNiveau?',
@@ -56,6 +35,14 @@ export default [
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterExercice.vue'),
     props: true
   },
+  {
+    // Modifier un exercice
+    path: '/NiveauExercice/exercice/:idExercice',
+    name: 'EditerExercice',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerExercice.vue'),
+    props: true
+  },
+
   {
     // Créer un test
     path: '/NiveauExercice/ajouterTest/:idExercice?',
