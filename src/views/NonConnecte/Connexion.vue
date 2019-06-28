@@ -1,124 +1,106 @@
 <template>
-  <div class="ui container segment stripe smallContainer">
-    <h2 class="ui center aligned header">
-      <div class="content">
-        Connexion
-      </div>
-    </h2>
+  <div class="ui container smallContainer">
+    <h2 class="text-center">Connexion</h2>
 
     <ApolloMutation
       :mutation="require('@/graphql/Utilisateur/Connexion.gql')"
       :variables="{
-        email: formulaire.email,
-        motDePasse: formulaire.motDePasse
+        email: form.email.v,
+        motDePasse: form.mdp.v
       }"
-      class="form"
+      class="ui container segment"
       @error="chargerErreur"
       @done="connexionOk"
     >
-      <template slot-scope="{ mutate, loading }">
+      <template v-slot="{ mutate, loading }">
         <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
-          <div class="field">
-            <label for="email">Adresse email</label>
-            <input type="text" id="email" v-model="formulaire.email" placeholder="Adresse email" />
-          </div>
-          <div class="field">
-            <label for="motDePasse">Mot de passe</label>
-            <input type="password" id="motDePasse" v-model="formulaire.motDePasse" placeholder="Mot de passe" autocomplete="current-password" />
-          </div>
+          <form-champs
+            v-model="form.email.v"
+            nom="Adresse email"
+            id="email"
+            type="email"
+            :err="form.email.err"
+          />
+
+          <form-champs
+            v-model="form.mdp.v"
+            nom="Mot de passe"
+            id="mdp"
+            type="password"
+            :err="form.mdp.err"
+          />
 
           <router-link to="/mdpOublie" class="mdpOublie underlineHover">Mot de passe oublié ?</router-link>
 
           <button class="ui button" type="submit">Se connecter</button>
         </form>
 
-        <Alerte ref="erreurs" type-alerte="Erreur" />
+        <Alerte ref="notifs" type-alerte="Erreur" />
       </template>
     </ApolloMutation>
   </div>
 </template>
 
 <script>
-import { onLogin } from '@/vue-apollo'
-import UTILISATEUR from '@/graphql/Utilisateur/Utilisateur.gql'
 import Alerte from '@/components/Alerte.vue'
+import FormChamps from '@/components/FormChamps.vue'
+import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
+import { onLogin } from '@/vue-apollo'
 
 export default {
   name: 'Connexion',
   components: {
-    Alerte
+    Alerte,
+    FormChamps
   },
   data() {
     return {
-      formulaire: {
-        email: '',
-        motDePasse:	''
+      form: {
+        email: { v: '', err: [] },
+        mdp:	{ v: '', err: [] }
       }
     }
   },
 
   methods: {
-    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
-    chargerErreur(errorObject) {
-      let e = errorObject.message
-      if (e.includes('GraphQL error: '))
-        this.ajouterErreur(e.replace('GraphQL error: ', ''))
+    chargerErreur({ gqlError }) {
+      this.$refs.notifs.ajouterAlerte(gqlError.message)
     },
-
-    // Ajouter une erreur dans la liste des erreurs
-    ajouterErreur(...str) {
-      this.$refs.erreurs.ajouterAlerte(...str)
-    },
-
-    // Mettre un fond rouge sur un élément de formulaire
-    setErreurInput(activerErreur, ...id) {
-      id.forEach(input => activerErreur
-        ? document.getElementById(input).parentElement.classList.add('error')
-        : document.getElementById(input).parentElement.classList.remove('error'))
-    },
-
-    // Vérifier que tous les champs du formulaire sont remplis
-    verifierTousChampsRemplis() {
-      let allInputCompleted = true
-      Object.keys(this.formulaire).forEach(input => {
-        if (!this.formulaire[input]) {
-          this.setErreurInput(true, input)
-          allInputCompleted = false
-        }
-      })
-      if (!allInputCompleted)
-        this.ajouterErreur('Tous les champs sont obligatoires.')
-      return allInputCompleted
-    },
-
-    // Vider les alertes d'erreurs et les couleurs des input
-    resetErreurs() {
-      this.setErreurInput(false, ...Object.keys(this.formulaire))
-      this.$refs.erreurs.viderAlerte()
-    },
-
-    // Vérifier le formulaire avant envoi
+    // Vérifier que le formulaire est bien rempli
     verifierFormulaire() {
-      this.resetErreurs()
-      let envoyerFormulaire = true
-      if (!this.verifierTousChampsRemplis()) envoyerFormulaire = false
-      return envoyerFormulaire
+      let formulaireOk = true
+
+      this.$refs.notifs.viderAlerte()
+      this.form.email.err = []
+      this.form.mdp.err = []
+
+      if (this.form.email.v.length === 0) {
+        this.form.email.err.push('Veuillez renseigner votre adresse email')
+        formulaireOk = false
+      }
+      if (this.form.mdp.v.length === 0) {
+        this.form.mdp.err.push('Veuillez renseigner votre mot de passe')
+        formulaireOk = false
+      }
+      if (!formulaireOk) {
+        this.$refs.notifs.ajouterAlerte('Tous les champs sont obligatoires.')
+        this.typeAlerte = 'Erreur'
+      }
+
+      return formulaireOk
     },
 
     // Formulaire validé, injection des données et redirection vers l'application
-    async connexionOk({ data }) {
+    async connexionOk({ data: { connexion } }) {
       const apolloClient = this.$apollo.provider.defaultClient
 
       // Mettre le jeton à jour et recharger le cache
-      const jeton = 'Bearer ' + data.connexion.jeton
-      await onLogin(apolloClient, jeton)
+      await onLogin(apolloClient, `Bearer ${connexion.jeton}`)
 
       // Mise à jour du cache
       apolloClient.writeQuery({
-        query: UTILISATEUR,
-        data: {
-          ...data.connexion
-        }
+        query: Utilisateur,
+        data: { ...connexion }
       })
 
       // On redirige le client vers la page de profil
