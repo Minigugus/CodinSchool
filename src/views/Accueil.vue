@@ -8,7 +8,7 @@
     <div class="ui text container">
       <h3 class="ui header">La plateforme d'apprentissage du Langage C</h3>
       <p>Avec CodinSchool, apprendre et pratiquer le langage C n'a jamais été aussi simple !</p>
-      <p>Connectez-vous et accédez à une multitude d'exercices qui testeront et amélioreront vos compétences</p>
+      <p>Connectez-vous et accédez à une multitude d'exercices qui testeront et amélioreront vos compétences.</p>
       <h4 class="ui horizontal header divider">
         <a href="#"></a>
       </h4>
