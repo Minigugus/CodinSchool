@@ -1,11 +1,26 @@
 <template>
-  <div class="ui container segment stripe smallContainer">
-    <h2 class="ui center aligned header">
-      <div class="content">
-        Activation de compte
-      </div>
-    </h2>
-    <Alerte ref="notifs" :type-alerte="typeAlerte" :fermable="false" />
+  <div class="ui container">
+    <h2 class="text-center">Activation de compte</h2>
+
+    <!-- Chargement -->
+    <sui-loader v-if="isLoading" active centered inline />
+
+    <!-- Erreur -->
+    <Alerte
+      v-else-if="error"
+      :liste-msg="[error.message]"
+      type-alerte="Erreur"
+      :fermable="false"
+    />
+
+    <!-- Result -->
+    <div v-else-if="validated" class="ui container segment">
+      <Alerte
+        :liste-msg="['Félicitations ! Votre compte CodinSchool a été activé. Vous pouvez maintenant vous connecter.']"
+        type-alerte="Succès"
+        :fermable="false"
+      />
+    </div>
   </div>
 </template>
 
@@ -17,44 +32,38 @@ export default {
   components: {
     Alerte
   },
+
   props: {
     code: {
       type: String,
       required: true
     }
   },
+
   data() {
     return {
-      typeAlerte: 'Erreur'
+      isLoading: false,
+      error: null,
+
+      validated: false
     }
   },
 
-  mounted() {
-    this.$apollo.mutate({
-      mutation: require('@/graphql/Utilisateur/Activation.gql'),
-      variables: {
-        code: this.code
-      }
-    })
-      .then(_ => {
-        this.ajouterNotif('Félicitations ! Votre compte CodinSchool a été activé. Vous pouvez maintenant vous connecter.')
-        this.typeAlerte = 'Succès'
+  async mounted() {
+    this.isLoading = true
+    try {
+      await this.$apollo.mutate({
+        mutation: require('@/graphql/Utilisateur/Activation.gql'),
+        variables: { code: this.code }
       })
-      .catch(err => this.chargerErreur(err))
-  },
-
-  methods: {
-    // Ajouter une alerte
-    ajouterNotif(...str) {
-      this.$refs.notifs.ajouterAlerte(...str)
-    },
-
-    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
-    chargerErreur(errorObject) {
-      let e = errorObject.message
-      if (e.includes('GraphQL error: '))
-        this.ajouterNotif(e.replace('GraphQL error: ', ''))
     }
+    catch (error) {
+      this.error = error
+    }
+    finally {
+      this.isLoading = false
+    }
+    this.validated = true
   }
 }
 </script>
