@@ -1,6 +1,6 @@
 import Accueil from '@/views/Accueil.vue'
 
-/** Liste des pages qui ne nécessitent pas de connexion */
+/** Liste des pages statiques */
 export default [
   {
     // Page d'accueil
@@ -39,20 +39,7 @@ export default [
     component: () => import('@/views/NonConnecte/MdpOublie.vue')
   },
   {
-    // Réinitialisation de mot de passe
-    path: '/resetMdp/:email/:code',
-    name: 'MdpReset',
-    component: () => import('@/views/NonConnecte/MdpReset.vue'),
-    props: true
-  },
-  {
-    // Activation de compte
-    path: '/activation/:code',
-    name: 'Activation',
-    component: () => import('@/views/NonConnecte/Activation.vue'),
-    props: true
-  },
-  {
+    // Mentions légales
     path: '/mentionsLegales',
     name: 'MentionsLegales',
     component: () => import('@/views/MentionsLegales.vue')
