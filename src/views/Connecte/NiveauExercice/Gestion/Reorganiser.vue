@@ -1,5 +1,5 @@
 <template>
-  <div class="ui text vertical segment container">
+  <div class="ui container">
     <div v-if="$apollo.queries.niveaux.loading" class="ui text vertical segment container loading"></div>
     <div v-else>
       <router-link :to="`/NiveauExercice/niveau/liste`" class="ui button left labeled icon" tag="button">

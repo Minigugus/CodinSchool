@@ -11,8 +11,8 @@
         motDePasse: form.mdp.v,
       }"
       class="ui container segment"
-      @error="(typeAlerte = 'Erreur') && $refs.notifs.ajouterAlerte($event.gqlError.message)"
-      @done="formOk"
+      @error="$refs.notifs.ajouterAlerte($event.gqlError.message)"
+      @done="validated = true"
     >
       <template v-slot="{ mutate, loading }">
         <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
@@ -50,7 +50,8 @@
 
           <button class="ui button" type="submit">Modifier mon mot de passe</button>
         </form>
-        <Alerte ref="notifs" :type-alerte="typeAlerte" />
+
+        <Alerte ref="notifs" type-alerte="Erreur" />
       </template>
     </ApolloMutation>
 
@@ -84,7 +85,6 @@ export default {
         mdp: { v: '', err: [] },
         mdp2: { v: '', err: [] }
       },
-      typeAlerte: 'Erreur',
       validated: false
     }
   },
@@ -105,23 +105,10 @@ export default {
         this.form.mdp2.err.push('Les mots de passe ne correspondent pas.')
         formulaireOk = false
       }
-      if (!formulaireOk) {
+      if (!formulaireOk)
         this.$refs.notifs.ajouterAlerte('Le formulaire contient des erreurs.')
-        this.typeAlerte = 'Erreur'
-      }
 
       return formulaireOk
-    },
-
-    // La demande de réinitialisation de mot de passe a été validée
-    formOk() {
-      this.viderNotif()
-      this.typeAlerte = 'Succès'
-      this.ajouterNotif('Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.')
-    },
-
-    chargerErreur() {
-
     }
   }
 }

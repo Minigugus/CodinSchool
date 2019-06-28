@@ -1,5 +1,5 @@
 <template>
-  <div class="ui text vertical segment container">
+  <div class="ui container">
     <!-- Chargement -->
     <sui-loader v-if="$apollo.queries.test.loading && $apollo.queries.niveaux.loading" active centered inline />
 
