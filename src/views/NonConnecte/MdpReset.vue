@@ -1,65 +1,72 @@
 <template>
-  <div class="ui container segment stripe smallContainer">
-    <h2 class="ui center aligned header">
-      <div class="content">
-        Réinitialisation de mot de passe
-      </div>
-    </h2>
+  <div class="ui container">
+    <h2 class="text-center">Réinitialisation de mot de passe</h2>
 
     <ApolloMutation
+      v-if="!validated"
       :mutation="require('@/graphql/Utilisateur/ResetMdp.gql')"
       :variables="{
         email,
         code,
-        motDePasse: nouveauMdp,
+        motDePasse: form.mdp.v,
       }"
-      class="form"
-      @error="chargerErreur"
+      class="ui container segment"
+      @error="(typeAlerte = 'Erreur') && $refs.notifs.ajouterAlerte($event.gqlError.message)"
       @done="formOk"
     >
-      <template v-if="typeAlerte !== 'Succès'" slot-scope="{ mutate, loading }">
+      <template v-slot="{ mutate, loading }">
         <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
-          <p>
-            Définissez votre nouveau mot de passe.
-          </p>
+          <p>Définissez votre nouveau mot de passe.</p>
 
-          <div class="field disabled">
-            <label for="email">Adresse email</label>
-            <input type="email" id="email" v-model="email" placeholder="Adresse email" />
-          </div>
+          <form-champs
+            :value="email"
+            nom="Adresse email"
+            id="email"
+            disabled
+          />
 
-          <div class="field disabled">
-            <label for="code">Code de réinitialisation de mot de passe</label>
-            <input type="text" id="code" v-model="code" placeholder="Code de réinitialisation" />
-          </div>
+          <form-champs
+            :value="code"
+            nom="Code de réinitialisation de mot de passe"
+            id="code"
+            disabled
+          />
 
-          <div class="field">
-            <label for="nouveauMdp">Nouveau mot de passe</label>
-            <input type="password" id="nouveauMdp" v-model="nouveauMdp" placeholder="Nouveau mot de passe" />
-          </div>
+          <form-champs
+            v-model="form.mdp.v"
+            nom="Nouveau mot de passe"
+            id="mdp"
+            type="password"
+            :err="form.mdp.err"
+          />
 
-          <div class="field">
-            <label for="nouveauMdp2">Confirmation du nouveau mot de passe</label>
-            <input type="password" id="nouveauMdp2" v-model="nouveauMdp2" placeholder="Confirmation du mot de passe" />
-          </div>
+          <form-champs
+            v-model="form.mdp2.v"
+            nom="Confirmation du mot de passe"
+            id="mdp2"
+            type="password"
+            :err="form.mdp2.err"
+          />
 
           <button class="ui button" type="submit">Modifier mon mot de passe</button>
         </form>
+        <Alerte ref="notifs" :type-alerte="typeAlerte" />
       </template>
-
-      <Alerte ref="notifs" :type-alerte="typeAlerte" :fermable="typeAlerte !== 'Succès'" />
     </ApolloMutation>
+
+    <Alerte v-else :liste-msg="['Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.']" type-alerte="Succès" :fermable="false" />
   </div>
 </template>
 
 <script>
-import { setErreurInput } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
+import FormChamps from '@/components/FormChamps.vue'
 
 export default {
   name: 'MdpReset',
   components: {
-    Alerte
+    Alerte,
+    FormChamps
   },
   props: {
     email: {
@@ -73,57 +80,48 @@ export default {
   },
   data() {
     return {
-      nouveauMdp: '',
-      nouveauMdp2: '',
-      typeAlerte: 'Erreur'
+      form: {
+        mdp: { v: '', err: [] },
+        mdp2: { v: '', err: [] }
+      },
+      typeAlerte: 'Erreur',
+      validated: false
     }
   },
   methods: {
-    // Afficher une alerte
-    ajouterNotif(...str) {
-      this.$refs.notifs.ajouterAlerte(...str)
-    },
-
-    // Réinitialiser les erreurs du formulaire
-    viderNotif() {
-      this.$refs.notifs.viderAlerte()
-      setErreurInput(false, 'nouveauMdp', 'nouveauMdp2')
-    },
-
     // Vérifier que le formulaire est bien rempli
     verifierFormulaire() {
       let formulaireOk = true
-      this.viderNotif()
 
-      if (this.nouveauMdp.length < 4) {
+      this.$refs.notifs.viderAlerte()
+      this.form.mdp.err = []
+      this.form.mdp2.err = []
+
+      if (this.form.mdp.v.length < 4) {
+        this.form.mdp.err.push('Le nouveau mot de passe doit être de 4 caractères minimum.')
         formulaireOk = false
-        setErreurInput(true, 'nouveauMdp')
-        this.ajouterNotif('Le nouveau mot de passe doit être de 4 caractères minimum.')
       }
-      if (this.nouveauMdp !== this.nouveauMdp2) {
+      if (this.form.mdp.v !== this.form.mdp2.v) {
+        this.form.mdp2.err.push('Les mots de passe ne correspondent pas.')
         formulaireOk = false
-        setErreurInput(true, 'nouveauMdp', 'nouveauMdp2')
-        this.ajouterNotif('Les mots de passe ne correspondent pas.')
       }
-      if (!formulaireOk) this.typeAlerte = 'Erreur'
+      if (!formulaireOk) {
+        this.$refs.notifs.ajouterAlerte('Le formulaire contient des erreurs.')
+        this.typeAlerte = 'Erreur'
+      }
 
       return formulaireOk
     },
 
-    // La demande de réinitialisation de mot de passe s'est bien passée
+    // La demande de réinitialisation de mot de passe a été validée
     formOk() {
       this.viderNotif()
       this.typeAlerte = 'Succès'
       this.ajouterNotif('Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.')
     },
 
-    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
-    chargerErreur(errorObject) {
-      let e = errorObject.message
-      if (e.includes('GraphQL error: ')) {
-        this.ajouterNotif(e.replace('GraphQL error: ', ''))
-        this.typeAlerte = 'Erreur'
-      }
+    chargerErreur() {
+
     }
   }
 }
