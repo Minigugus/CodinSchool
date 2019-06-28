@@ -64,7 +64,7 @@ export default {
   },
 
   mounted() {
-    this.messages = this.listeMsg
+    if (this.listeMsg.length > 0) this.messages = this.listeMsg
   },
 
   methods: {

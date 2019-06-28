@@ -9,7 +9,7 @@
         motDePasse: form.mdp.v
       }"
       class="ui container segment"
-      @error="chargerErreur"
+      @error="$refs.notifs.ajouterAlerte(gqlError.message)"
       @done="connexionOk"
     >
       <template v-slot="{ mutate, loading }">
@@ -63,9 +63,6 @@ export default {
   },
 
   methods: {
-    chargerErreur({ gqlError }) {
-      this.$refs.notifs.ajouterAlerte(gqlError.message)
-    },
     // Vérifier que le formulaire est bien rempli
     verifierFormulaire() {
       let formulaireOk = true

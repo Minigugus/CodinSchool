@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="ui container">
     <h1>En construction ...</h1>
     <pre>{{ JSON.stringify(moi, null, 2) }}</pre>
   </div>
@@ -15,6 +15,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

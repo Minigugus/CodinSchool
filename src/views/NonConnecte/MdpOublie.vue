@@ -1,27 +1,26 @@
 <template>
-  <div class="ui container segment stripe smallContainer">
-    <h2 class="ui center aligned header">
-      <div class="content">
-        Mot de passe oublié
-      </div>
-    </h2>
+  <div class="ui container smallContainer">
+    <h2 class="text-center">Mot de passe oublié</h2>
 
     <ApolloMutation
+      v-if="!validated"
       :mutation="require('@/graphql/Utilisateur/MdpOublie.gql')"
-      :variables="{ email }"
-      class="form"
-      @error="chargerErreur"
-      @done="formOk"
+      :variables="{ email: form.email.v }"
+      class="ui container segment"
+      @error="$refs.notifs.ajouterAlerte(gqlError.message)"
+      @done="validated = true"
     >
-      <template v-if="typeAlerte !== 'Succès'" slot-scope="{ mutate, loading }">
+      <template v-slot="{ mutate, loading }">
         <form @submit.prevent="verifierFormulaire() && mutate()" :class="{ loading }" class="ui form">
-          <p>
-            Entrez votre adresse email afin de recevoir un lien de reinitialisation de mot de passe.
-          </p>
-          <div class="field">
-            <label for="email">Adresse email</label>
-            <input type="email" id="email" v-model="email" placeholder="Adresse email" />
-          </div>
+          <p>Entrez votre adresse email afin de recevoir un lien de reinitialisation de mot de passe.</p>
+
+          <form-champs
+            v-model="form.email.v"
+            nom="Adresse email"
+            id="email"
+            type="email"
+            :err="form.email.err"
+          />
 
           <router-link to="/connexion" class="retour underlineHover">Retour à la connexion</router-link>
 
@@ -29,64 +28,51 @@
         </form>
       </template>
 
-      <Alerte ref="notifs" :type-alerte="typeAlerte" :fermable="typeAlerte !== 'Succès'" />
+      <Alerte ref="notifs" type-alerte="Erreur" />
     </ApolloMutation>
+
+    <Alerte
+      v-else
+      :liste-msg="[
+        'Votre demande de réinitialisation de mot de passe a été validée.',
+        'Si un compte est enregistré avec cette adresse, vous recevrez un email de confirmation contenant un lien permettant de définir votre nouveau mot de passe.'
+      ]"
+      type-alerte="Succès"
+      :fermable="false"
+    />
   </div>
 </template>
 
 <script>
-import { setErreurInput } from '@/functions'
 import Alerte from '@/components/Alerte.vue'
+import FormChamps from '@/components/FormChamps.vue'
 
 export default {
   name: 'MdpOublie',
   components: {
-    Alerte
+    Alerte,
+    FormChamps
   },
   data() {
     return {
-      email: '',
-      typeAlerte: 'Erreur'
+      form: {
+        email: { v: '', err: [] }
+      },
+      validated: false
     }
   },
   methods: {
-    // Afficher une alerte
-    setNotif(...str) {
-      this.$refs.notifs.setAlerte(...str)
-    },
-
-    // Réinitialiser les erreurs du formulaire
-    viderNotif() {
-      this.$refs.notifs.viderAlerte()
-      setErreurInput(false, 'email')
-    },
-
     // Vérifier que le formulaire est bien rempli
     verifierFormulaire() {
-      this.viderNotif()
-      if (this.email === '') {
-        this.typeAlerte = 'Erreur'
-        this.setNotif('Le champs est vide.')
-        setErreurInput(true, 'email')
+      this.$refs.notifs.viderAlerte()
+      this.form.email.err = []
+
+      if (this.form.email.v.length === 0) {
+        this.form.email.err.push('Veuillez renseigner votre adresse email')
+        this.$refs.notifs.ajouterAlerte('Tous les champs sont obligatoires.')
         return false
       }
       return true
-    },
-
-    // La demande de réinitialisation de mot de passe s'est bien passée
-    formOk() {
-      this.typeAlerte = 'Succès'
-      this.setNotif('Votre demande de réinitialisation de mot de passe a été validée.',
-        'Vous avez reçu un email de confirmation contenant un lien permettant de définir votre nouveau mot de passe.')
-    },
-
-    // Charger une erreur GraphQL envoyée par Apollo dans la liste des erreurs
-    chargerErreur(errorObject) {
-      let e = errorObject.message
-      if (e.includes('GraphQL error: ')) {
-        this.typeAlerte = 'Erreur'
-        this.setNotif(e.replace('GraphQL error: ', ''))
-      }
     }
   }
 }

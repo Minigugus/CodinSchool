@@ -1,5 +1,5 @@
 <template>
-  <div class="ui text vertical segment container">
+  <div class="ui container">
     <h2 class="text-center">Liste des niveaux</h2>
 
     <ApolloQuery :query="require('@/graphql/NiveauExercice/Niveaux.gql')">
