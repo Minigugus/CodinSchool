@@ -46,5 +46,5 @@ const Niveau = bdd.define(
 
 export default Niveau
 
-Niveau.hasMany(Exercice, { onDelete: 'CASCADE' })
-Exercice.belongsTo(Niveau, { onDelete: 'CASCADE' })
+export const niveauVersExercice = Niveau.hasMany(Exercice, { onDelete: 'CASCADE' })
+export const exerciceVersNiveau = Exercice.belongsTo(Niveau, { onDelete: 'CASCADE' })

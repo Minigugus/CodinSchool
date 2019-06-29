@@ -12,14 +12,16 @@ export class NiveauNonTrouveError extends CodinSchoolError {
   }
 }
 
-export class NiveauxNonTrouvesError extends CodinSchoolError {
-  constructor(nonTrouves, tous) {
-    super('NIVEAUX_NON_TROUVES', 'Certains Niveaux n\'a pas été trouvés.', { manquants: nonTrouves, niveaux: tous })
-  }
-}
-
-export class NiveauxManquantsError extends CodinSchoolError {
-  constructor(tous) {
-    super('NIVEAUX_MANQUANTS', 'Certains Niveaux sont manquants. Vous devez spécifier le nouvel ordre de tous les Niveaux.', { niveaux: tous })
+export class ListeIDsNiveauxInvalideError extends CodinSchoolError {
+  constructor(nonTrouves, manquants, tous) {
+    super(
+      'NIVEAUX_LISTE_INVALIDE',
+      'Certains identifiants de Niveaux sont manquants ou non associés. Vous devez spécifier uniquement tous les identifiants de Niveaux de CodinSchool.',
+      {
+        nonTrouves,
+        manquants,
+        tous
+      }
+    )
   }
 }
