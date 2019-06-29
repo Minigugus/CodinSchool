@@ -9,7 +9,7 @@
         motDePasse: form.mdp.v
       }"
       class="ui container segment"
-      @error="$refs.notifs.ajouterAlerte(gqlError.message)"
+      @error="$refs.notifs.ajouterAlerte($event.gqlError.message)"
       @done="connexionOk"
     >
       <template v-slot="{ mutate, loading }">

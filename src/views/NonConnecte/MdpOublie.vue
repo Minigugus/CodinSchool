@@ -7,7 +7,7 @@
       :mutation="require('@/graphql/Utilisateur/MdpOublie.gql')"
       :variables="{ email: form.email.v }"
       class="ui container segment"
-      @error="$refs.notifs.ajouterAlerte(gqlError.message)"
+      @error="$refs.notifs.ajouterAlerte($event.gqlError.message)"
       @done="validated = true"
     >
       <template v-slot="{ mutate, loading }">
