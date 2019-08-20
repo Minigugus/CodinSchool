@@ -1,0 +1,62 @@
+#import * from "./ConstanteDirective.graphql"
+
+# enum Permission {
+#   EVALUATION_CODE
+# }
+
+type ResultatCompilation {
+  reussie: Boolean!
+  duree: Int!
+  stdout: String!
+  stderr: String!
+  code: Int!
+}
+
+# type ResultatTestEvaluation {
+#   id: ID!
+#   duree: Int!
+#   stdout: String!
+#   stderr: String!
+#   code: Int # `null` si temps maximal d'éxécution dépassé
+# }
+
+enum EtapeEvaluationID {
+  DEBUT_COMPILATION
+  FIN_COMPILATION
+
+  DEBUT_EXECUTION_TEST
+  FIN_EXECUTION_TEST
+  
+  FIN_EVALUATION
+}
+
+# interface EtapeEvaluation {
+#   etape: EtapeEvaluationID!
+# }
+
+# type EtapeDebutCompilation implements EtapeEvaluation {
+#   etape: EtapeEvaluationID! @constante(valeur: "DEBUT_COMPILATION")
+# }
+
+# type EtapeFinCompilation implements EtapeEvaluation {
+#   etape: EtapeEvaluationID! @constante(valeur: "FIN_COMPILATION")
+#   compilation: ResultatCompilation!
+# }
+
+# type EtapeDebutTest implements EtapeEvaluation {
+#   etape: EtapeEvaluationID! @constante(valeur: "DEBUT_EXECUTION_TEST")
+#   id: ID! # ID du test concerné
+# }
+
+# type EtapeFinTest implements EtapeEvaluation {
+#   etape: EtapeEvaluationID! @constante(valeur: "FIN_EXECUTION_TEST")
+#   id: ID! # ID du test concerné
+#   test: ResultatTestEvaluation!
+# }
+
+# type EtapeFinEvaluation implements EtapeEvaluation {
+#   etape: EtapeEvaluationID! @constante(valeur: "FIN_EVALUATION")
+#   id: ID! # ID du résultat
+#   compilation: ResultatCompilation!
+#   tests: [ResultatTestEvaluation!] # `null| si compilation échouée
+# }

@@ -1,0 +1,3 @@
+directive @constante(
+  valeur: String!
+) on FIELD_DEFINITION

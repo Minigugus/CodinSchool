@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize'
 import bdd from '../bdd'
 import Test from './test/TestModele'
+import Soumission from './soumission/SoumissionModele'
 
 const Exercice = bdd.define(
   'exercice',
@@ -45,3 +46,6 @@ export default Exercice
 
 Exercice.hasMany(Test, { onDelete: 'CASCADE' })
 Test.belongsTo(Exercice, { onDelete: 'CASCADE' })
+
+Exercice.hasMany(Soumission, { onDelete: 'SET NULL' })
+Soumission.belongsTo(Exercice, { onDelete: 'SET NULL' })

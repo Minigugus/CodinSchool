@@ -2,6 +2,7 @@ import Sequelize from 'sequelize'
 import bdd from '../bdd'
 
 import { Role } from '../role'
+import { Soumission } from '../exercice/soumission'
 
 const Profile = bdd.define(
   'utilisateur',
@@ -119,6 +120,9 @@ const Profile = bdd.define(
 Profile.belongsToMany(Role, { as: 'role', through: 'utilisateur_role', timestamps: false })
 Role.belongsToMany(Profile, { as: 'membre', through: 'utilisateur_role', timestamps: false })
 
+Profile.hasMany(Soumission, { onDelete: 'CASCADE' })
+Soumission.belongsTo(Profile)
+
 Object.defineProperty(Profile.prototype, 'roles', {
   configurable: false,
   enumerable: true,
@@ -127,17 +131,18 @@ Object.defineProperty(Profile.prototype, 'roles', {
   }
 })
 
+const PERMISSIONS = Symbol()
 Object.defineProperty(Profile.prototype, 'permissions', {
   configurable: false,
   enumerable: true,
   // eslint-ignore no-underscore-dangle
   get() {
-    if (!this._permissions && this.role)
-      this._permissions = this.role.reduce((set, role) => {
+    if (!this[PERMISSIONS] && this.role)
+      this[PERMISSIONS] = this.role.reduce((set, role) => {
         role.permissions.forEach(set.add, set)
         return set
       }, new Set())
-    return this._permissions
+    return this[PERMISSIONS]
   }
 })
 

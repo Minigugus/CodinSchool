@@ -1,9 +1,13 @@
 import authentifier from './composants/auth'
 
-const auth = req => {
-  if (req) {
-    const autorisation = req.headers.authorization
-    if (autorisation) return authentifier(autorisation).catch(_ => null)
+const auth = async (req, connection) => {
+  try {
+    const autorisation = req ? req.headers.authorization : connection.Authorization
+    if (autorisation && /^Bearer /.test(autorisation))
+      return await authentifier(autorisation.slice(7))
+  }
+  catch (err) {
+    // console.warn('Erreur lors du décodage du jeton d\'authentification : %s', err)
   }
   return null
 }
@@ -12,8 +16,8 @@ const auth = req => {
 // req => Query
 // connection => Subscription
 // eslint-disable-next-line no-unused-vars
-export default async ({ req, connection }) => ({
+export default async ({ req, connection }) => connection && connection.context ? connection.context : ({
   req,
   connection,
-  utilisateur: await auth(req)
+  utilisateur: await auth(req, connection)
 })

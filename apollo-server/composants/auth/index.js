@@ -11,13 +11,10 @@ export default async jeton => {
   if (!jeton) return null
   // TODO : Ajouter une liste noire pour bloquer les jetons mal utilisés (anti-piratage).
   try {
-    if (!/Bearer /.test(jeton)) return null
-    jeton = jeton.slice(7)
     const decode = await validerJeton(jeton)
     if (decode && !('id' in decode)) return null
     const utilisateur = await ProfileAvecRoles.findByPk(decode.id)
-    if (!utilisateur) return null
-    return utilisateur
+    return utilisateur ? utilisateur : null
   }
   catch (err) {
     if (err instanceof CodinSchoolError) throw err

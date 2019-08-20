@@ -1,0 +1,5 @@
+#import * from "./Evaluation.graphql"
+
+type Subscription {
+  executer(code: String!, entrees: [String!]!): EtapeEvaluation! @acces(requis: [ EVALUATION_CODE ])
+}

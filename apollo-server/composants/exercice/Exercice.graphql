@@ -27,5 +27,5 @@ type Exercice {
   
   meilleurSoumission: Soumission
 
-  soumissions: [Soumission]! @acces
+  soumissions: [Soumission!]! @acces
 }

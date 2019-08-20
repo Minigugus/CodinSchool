@@ -30,12 +30,16 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
   assurerChampsProteges(type) {
     if (!type[DEJA_PROTEGE]) {
       type[DEJA_PROTEGE] = true
+      const nomFonction = type.name === 'Subscription' ? 'subscribe' : 'resolve'
+      const functionParDefaut = nomFonction === 'resolve'
+        ? defaultFieldResolver
+        : undefined
       const champs = type.getFields()
       Object.keys(champs).forEach(nomChamp => {
         const champ = champs[nomChamp]
-        const resoudre = champ.resolve || defaultFieldResolver
+        const resoudre = champ[nomFonction] || functionParDefaut
         let permissionsRequises
-        champ.resolve = async function (...args) {
+        champ[nomFonction] = async function (...args) {
           if (champ[TYPE_REQUIS] || type[TYPE_REQUIS]) {
             if (!permissionsRequises)
               permissionsRequises = (champ[TYPE_REQUIS] || []).concat(type[TYPE_REQUIS] || [])
@@ -46,7 +50,7 @@ export default class DirectiveAcces extends SchemaDirectiveVisitor {
             if (manquantes.length)
               throw new AccesInterditError(manquantes)
           }
-          return resoudre.apply(this, args)
+          return resoudre && resoudre.apply(this, args)
         }
       })
     }

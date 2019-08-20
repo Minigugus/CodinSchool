@@ -1,13 +1,10 @@
 #import * from "./Soumission.graphql"
 
 type Query {
-  soumissions: [Soumission]!
+  soumission(id: ID!): Soumission!
+  soumissions: [Soumission!]!
 }
 
-type Mutation {
-  soumettre(exercice: ID!, code: String!): ID! @acces
-
-  # FIXME : Implémenter cette fonction ? Pratique pour déboguer et pour générer des tests à partir d'un code source.
-  # executer(code: String!, entree: [String]!): ID!
-  # @acces(requis: [ GESTION_EXERCICE ])
+type Subscription {
+  soumettre(exercice: ID!, code: String!): EtapeSoumission! @acces
 }

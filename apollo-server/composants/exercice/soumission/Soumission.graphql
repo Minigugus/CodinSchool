@@ -1,6 +1,7 @@
+#import * from "../../evaluation/Evaluation.graphql"
 #import * from "../../auth/DirectiveAcces.graphql"
-#import * from "../Exercice.graphql"
 #import * from "./test/ResultatTest.graphql"
+#import * from "../Exercice.graphql"
 
 type Soumission @acces {
   id: ID!
@@ -8,9 +9,45 @@ type Soumission @acces {
   nbTests: Int!
   nbPasses: Int!
   
+  duree: Int!
   date: String!
 
-  exercice: Exercice!
+  code: String!
 
-  resultats: [ResultatTest]!
+  exercice: Exercice # `null` si l'exercice a été supprimé
+
+  compilation: ResultatCompilation!
+  resultats: [ResultatTest!] # `null` si compilation échouée
+}
+
+interface EtapeSoumission {
+  etape: EtapeEvaluationID!
+}
+
+type EtapeDebutCompilationSoumission implements EtapeSoumission {
+  etape: EtapeEvaluationID! @constante(valeur: "DEBUT_COMPILATION")
+}
+
+type EtapeFinCompilationSoumission implements EtapeSoumission {
+  etape: EtapeEvaluationID! @constante(valeur: "FIN_COMPILATION")
+  compilation: ResultatCompilation!
+}
+
+type EtapeDebutTestSoumission implements EtapeSoumission {
+  etape: EtapeEvaluationID! @constante(valeur: "DEBUT_EXECUTION_TEST")
+  id: ID! # ID du test concerné
+  test: Test! # Définition du test
+}
+
+type EtapeFinTestSoumission implements EtapeSoumission {
+  etape: EtapeEvaluationID! @constante(valeur: "FIN_EXECUTION_TEST")
+  id: ID! # ID du test concerné
+  test: ResultatTest!
+}
+
+type EtapeFinSoumission implements EtapeSoumission {
+  etape: EtapeEvaluationID! @constante(valeur: "FIN_EVALUATION")
+  id: ID! # ID du résultat
+  compilation: ResultatCompilation!
+  tests: [ResultatTest!] # `null| si compilation échouée
 }

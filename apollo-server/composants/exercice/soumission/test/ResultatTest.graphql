@@ -5,11 +5,15 @@
 type ResultatTest @acces {
   id: ID!
 
-  definition: Test!
+  nom: String!
   soumission: Soumission!
 
+  duree: Int!
   passe: Boolean!
 
   entree: String!
-  sortie: String!
+  attendu: String!
+  
+  stdout: String!
+  stderr: String!
 }

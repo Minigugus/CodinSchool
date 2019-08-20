@@ -12,6 +12,6 @@ type Test {
   # tempsExecution: Int!
 
   # FIXME : Les utilisateurs peuvent-ils accéder aux entrées/sorties des tests ?
-  entree: String
-  sortie: String
+  entree: String!
+  sortie: String!
 }
