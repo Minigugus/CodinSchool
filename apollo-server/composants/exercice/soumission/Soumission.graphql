@@ -20,6 +20,43 @@ type Soumission @acces {
   resultats: [ResultatTest!] # `null` si compilation échouée
 }
 
+enum Etat {
+  EN_ATTENTE
+  EN_COURS
+  TERMINE
+}
+
+type EtatCompilation {
+  etat: Etat!
+
+  reussie: Boolean
+  duree: Int
+  stdout: String
+  stderr: String
+  code: Int
+}
+
+type EtatTest {
+  etat: Etat!
+
+  id: ID!
+  nom: String!
+  entree: String!
+  attendu: String!
+
+  code: Int
+  duree: Int
+  passe: Boolean
+  stdout: String
+  stderr: String  
+}
+
+type EtatSoumission {
+  etat: Etat!
+  compilation: EtatCompilation
+  tests: [EtatTest!]
+}
+
 interface EtapeSoumission {
   etape: EtapeEvaluationID!
 }

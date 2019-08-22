@@ -2,7 +2,7 @@ import authentifier from './composants/auth'
 
 const auth = async (req, connection) => {
   try {
-    const autorisation = req ? req.headers.authorization : connection.Authorization
+    const autorisation = req ? req.headers.authorization : connection.authorization
     if (autorisation && /^Bearer /.test(autorisation))
       return await authentifier(autorisation.slice(7))
   }

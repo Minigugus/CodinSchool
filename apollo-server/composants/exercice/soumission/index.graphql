@@ -6,5 +6,5 @@ type Query {
 }
 
 type Subscription {
-  soumettre(exercice: ID!, code: String!): EtapeSoumission! @acces
+  soumettre(exercice: ID!, code: String!): EtatSoumission! @acces
 }

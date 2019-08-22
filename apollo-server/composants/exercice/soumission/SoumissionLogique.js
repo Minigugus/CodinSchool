@@ -1,7 +1,7 @@
 import Soumission from './SoumissionModele'
 import { SoumissionNonTrouveError } from './SoumissionErreurs'
 
-import evaluer from '../../evaluation'
+import evaluer from '../../evaluation/Evaluer'
 import { creerResultatTest } from './test/ResultatTestLogique'
 
 export const recupererTous = utilisateur => Soumission.findAll({
@@ -38,65 +38,42 @@ export const recupererResultatTestsSoumission = soumission =>
 export const recupererExerciceSoumission = soumission =>
   soumission.getExercice()
 
-export async function* soumettre(preparer, utilisateur, exerciceId, tests, code) {
-  let debut, nbPasses = 0
-  const resultatTests = Array(tests.length)
-  for await (const etape of evaluer((id, params) => ({ ...params, etape: id }), code, tests.map(test => test.entree), utilisateur)) {
-    switch (etape.etape) {
-    case 'DEBUT_COMPILATION':
-      debut = Date.now()
-      break
-    case 'DEBUT_EXECUTION_TEST':
-      etape.test = tests[etape.id]
-      break
-    case 'FIN_EXECUTION_TEST':
-      const test = tests[etape.id]
-      const resultat = etape.test
-      const passe = (resultat.stdout === test.sortie)
-      if (passe)
-        nbPasses++
-      resultatTests[etape.id] = (etape.test = {
-        // id,
-        nom: test.nom, // FIXME : Rendre les tests immuables afin de ne pas avoir à copier certains propriétés ?
-        code: resultat.code,
-        duree: resultat.duree,
-        passe, // FIXME : Ignorer les espaces en début et en fin de chaine de caractères ?
-        entree: resultat.entree,
-        attendu: test.sortie,
-        stdout: resultat.stdout,
-        stderr: resultat.stderr
-      })
-      break
-
-    case 'FIN_EVALUATION':
+export async function* soumettre(nomAbonnement, moteur, utilisateurId, exerciceId, tests, code) {
+  const debut = Date.now()
+  for await (const etatSoumission of evaluer(
+    moteur,
+    code,
+    tests
+  )) {
+    if (etatSoumission.etat === 'TERMINE') { // Sauver le résultat
       const nbTests = tests.length
+      const nbPasses = etatSoumission.tests
+        ? etatSoumission.tests.reduce((somme, test) => test.passe ? somme + 1 : somme, 0)
+        : 0
       const soumission = await creerSoumission(
         exerciceId,
-        utilisateur.id,
+        utilisateurId,
         {
           duree: Date.now() - debut,
-          passe: nbTests === nbPasses,
+          passe: nbPasses === nbTests,
           nbTests,
           nbPasses,
 
           code,
 
-          compilationReussie: etape.compilation.reussie,
-          compilationDuree: etape.compilation.duree,
-          compilationCode: etape.compilation.code,
-          compilationStdout: etape.compilation.stdout,
-          compilationStderr: etape.compilation.stderr
+          compilationReussie: etatSoumission.compilation.reussie,
+          compilationDuree: etatSoumission.compilation.duree,
+          compilationCode: etatSoumission.compilation.code,
+          compilationStdout: etatSoumission.compilation.stdout,
+          compilationStderr: etatSoumission.compilation.stderr
         }
       )
-      if (etape.compilation.reussie)
-        await creerResultatTest(soumission, resultatTests)
-      etape.tests = resultatTests
-      etape.id = soumission.id // Permet récupérer le résultat facilement depuis le front
-      break
-
-    default:
-      break
+      if (etatSoumission.tests)
+        await creerResultatTest(soumission, etatSoumission.tests)
+      etatSoumission.id = soumission.id // Permet récupérer le résultat facilement depuis le front
     }
-    yield preparer(etape.etape, etape)
+    yield {
+      [nomAbonnement]: etatSoumission
+    }
   }
 }

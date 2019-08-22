@@ -1,0 +1,23 @@
+subscription Soumettre($code: String!, $exercice: ID!) {
+  soumettre(exercice: $exercice, code: $code) {
+    etat
+    compilation {
+      etat
+      duree
+      code
+      reussie
+      stdout
+      stderr
+    }
+    tests {
+      id
+      etat
+      nom
+      attendu
+      duree
+      passe
+      stdout
+      stderr
+    }
+  }
+}

@@ -7,6 +7,7 @@ import {
   recupererExerciceSoumission
 } from './SoumissionLogique'
 import { recupererParID as recupererExerciceParID, recupererTestsExercice } from '../ExerciceLogique'
+import * as moteursLangage from '../../evaluation/langages'
 
 export default {
   Query: {
@@ -20,11 +21,15 @@ export default {
   Subscription: {
     soumettre: {
       async subscribe(_, { exercice: exerciceId, code }, { utilisateur }, { fieldName: nomChamp }) {
+        const langage = 'JS' // FIXME : Demander à l'utilisateur ?
         const exercice = await recupererExerciceParID(exerciceId)
         const tests = await recupererTestsExercice(exercice)
+        if (!(langage in moteursLangage))
+          throw new Error() // TODO : Créer une classe pour cette exception
         return soumettre(
-          (etape, parametres = {}) => ({ [nomChamp]: { ...parametres, etape } }),
-          utilisateur,
+          nomChamp,
+          moteursLangage[langage],
+          utilisateur.id,
           exercice.id,
           tests,
           code

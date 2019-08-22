@@ -1,8 +1,8 @@
 #import * from "./ConstanteDirective.graphql"
 
-# enum Permission {
-#   EVALUATION_CODE
-# }
+enum Permission {
+  EVALUATION_CODE
+}
 
 type ResultatCompilation {
   reussie: Boolean!

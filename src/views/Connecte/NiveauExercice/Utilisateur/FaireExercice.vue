@@ -88,7 +88,7 @@
               <div v-for="(aTest, index) in TEMP_TESTS" :key="'test-' + index">
                 <sui-accordion-title class="test-title">
                   <span>
-                    <sui-icon :name="aTest.nom.length > 60 ? 'dropdown' : 'arrow right'" />
+                    <sui-icon :name="!(aTest.loading || aTest.reussi) ? 'dropdown' : 'arrow right'" />
                     {{ aTest.nom.slice(0, 60) }} {{ aTest.nom.length > 60 ? '...' : '' }}
                   </span>
                   <span>
@@ -111,8 +111,18 @@
                     </button>
                   </span>
                 </sui-accordion-title>
-                <sui-accordion-content v-if="aTest.nom.length > 60">
-                  <p v-text="aTest.nom" />
+                <sui-accordion-content v-if="!(aTest.loading || aTest.reussi)">
+                  <h5>Attendu</h5>
+                  <p v-text="aTest.attendu" />
+                  <div v-if="aTest.stdout">
+                    <h5>Reçu</h5>
+                    <p class="red" v-text="aTest.stdout" />
+                  </div>
+                  <h5 v-else>Aucune entrée reçue</h5>
+                  <div v-if="aTest.stderr">
+                    <h5>Sortie d'erreur</h5>
+                    <p class="red" v-text="aTest.stderr" />
+                  </div>
                 </sui-accordion-content>
               </div>
             </sui-accordion>
@@ -211,6 +221,7 @@
 import 'highlight.js/styles/monokai.css'
 
 import Exercice from '@/graphql/NiveauExercice/Exercice.gql'
+import Soumettre from '@/graphql/NiveauExercice/Soumettre.gql'
 
 import Alerte from '@/components/Alerte.vue'
 import FormChamps from '@/components/FormChamps.vue'
@@ -276,7 +287,7 @@ export default {
       return this.TEMP_TESTS.some(x => x.loading)
     },
     testsCompletion() {
-      return this.TEMP_TESTS.reduce((acc, x) => x.reussi ? ++acc : acc, 0) / this.TEMP_TESTS.length * 100
+      return this.TEMP_TESTS.reduce((acc, x) => x.reussi ? ++acc : acc, 0) / (this.TEMP_TESTS.length || 1) * 100
     }
   },
 
@@ -304,7 +315,28 @@ export default {
     },
 
     async lancerTests() {
-
+      console.debug(this)
+      this.$apollo.subscribe({
+        query: Soumettre,
+        variables: {
+          code: this.champs.code.v,
+          exercice: 'bye-world' // FIXME
+        }
+      }).subscribe({
+        next: ({ data: { soumettre: { etat, compilation, tests } } }) => {
+          console.info('DEBUG %s', etat, compilation, tests)
+          this.$set(this, 'TEMP_TESTS', (tests || [])
+            .map(test => ({
+              ...test,
+              reussi: test.passe,
+              loading: test.etat !== 'TERMINE'
+            }))
+          )
+        },
+        error(err) {
+          console.error(err)
+        }
+      })
     }
   }
 }
