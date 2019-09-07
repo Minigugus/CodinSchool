@@ -2,13 +2,13 @@
 #import "./FragmentExercice.gql"
 #import "./FragmentNiveau.gql"
 
-mutation EditerTest($id: ID!, $test: EditionTest!) {
-  editerTest(id: $id, test: $test) {
+query Test($id: ID!) {
+  test(id: $id) {
     ...test
     exercice {
       ...exercice
       niveau {
-      ...niveau
+        ...niveau
       }
     }
   }

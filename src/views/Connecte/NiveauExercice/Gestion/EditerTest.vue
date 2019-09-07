@@ -1,7 +1,7 @@
 <template>
   <div class="ui container">
     <!-- Chargement -->
-    <sui-loader v-if="$apollo.queries.test.loading && $apollo.queries.niveaux.loading" active centered inline />
+    <sui-loader v-if="$apollo.queries.test.loading || $apollo.queries.niveaux.loading" active centered inline />
 
     <!-- Erreur -->
     <div v-else-if="erreurLoadingTest || testSupprime">
@@ -32,9 +32,9 @@
       <!-- Fil d'ariane -->
       <FilAriane :items="[
         { txt: 'Liste des niveaux', to: '/NiveauExercice/niveau/liste' },
-        { txt: `Niveau : ${test.niveau.titre}`, to: `/NiveauExercice/niveau/${test.niveau.id}` },
+        { txt: `Niveau : ${test.exercice.niveau.titre}`, to: `/NiveauExercice/niveau/${test.exercice.niveau.id}` },
         { txt: `Exercice : ${test.exercice.titre}`, to: `/NiveauExercice/exercice/${test.exercice.id}` },
-        `Test : ${test.nom }`
+        `Test : ${test.nom}`
       ]"
       />
       <!--/ Fil d'ariane -->
@@ -137,7 +137,7 @@ import GoBack from '@/components/GoBack.vue'
 import FormChamps from '@/components/FormChamps.vue'
 import FilAriane from '@/components/FilAriane.vue'
 
-import NiveauxExercices from '@/graphql/NiveauExercice/NiveauxExercices.gql'
+import NiveauxExercicesTests from '@/graphql/NiveauExercice/NiveauxExercicesTests.gql'
 import Test from '@/graphql/NiveauExercice/Test.gql'
 import SupprimerTest from '@/graphql/NiveauExercice/SupprimerTest.gql'
 
@@ -162,6 +162,7 @@ export default {
 
       champs: {
         test: {
+          id: { err: [] },
           nom: { err: [] },
           entree: { err: [] },
           sortie: { err: [] },
@@ -178,7 +179,7 @@ export default {
       query: Utilisateur,
       result: checkPermissions(['GESTION_NIVEAU', 'GESTION_EXERCICE'])
     },
-    niveaux: NiveauxExercices,
+    niveaux: NiveauxExercicesTests,
     test() {
       return {
         query: Test,
@@ -194,7 +195,7 @@ export default {
   computed: {
     selectExerciceOptions() {
       let options = []
-      this.niveaux.forEach(aNiveau => aNiveau.exercices.forEach(anExercice =>
+      this.niveaux.forEach(aNiveau => aNiveau.exercices.length > 0 && aNiveau.exercices.forEach(anExercice =>
         (options.push({ text: `${anExercice.titre} (Niveau : #${aNiveau.id} / Exercice : #${anExercice.id})`, value: anExercice.id }))))
       return options
     }
@@ -244,13 +245,13 @@ export default {
         variables: { id: this.test.id },
         update: store => {
           // Lire le cache pour récupérer le contenu actuel
-          const data = store.readQuery({ query: NiveauxExercices })
-          const indexNiveau = data.niveaux.findIndex(x => x.id === this.test.niveau.id)
+          const data = store.readQuery({ query: NiveauxExercicesTests })
+          const indexNiveau = data.niveaux.findIndex(x => x.id === this.test.exercice.niveau.id)
           const indexExercice = data.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.test.exercice.id)
           const indexTest = data.niveaux[indexNiveau].exercices[indexExercice].tests.findIndex(x => x.id === this.test.id)
           data.niveaux[indexNiveau].exercices[indexExercice].tests.splice(indexTest, 1)
           // Appliquer la modification en cache
-          store.writeQuery({ query: NiveauxExercices, data })
+          store.writeQuery({ query: NiveauxExercicesTests, data })
           this.testSupprime = true
         }
       }).catch(err => {
@@ -266,18 +267,18 @@ export default {
 
       try {
       // Lire le cache pour récupérer le contenu actuel
-        const oldData = apolloClient.readQuery({ query: NiveauxExercices })
-        const indexNiveau = oldData.niveaux.findIndex(x => x.id === this.test.niveau.id)
+        const oldData = apolloClient.readQuery({ query: NiveauxExercicesTests })
+        const indexNiveau = oldData.niveaux.findIndex(x => x.id === this.test.exercice.niveau.id)
         const indexExercice = oldData.niveaux[indexNiveau].exercices.findIndex(x => x.id === this.test.exercice.id)
-        const indexTest = data.niveaux[indexNiveau].exercices[indexExercice].tests.findIndex(x => x.id === this.test.id)
+        const indexTest = oldData.niveaux[indexNiveau].exercices[indexExercice].tests.findIndex(x => x.id === this.test.id)
         oldData.niveaux[indexNiveau].exercices[indexExercice].tests[indexTest] = data.editerTest
 
         // Appliquer la modification en cache
-        apolloClient.writeQuery({ query: NiveauxExercices, data: oldData })
+        apolloClient.writeQuery({ query: NiveauxExercicesTests, data: oldData })
 
         this.$refs.erreurs.viderAlerte()
         this.typeAlerte = 'Succès'
-        this.$refs.erreurs.ajouterAlerte(`Le test "${data.editerExercice.id}" a été modifié.`)
+        this.$refs.erreurs.ajouterAlerte(`Le test "${data.editerTest.id}" a été modifié.`)
       }
       catch (err) {
         console.error(err)

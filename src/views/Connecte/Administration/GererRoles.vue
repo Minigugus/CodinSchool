@@ -2,7 +2,7 @@
   <div class="ui container">
     <h2 class="text-center">Gestion des rôles</h2>
 
-    <sui-loader v-if="$apollo.queries.permissions.loading && $apollo.queries.roles.loading" active centered inline />
+    <sui-loader v-if="$apollo.queries.permissions.loading || $apollo.queries.roles.loading" active centered inline />
     <!-- Result -->
     <div v-else class="ui container">
       <!-- Modal de confirmation de suppression de rôle -->

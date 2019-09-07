@@ -49,13 +49,12 @@ export default [
     name: 'AjouterTest',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterTest.vue'),
     props: true
+  },
+  {
+    // Modifier un test
+    path: '/NiveauExercice/exercice/:idExercice/test/:idTest',
+    name: 'EditerTest',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
+    props: true
   }
-  // TODO: Rendre de nouveau disponible après https://github.com/Minigugus/CodinSchool/issues/45
-  // {
-  //   // Modifier un test
-  //   path: '/NiveauExercice/exercice/:idExercice/test/:idTest',
-  //   name: 'EditerTest',
-  //   component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
-  //   props: true
-  // }
 ]
