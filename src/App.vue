@@ -52,8 +52,14 @@
                   <!-- Menu principal de gestion -->
                   <sui-dropdown text="Gestion" :item="true">
                     <sui-dropdown-menu>
+                      <!-- Visible par tous -->
+                      <sui-dropdown-header>Travail</sui-dropdown-header>
+                      <router-link to="/listeExercices" class="item" exact-active-class="active">Liste des exercices</router-link>
+                      <!--/ Visible par tous -->
+
                       <!-- Visible par les permissions "GESTION_NIVEAU" et "GESTION_EXERCICE" -->
                       <template v-if="possedePermission(['GESTION_NIVEAU', 'GESTION_EXERCICE'], 'AND')">
+                        <sui-dropdown-divider />
                         <sui-dropdown-header>Gestion de contenu</sui-dropdown-header>
 
                         <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
