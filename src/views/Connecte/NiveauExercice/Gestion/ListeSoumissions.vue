@@ -19,8 +19,8 @@
             <sui-table-header>
               <sui-table-row text-align="center">
                 <sui-table-header-cell>id</sui-table-header-cell>
-                <sui-table-header-cell>Timestamp</sui-table-header-cell>
-                <sui-table-header-cell>Exercice</sui-table-header-cell>
+                <sui-table-header-cell>Date de création</sui-table-header-cell>
+                <sui-table-header-cell>Niveau/Exercice</sui-table-header-cell>
                 <sui-table-header-cell>Nombre tests réussis</sui-table-header-cell>
               </sui-table-row>
             </sui-table-header>
@@ -33,7 +33,7 @@
                   <span>/</span>
                   <router-link :to="`/NiveauExercice/exercice/${aSoumission.exercice.id}`">{{ aSoumission.exercice.id }}</router-link>
                 </sui-table-cell>
-                <sui-table-cell>{{ aSoumission.nbPasses }}/{{ aSoumission.nbTests }}</sui-table-cell>
+                <sui-table-cell>{{ aSoumission.nbPasses }}/{{ aSoumission.nbTests }} - {{ aSoumission.nbPasses / (aSoumission.nbTests || 1) * 100 }}%</sui-table-cell>
               </sui-table-row>
             </sui-table-body>
           </sui-table>

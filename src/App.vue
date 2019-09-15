@@ -63,7 +63,7 @@
                         <sui-dropdown-header>Gestion de contenu</sui-dropdown-header>
 
                         <router-link to="/NiveauExercice/niveau/liste" class="item" exact-active-class="active">Gérer les niveaux</router-link>
-                        <router-link to="/NiveauExercice/soumissions" class="item" exact-active-class="active">Afficher les soumissions</router-link>
+                        <router-link to="/NiveauExercice/soumission" class="item" exact-active-class="active">Afficher les soumissions</router-link>
                       </template>
                       <!--/ Visible par les permissions "GESTION_NIVEAU" et "GESTION_EXERCICE" -->
 
