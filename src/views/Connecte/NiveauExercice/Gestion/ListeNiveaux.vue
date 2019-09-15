@@ -49,8 +49,8 @@
                   <sui-table-row text-align="center">
                     <sui-table-header-cell v-if="niveau.sontDraggable">#</sui-table-header-cell>
                     <sui-table-header-cell>id</sui-table-header-cell>
-                    <sui-table-header-cell>titre</sui-table-header-cell>
-                    <sui-table-header-cell>dateCreation</sui-table-header-cell>
+                    <sui-table-header-cell>Titre</sui-table-header-cell>
+                    <sui-table-header-cell>Date de création</sui-table-header-cell>
                     <sui-table-header-cell v-if="!niveau.sontDraggable">Editer</sui-table-header-cell>
                   </sui-table-row>
                 </sui-table-header>
@@ -101,12 +101,14 @@ import Utilisateur from '@/graphql/Utilisateur/Utilisateur.gql'
 import { checkPermissions } from '@/functions'
 
 import draggable from 'vuedraggable'
+import Alerte from '@/components/Alerte.vue'
 
 import Niveaux from '@/graphql/NiveauExercice/Niveaux.gql'
 
 export default {
   name: 'ListeNiveaux',
   components: {
+    Alerte,
     draggable
   },
   data() {

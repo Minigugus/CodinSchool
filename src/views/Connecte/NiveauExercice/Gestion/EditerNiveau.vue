@@ -145,8 +145,9 @@
               <sui-table-header>
                 <sui-table-row text-align="center">
                   <sui-table-header-cell v-if="exercice.sontDraggable">#</sui-table-header-cell>
-                  <sui-table-header-cell>Id</sui-table-header-cell>
+                  <sui-table-header-cell>id</sui-table-header-cell>
                   <sui-table-header-cell>Titre</sui-table-header-cell>
+                  <sui-table-header-cell>Date de création</sui-table-header-cell>
                   <sui-table-header-cell v-if="!exercice.sontDraggable">Editer</sui-table-header-cell>
                 </sui-table-row>
               </sui-table-header>
@@ -162,6 +163,7 @@
                   <sui-table-cell v-if="exercice.sontDraggable"><i class="bars icon cursor-move" /></sui-table-cell>
                   <sui-table-cell v-text="anExercice.id" text-align="center" />
                   <sui-table-cell v-text="anExercice.titre" />
+                  <sui-table-cell v-text="new Date(parseInt(anExercice.dateCreation, 10)).toJSON()" />
                   <sui-table-cell v-if="!exercice.sontDraggable">
                     <router-link :to="`/NiveauExercice/exercice/${anExercice.id}`" class="ui primary right labeled icon button mini">
                       <i class="edit icon"></i>
