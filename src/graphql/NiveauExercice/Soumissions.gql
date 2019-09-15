@@ -13,6 +13,10 @@ query Soumissions {
     exercice {
       id
       titre
+      niveau {
+        id
+        titre
+      }
     }
     id
     nbPasses

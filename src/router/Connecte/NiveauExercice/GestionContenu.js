@@ -17,7 +17,7 @@ export default [
   {
     // Créer un niveau
     path: '/NiveauExercice/niveau/ajouterNiveau',
-    name: 'AjouterNiveaux',
+    name: 'AjouterNiveau',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/AjouterNiveau.vue')
   },
   {
@@ -56,5 +56,19 @@ export default [
     name: 'EditerTest',
     component: () => import('@/views/Connecte/NiveauExercice/Gestion/EditerTest.vue'),
     props: true
-  }
+  },
+
+  {
+    // Lister les soumissions sur la plateforme
+    path: '/NiveauExercice/soumission',
+    name: 'ListeSoumissions',
+    component: () => import('@/views/Connecte/NiveauExercice/Gestion/ListeSoumissions.vue')
+  }// ,
+  // {
+  //   // FIXME: Route utile ? On peut tout afficher dans listeSoumissions ?
+  //   // Afficher les détails d'une soumission
+  //   path: '/NiveauExercice/soumission/:idSoumission',
+  //   name: 'AfficherSoumission',
+  //   component: () => import('@/views/Connecte/NiveauExercice/Gestion/AfficherSoumission.vue')
+  // }
 ]
