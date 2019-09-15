@@ -1,0 +1,31 @@
+query Soumission($id: ID!) {
+  soumission(id: $id) {
+    code
+    compilation {
+      code
+      duree
+      reussie
+      stderr
+      stdout
+    }
+    date
+    duree
+    exercice {
+      id
+      titre
+    }
+    id
+    nbPasses
+    nbTests
+    resultats {
+      attendu
+      duree
+      entree
+      id
+      nom
+      passe
+      stderr
+      stdout
+    }
+  }
+}

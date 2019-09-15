@@ -190,6 +190,9 @@ export default {
 .text-right {
   text-align: right !important;
 }
+.align-items-center {
+  align-items: center !important;
+}
 .underlineHover:hover {
   text-decoration: underline !important;
 }

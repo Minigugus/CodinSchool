@@ -11,7 +11,7 @@
     <!--/ Erreur de chargement de la page -->
 
     <!-- Ecran de chargement de la page -->
-    <div v-else-if="!erreurLoadingExercice && $apollo.queries.exercice.loading" class="ui text vertical segment container loading"></div>
+    <div v-else-if="$apollo.queries.exercice.loading" class="ui text vertical segment container loading"></div>
     <!--/ Ecran de chargement de la page -->
 
     <div v-else>
@@ -45,7 +45,7 @@
                       <i class="clone icon"></i>
                       Copier
                     </button>
-                    <button @click="copierPressePapier(TEMP_ENONCE, $event)" class="ui button labeled icon tiny">
+                    <button @click="copierPressePapier(exercice.enonce, $event)" class="ui button labeled icon tiny">
                       <i class="clone icon"></i>
                       Copier HTML
                     </button>
@@ -54,7 +54,7 @@
               </div>
             </div>
             <!-- TODO: Vrai énoncé (test car sur cette branche max char = 255) -->
-            <div v-html="escapeHtml(TEMP_ENONCE)" class="ui container segment" id="enonce" /> <!--eslint-disable-line -->
+            <div v-html="escapeHtml(exercice.enonce)" class="ui container segment" id="enonce" /> <!--eslint-disable-line -->
           </div>
           <!--/ Bloc d'énoncé -->
 
@@ -85,10 +85,10 @@
 
             <!-- Liste des tests -->
             <sui-accordion styled fluid class="mb-3">
-              <div v-for="(aTest, index) in TEMP_TESTS" :key="'test-' + index">
+              <div v-for="(aTest, index) in exercice.tests" :key="'test-' + index">
                 <sui-accordion-title class="test-title">
                   <span>
-                    <sui-icon :name="!(aTest.loading || aTest.reussi) ? 'dropdown' : 'arrow right'" />
+                    <sui-icon name="dropdown" />
                     {{ aTest.nom.slice(0, 60) }} {{ aTest.nom.length > 60 ? '...' : '' }}
                   </span>
                   <span>
@@ -111,17 +111,73 @@
                     </button>
                   </span>
                 </sui-accordion-title>
-                <sui-accordion-content v-if="!(aTest.loading || aTest.reussi)">
-                  <h5>Attendu</h5>
-                  <p v-text="aTest.attendu" />
-                  <div v-if="aTest.stdout">
-                    <h5>Reçu</h5>
-                    <p class="red" v-text="aTest.stdout" />
-                  </div>
-                  <h5 v-else>Aucune entrée reçue</h5>
-                  <div v-if="aTest.stderr">
-                    <h5>Sortie d'erreur</h5>
-                    <p class="red" v-text="aTest.stderr" />
+                <sui-accordion-content>
+                  <p>
+                    <b>Nom du test :</b> {{ aTest.nom }}<br>
+                    <b>Entrée envoyée au programme :</b> {{ aTest.entree }}<br>
+                    <b>Sortie attendue par le programme :</b> {{ aTest.sortie }}
+                  </p>
+
+                  <div v-if="aTest.hasOwnProperty('stdout')">
+                    <!-- Retour du programme -->
+                    <div class="ui container retour-code form">
+                      <div class="ui grid mb-1">
+                        <div class="two column row align-items-center">
+                          <div class="left floated column">
+                            <h4>Sortie du programme :</h4>
+                          </div>
+                          <div class="right floated column">
+                            <div class="ui text-right">
+                              <transition name="fade">
+                                <button
+                                  v-show="aTest.stdout !== ''"
+                                  @click="copierPressePapier(aTest.stdout, $event)"
+                                  class="ui button labeled icon tiny"
+                                >
+                                  <i class="clone icon"></i>
+                                  Copier
+                                </button>
+                              </transition>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="aTest.stdout" class="field">
+                        <textarea v-text="aTest.stdout" class="field" readonly />
+                      </div>
+                      <p v-else class="my-0">Aucune sortie.</p>
+                    </div>
+                    <!--/ Retour du programme -->
+
+                    <!-- Retour d'erreur du programme -->
+                    <div class="ui container retour-code form mt-3">
+                      <div class="ui grid mb-1">
+                        <div class="two column row align-items-center">
+                          <div class="left floated column">
+                            <h4>Sortie d'erreur du programme :</h4>
+                          </div>
+                          <div class="right floated column">
+                            <div class="ui text-right">
+                              <transition name="fade">
+                                <button
+                                  v-show="aTest.stderr !== ''"
+                                  @click="copierPressePapier(aTest.stderr, $event)"
+                                  class="ui button labeled icon tiny"
+                                >
+                                  <i class="clone icon"></i>
+                                  Copier
+                                </button>
+                              </transition>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="aTest.stderr" class="field">
+                        <textarea v-text="aTest.stderr" class="field" readonly />
+                      </div>
+                      <p v-else class="my-0">Aucune sortie d'erreur.</p>
+                    </div>
+                    <!--/ Retour d'erreur du programme -->
                   </div>
                 </sui-accordion-content>
               </div>
@@ -159,7 +215,7 @@
             </div>
 
             <sui-dropdown
-              v-model="langageProgrammation"
+              v-model="selectedLangageProgrammation"
               fluid
               :options="TEMP_LANGAGES_DISPONIBLES"
               placeholder="Liste des langages autorisés"
@@ -171,45 +227,12 @@
                 v-model="champs.code.v"
                 tag="codeeditor"
                 class="mt-2"
-                :type="langageProgrammation"
+                :type="selectedLangageProgrammation"
                 :err="champs.code.err"
               />
             </div>
           </div>
           <!--/ Bloc de l'éditeur de code -->
-
-          <!-- Bloc de retour de code -->
-          <div class="ui container segment retour-code form">
-            <div class="ui grid mb-1">
-              <div class="two column row">
-                <div class="left floated column">
-                  <h2>Résultat d'exécution de code</h2>
-                </div>
-                <div class="right floated column">
-                  <div class="ui text-right">
-                    <transition name="fade">
-                      <button
-                        v-show="TEMP_RETOUR_CODE !== ''"
-                        @click="copierPressePapier(TEMP_RETOUR_CODE, $event)"
-                        class="ui button labeled icon tiny"
-                      >
-                        <i class="clone icon"></i>
-                        Copier
-                      </button>
-                    </transition>
-                    <button @click="TEMP_RETOUR_CODE = ''" class="ui button labeled icon tiny">
-                      <i class="trash icon"></i>
-                      Vider
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="field">
-              <textarea v-model="TEMP_RETOUR_CODE" class="field" placeholder="Le résultat de votre code ou les erreurs s'afficheront ici." />
-            </div>
-          </div>
-          <!--/ Bloc de retour de code -->
         </div>
         <!--/ Bloc de droite -->
       </div>
@@ -254,6 +277,11 @@ export default {
           const { gqlError } = errorObject
           if (!gqlError) return console.error(errorObject)
           this.erreurLoadingExercice = gqlError.message
+        },
+        result({ loading, data }) {
+          // Ajouter un état de loading aux tests
+          if (!loading)
+            this.exercice.tests = data.exercice.tests.map(x => ({ ...x, loading: false, reussi: false }))
         }
       }
     }
@@ -261,22 +289,14 @@ export default {
 
   data() {
     return {
-      TEMP_ENONCE: '<h1>Partie 1 :</h1><p>Aujourd\'hui, nous apprenons la triste nouvelle que le membre du projet <em>CodinSchool, \"</em>Minigugus\", n\'a pas codé pour le projet de tout le week end.</p><p><strong>Objectif :</strong></p><p>Sortir tous les nombres de 1 à 48 suivis de la lettre \"h\", afin de lui faire ouvrir les yeux sur les heures perdues pour le projet.</p><p><br></p><h1>Partie 2 :</h1><p>Malheureusement, cela ne suffira pas.Afin de la motiver à se bouger le cul il faut maintenant lui mettre la <strong>pression</strong>.</p><p><strong>Objectif :</strong></p><p>Créer un script affichant le nombre de jours restant avant le jour de rendu du rapport de projet.</p><p><br></p><h3>Obtenir la date en JavaScript :</h3><pre class=\"ql-syntax\" spellcheck=\"false\"><span class=\"hljs-built_in\">var</span> <span class=\"hljs-built_in\">date</span> = <span class=\"hljs-literal\">new</span> <span class=\"hljs-built_in\">Date</span>()\n</pre><script>console.log(\'mdr\')script>',
-      TEMP_RETOUR_CODE: '1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n',
+      // TODO: Ajout des langages disponibles pour cet exercice
       TEMP_LANGAGES_DISPONIBLES: [
         'JavaScript',
         'C'
       ].map(key => ({ text: key, value: key })),
-      TEMP_TESTS: [
-        { nom: 'Sortir tous les nombres de 1 à 48', loading: false, reussi: false },
-        { nom: 'Sortir le nombre de jours avant le rendu du rapport de projet. Minim pariatur nulla aute sit adipisicing ipsum elit in nisi tempor enim non. Lorem sunt veniam ad cillum ut adipisicing commodo laborum laboris eiusmod aliquip magna magna. Nostrud occaecat fugiat ea consectetur nulla mollit.', loading: false, reussi: false },
-        { nom: 'Sortir le nombre de jours avant le rendu du rapport de projet. Minim pariatur nulla aute sit adipisicing ipsum elit in nisi tempor enim non. Lorem sunt veniam ad cillum ut adipisicing commodo laborum laboris eiusmod aliquip magna magna. Nostrud occaecat fugiat ea consectetur nulla mollit.', loading: false, reussi: false },
-        { nom: 'Sortir le nombre de jours avant le rendu du rapport.', loading: false, reussi: false }
-      ],
+      selectedLangageProgrammation: 'JavaScript',
 
       erreurLoadingExercice: false,
-      langageProgrammation: 'C',
-
       champs: {
         code: { v: '', err: [] }
       }
@@ -284,18 +304,21 @@ export default {
   },
   computed: {
     testsLoading() {
-      return this.TEMP_TESTS.some(x => x.loading)
+      return this.exercice.tests.some(x => x.loading)
     },
     testsCompletion() {
-      return this.TEMP_TESTS.reduce((acc, x) => x.reussi ? ++acc : acc, 0) / (this.TEMP_TESTS.length || 1) * 100
+      return this.exercice.tests.reduce((acc, x) => x.reussi ? ++acc : acc, 0) / (this.exercice.tests.length || 1) * 100
     }
   },
 
   mounted() {
+    // TODO: Champs `Code de départ` en bdd, injecter un code par défaut pour le langage
+    // choisis directement dans le module `codeMirrorLanguageLoader`
     this.champs.code.v = 'for (let i = 1 ; i <= 48 ; i++)\n  console.log(i)'
   },
   methods: {
     escapeHtml,
+
     async copierPressePapier(content, event) {
       const source = event.srcElement
       const buttonText = event.srcElement.textContent
@@ -315,27 +338,33 @@ export default {
     },
 
     async lancerTests() {
-      console.debug(this)
+      // console.debug(this)
       this.$apollo.subscribe({
         query: Soumettre,
         variables: {
           code: this.champs.code.v,
-          exercice: 'bye-world' // FIXME
+          exercice: this.exercice.id
         }
       }).subscribe({
-        next: ({ data: { soumettre: { etat, compilation, tests } } }) => {
-          console.info('DEBUG %s', etat, compilation, tests)
-          this.$set(this, 'TEMP_TESTS', (tests || [])
-            .map(test => ({
-              ...test,
-              reussi: test.passe,
-              loading: test.etat !== 'TERMINE'
-            }))
-          )
+        next: ({ data: { soumettre: { /* etat, compilation,*/ tests } } }) => {
+          // console.info(`DEBUG ${etat}`, compilation, tests)
+          // console.log(JSON.stringify(tests, null, 2))
+          /* ;*/(tests || []).forEach(aTest => {
+            // FIXME: aTest.id is the submission ID ? how to identify the test ? (editing only the test number 1 right now )
+            const i = this.exercice.tests.findIndex(x => x.id === /* aTest.id*/this.exercice.tests[0].id)
+            if (i === -1) return
+
+            console.log('mdr2')
+            this.exercice.tests[i].duree = aTest.duree
+            this.exercice.tests[i].etat = aTest.etat
+            this.exercice.tests[i].stderr = aTest.stderr
+            this.exercice.tests[i].stdout = aTest.stdout
+
+            this.exercice.tests[i].loading = aTest.etat !== 'TERMINE'
+            this.exercice.tests[i].reussi = aTest.passe
+          })
         },
-        error(err) {
-          console.error(err)
-        }
+        error: console.error
       })
     }
   }
